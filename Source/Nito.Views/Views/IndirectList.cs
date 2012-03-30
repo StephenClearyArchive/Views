@@ -14,7 +14,7 @@ namespace Views
         /// <summary>
         /// The redirected index values.
         /// </summary>
-        private int[] indices;
+        private readonly int[] indices;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IndirectList&lt;T&gt;"/> class for the given source list.
@@ -50,6 +50,15 @@ namespace Views
         {
             comparer = comparer ?? Comparer<T>.Default;
             return new Util.AnonymousComparer<int> { Compare = (x, y) => comparer.Compare(this[x], this[y]) };
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// </summary>
+        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
+        protected override bool CanUpdateElementValues()
+        {
+            return true;
         }
 
         /// <summary>
