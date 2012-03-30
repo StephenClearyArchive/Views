@@ -29,8 +29,14 @@ namespace Views
             start = Math.Max(start, 0); // start >= 0
             stop = Math.Min(stop, count); // stop <= count
 
-            // Simplify empty ranges.
-            start = Math.Min(start, stop); // start <= stop
+            // Ranges of negative size cause problems when the returned collection is modified (e.g., Add).
+            if (stop < start)
+            {
+                return new Util.AnonymousReadOnlyList<T>
+                {
+                    Count = () => 0,
+                };
+            }
 
             // Apply the slice if necessary.
             source = (start == 0 && stop == count) ? source : new Util.SliceList<T>(source, start, stop - start);
@@ -39,7 +45,6 @@ namespace Views
             return (step == 1) ? source : new Util.StepList<T>(source, step);
         }
 
-#if NO
         public static IList<TResult> View<TSource, TResult>(this IList<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
         {
             if (write == null)
@@ -51,8 +56,7 @@ namespace Views
                 };
             }
 
-            return new Util.
+            return new Util.ProjectionList<TSource, TResult>(source, read, write);
         }
-#endif
     }
 }
