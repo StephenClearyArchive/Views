@@ -85,5 +85,19 @@ namespace Views
 
             return new Util.ProjectionList<TSource, TResult>(source, read, write);
         }
+
+        /// <summary>
+        /// Creates a sorted view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element contained in the list.</typeparam>
+        /// <param name="source">The source list.</param>
+        /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer<T>.Default"/> is used.</param>
+        /// <returns>The sorted view.</returns>
+        public static IList<T> SortView<T>(this IList<T> source, IComparer<T> comparer = null)
+        {
+            var ret = new Util.IndirectList<T>(source);
+            ((List<int>)ret.Indices).Sort(ret.GetComparer(comparer));
+            return ret;
+        }
     }
 }
