@@ -29,7 +29,16 @@ namespace Views.Util
         public IndirectList(IList<T> source, IList<int> indices = null)
         {
             this.source = source;
-            this.indices = indices ?? Enumerable.Range(0, source.Count).ToList();
+            if (indices == null)
+            {
+                var list = new List<int>(source.Count);
+                for (var i = 0; i != list.Count; ++i)
+                    list[i] = i;
+            }
+            else
+            {
+                this.indices = indices;
+            }
         }
 
         /// <summary>
