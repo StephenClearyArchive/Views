@@ -12,29 +12,36 @@ namespace Views
     public sealed class IndirectList<T> : Util.ReadOnlyListBase<T>
     {
         /// <summary>
-        /// The redirected index values.
+        /// The source list.
         /// </summary>
-        private readonly int[] indices;
+        private readonly IList<T> source;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IndirectList&lt;T&gt;"/> class for the given source list.
+        /// The redirected index values.
         /// </summary>
-        /// <param name="source">The source list. The number of elements in the source list may not change as long as this <see cref="IndirectList{T}"/> is reachable.</param>
-        public IndirectList(IList<T> source)
+        private readonly IList<int> indices;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IndirectList&lt;T&gt;"/> class for the given source list, using the given redirected index values.
+        /// </summary>
+        /// <param name="source">The source list.</param>
+        /// <param name="indices">The redirected index values. If this is <c>null</c>, then a new list of indices is created matching the current source indices.</param>
+        public IndirectList(IList<T> source, IList<int> indices = null)
         {
-            this.Source = source;
-            this.indices = new int[source.Count];
-            for (int i = 0; i != this.indices.Length; ++i)
-                this.indices[i] = i;
+            this.source = source;
+            this.indices = indices ?? Enumerable.Range(0, source.Count).ToList();
         }
 
         /// <summary>
         /// Gets the source list.
         /// </summary>
-        public IList<T> Source { get; private set; }
+        public IList<T> Source
+        {
+            get { return this.source; }
+        }
 
         /// <summary>
-        /// Gets the redirected index values. Elements in this list may be set, but not inserted or removed.
+        /// Gets the redirected index values.
         /// </summary>
         public IList<int> Indices
         {
@@ -67,12 +74,7 @@ namespace Views
         /// <returns>The number of elements contained in this list.</returns>
         protected override int DoCount()
         {
-            if (this.Source.Count != this.indices.Length)
-            {
-                throw new InvalidOperationException("Source list count changed when the source is being indirectly referenced");
-            }
-
-            return this.indices.Length;
+            return this.indices.Count;
         }
 
         /// <summary>
