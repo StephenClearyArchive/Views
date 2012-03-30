@@ -38,6 +38,15 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// </summary>
+        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
+        protected override bool CanUpdateElementValues()
+        {
+            return true;
+        }
+
+        /// <summary>
         /// Gets the number of elements contained in this list.
         /// </summary>
         /// <returns>The number of elements contained in this list.</returns>
