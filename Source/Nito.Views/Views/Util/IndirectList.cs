@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Views
+namespace Views.Util
 {
     /// <summary>
     /// An indirect list, which provides a layer of indirection for the index values of a source list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class IndirectList<T> : Util.ReadOnlyListBase<T>
+    public sealed class IndirectList<T> : ReadOnlyListBase<T>
     {
         /// <summary>
         /// The source list.
@@ -56,7 +56,7 @@ namespace Views
         public IComparer<int> GetComparer(IComparer<T> comparer = null)
         {
             comparer = comparer ?? Comparer<T>.Default;
-            return new Util.AnonymousComparer<int> { Compare = (x, y) => comparer.Compare(this[x], this[y]) };
+            return new AnonymousComparer<int> { Compare = (x, y) => comparer.Compare(this[x], this[y]) };
         }
 
         /// <summary>
