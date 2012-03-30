@@ -9,8 +9,21 @@ namespace Views.Util
     /// Provides common implementations of some list methods.
     /// </summary>
     /// <typeparam name="T">The type of element contained in the list.</typeparam>
-    public abstract class ListBase<T> : IList<T>
+    public abstract class ListBase<T> : IList<T>, System.Collections.IList
     {
+        /// <summary>
+        /// Backing field for <see cref="ICollection.SyncRoot"/>.
+        /// </summary>
+        private readonly object syncRoot;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListBase&lt;T&gt;"/> class.
+        /// </summary>
+        public ListBase()
+        {
+            this.syncRoot = new object();
+        }
+
         /// <summary>
         /// Gets the number of elements contained in this list.
         /// </summary>
@@ -23,15 +36,33 @@ namespace Views.Util
             }
         }
 
-        // TODO: support IList and IList.IsReadOnly...
-
         /// <summary>
         /// Gets a value indicating whether this list is read-only.
         /// </summary>
         /// <returns>true if this list is read-only; otherwise, false.</returns>
         public virtual bool IsReadOnly
         {
-            get { return true; }
+            get { return !(this.CanUpdateCollection() && this.CanUpdateElementValues()); }
+        }
+
+        bool System.Collections.IList.IsFixedSize
+        {
+            get { return !this.CanUpdateCollection(); }
+        }
+
+        bool System.Collections.IList.IsReadOnly
+        {
+            get { return !this.CanUpdateElementValues(); }
+        }
+
+        bool System.Collections.ICollection.IsSynchronized
+        {
+            get { return false; }
+        }
+
+        object System.Collections.ICollection.SyncRoot
+        {
+            get { return this.syncRoot; }
         }
 
         /// <summary>
@@ -59,6 +90,24 @@ namespace Views.Util
             }
         }
 
+        object System.Collections.IList.this[int index]
+        {
+            get
+            {
+                return this[index];
+            }
+
+            set
+            {
+                if (!this.ObjectIsT(value))
+                {
+                    throw this.WrongObjectType();
+                }
+
+                this[index] = (T)value;
+            }
+        }
+
         /// <summary>
         /// Inserts an item to this list at the specified index.
         /// </summary>
@@ -74,6 +123,16 @@ namespace Views.Util
         {
             ListHelper.CheckNewIndexArgument(this.Count, index);
             this.DoInsert(index, item);
+        }
+
+        void System.Collections.IList.Insert(int index, object value)
+        {
+            if (!this.ObjectIsT(value))
+            {
+                throw this.WrongObjectType();
+            }
+
+            this.Insert(index, (T)value);
         }
 
         /// <summary>
@@ -117,6 +176,16 @@ namespace Views.Util
             return -1;
         }
 
+        int System.Collections.IList.IndexOf(object value)
+        {
+            if (!this.ObjectIsT(value))
+            {
+                return -1;
+            }
+
+            return this.IndexOf((T)value);
+        }
+
         /// <summary>
         /// Adds an item to the end of this list.
         /// </summary>
@@ -129,6 +198,17 @@ namespace Views.Util
             this.DoInsert(this.Count, item);
         }
 
+        int System.Collections.IList.Add(object value)
+        {
+            if (!this.ObjectIsT(value))
+            {
+                throw this.WrongObjectType();
+            }
+
+            this.Add((T)value);
+            return this.Count - 1;
+        }
+
         /// <summary>
         /// Determines whether this list contains a specific value.
         /// </summary>
@@ -139,6 +219,16 @@ namespace Views.Util
         public virtual bool Contains(T item)
         {
             return this.Contains(item, null);
+        }
+
+        bool System.Collections.IList.Contains(object value)
+        {
+            if (!this.ObjectIsT(value))
+            {
+                return false;
+            }
+
+            return this.Contains((T)value);
         }
 
         /// <summary>
@@ -172,6 +262,28 @@ namespace Views.Util
             }
         }
 
+        void System.Collections.ICollection.CopyTo(Array array, int index)
+        {
+            if (array == null)
+            {
+                throw new ArgumentNullException("array", "Array is null.");
+            }
+
+            if (array.Rank != 1)
+            {
+                throw new ArgumentException("Multidimensional arrays are not supported.");
+            }
+
+            try
+            {
+                Array.Copy(this.ToArray(), 0, array, 0, this.Count);
+            }
+            catch (ArrayTypeMismatchException ex)
+            {
+                throw new ArgumentException("Invalid array argument; see inner exception for details.", ex);
+            }
+        }
+
         /// <summary>
         /// Removes the first occurrence of a specific object from this list.
         /// </summary>
@@ -192,6 +304,16 @@ namespace Views.Util
 
             this.DoRemoveAt(index);
             return true;
+        }
+
+        void System.Collections.IList.Remove(object value)
+        {
+            if (!this.ObjectIsT(value))
+            {
+                return;
+            }
+
+            this.Remove((T)value);
         }
 
         /// <summary>
@@ -218,6 +340,53 @@ namespace Views.Util
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns whether or not the type of a given item indicates it is appropriate for storing in this list.
+        /// </summary>
+        /// <param name="item">The item to test.</param>
+        /// <returns><c>true</c> if the item is appropriate to store in this list; otherwise, <c>false</c>.</returns>
+        private bool ObjectIsT(object item)
+        {
+            if (item is T)
+            {
+                return true;
+            }
+
+            if (item == null && !typeof(T).IsValueType)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns an exception indicating that the type of an item indicates it is not appropriate for storing in this list.
+        /// </summary>
+        /// <returns>An exception indicating that the type of an item indicates it is not appropriate for storing in this list.</returns>
+        protected virtual Exception WrongObjectType()
+        {
+            return new ArgumentException("Object is not compatible with the type of elements contained in this list.");
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// </summary>
+        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
+        protected virtual bool CanUpdateElementValues()
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
+        /// </summary>
+        /// <returns>A value indicating whether the collection itself may be updated.</returns>
+        protected virtual bool CanUpdateCollection()
+        {
+            return true;
         }
 
         /// <summary>

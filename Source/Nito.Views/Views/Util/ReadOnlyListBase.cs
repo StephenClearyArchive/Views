@@ -11,32 +11,22 @@ namespace Views.Util
     /// <typeparam name="T">The type of item contained in the list.</typeparam>
     public abstract class ReadOnlyListBase<T> : ListBase<T>
     {
-#if NO
         /// <summary>
-        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter. If this is <c>false</c>, then <see cref="DoSetItem"/> will never be called.
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
         /// </summary>
         /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
-        public virtual bool CanUpdateElementValues()
+        protected override bool CanUpdateElementValues()
         {
-            return true;
+            return false;
         }
 
         /// <summary>
-        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc. If this is <c>false</c>, then <see cref="DoCount"/> must always return the same value.
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
         /// </summary>
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
-        public virtual bool CanUpdateCollection()
+        protected override bool CanUpdateCollection()
         {
-            return true;
-        }
-#endif
-        /// <summary>
-        /// Gets a value indicating whether this list is read-only.
-        /// </summary>
-        /// <returns>true if this list is read-only; otherwise, false.</returns>
-        public override bool IsReadOnly
-        {
-            get { return true; }
+            return false;
         }
 
         /// <summary>
