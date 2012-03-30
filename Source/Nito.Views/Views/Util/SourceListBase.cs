@@ -111,7 +111,7 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            this.source.RemoveAt(index - 1);
+            this.source.RemoveAt(index);
         }
     }
 }
