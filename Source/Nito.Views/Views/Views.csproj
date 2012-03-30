@@ -49,6 +49,7 @@
     </Compile>
     <Compile Include="Util\ListBase.cs" />
     <Compile Include="Util\ListHelper.cs" />
+    <Compile Include="Util\ProjectionList.cs" />
     <Compile Include="Util\ReadOnlyListBase.cs" />
     <Compile Include="Util\ReverseList.cs" />
     <Compile Include="Util\SliceList.cs" />
