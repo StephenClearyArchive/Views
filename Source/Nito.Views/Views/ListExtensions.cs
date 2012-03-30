@@ -99,5 +99,16 @@ namespace Views
             ((List<int>)ret.Indices).Sort(ret.GetComparer(comparer));
             return ret;
         }
+
+        /// <summary>
+        /// Creates a (generic) view of the (untyped) data.
+        /// </summary>
+        /// <typeparam name="T">The type of element contained in the list.</typeparam>
+        /// <param name="source">The source list.</param>
+        /// <returns>The generic view.</returns>
+        public static IList<T> GenericView<T>(this System.Collections.IList source)
+        {
+            return new Util.GenericList<T>(source);
+        }
     }
 }
