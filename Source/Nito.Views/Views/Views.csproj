@@ -53,6 +53,7 @@
     <Compile Include="Util\ReadOnlyListBase.cs" />
     <Compile Include="Util\ReverseList.cs" />
     <Compile Include="Util\SliceList.cs" />
+    <Compile Include="Util\SourceListBase.cs" />
     <Compile Include="Util\StepList.cs" />
   </ItemGroup>
   <ItemGroup />

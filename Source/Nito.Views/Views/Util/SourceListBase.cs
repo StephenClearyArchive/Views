@@ -6,34 +6,56 @@ using System.Text;
 namespace Views.Util
 {
     /// <summary>
-    /// Slices a source list.
+    /// A view that is based on a source list.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public sealed class SliceList<T> : SourceListBase<T>
+    public class SourceListBase<T> : ListBase<T>
     {
         /// <summary>
-        /// The offset into the source list where this slice begins.
+        /// The source list.
         /// </summary>
-        private readonly int offset;
+        protected readonly IList<T> source;
 
         /// <summary>
-        /// The number of objects in this slice.
-        /// </summary>
-        private int count;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SliceList&lt;T&gt;"/> class.
+        /// Initializes a new instance of the <see cref="SourceListBase&lt;T&gt;"/> class over the specified source list.
         /// </summary>
         /// <param name="source">The source list.</param>
-        /// <param name="offset">The offset into the source list where this slice begins.</param>
-        /// <param name="count">The number of objects in this slice.</param>
-        public SliceList(IList<T> source, int offset, int count)
-            : base(source)
+        public SourceListBase(IList<T> source)
         {
-            ListHelper.CheckRangeArguments(source.Count, offset, count);
+            this.source = source;
+        }
 
-            this.offset = offset;
-            this.count = count;
+        /// <summary>
+        /// Gets a value indicating whether this list is read-only. This list is read-only iff its source list is read-only.
+        /// </summary>
+        /// <returns>true if this list is read-only; otherwise, false.</returns>
+        public override bool IsReadOnly
+        {
+            get { return this.source.IsReadOnly; }
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
+        /// </summary>
+        /// <returns>A value indicating whether the collection itself may be updated.</returns>
+        protected override bool CanUpdateCollection()
+        {
+            var list = this.source as System.Collections.IList;
+            if (list != null)
+                return !list.IsFixedSize;
+            return !this.source.IsReadOnly;
+        }
+
+        /// <summary>
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// </summary>
+        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
+        protected override bool CanUpdateElementValues()
+        {
+            var list = this.source as System.Collections.IList;
+            if (list != null)
+                return !list.IsReadOnly;
+            return !this.source.IsReadOnly;
         }
 
         /// <summary>
@@ -41,11 +63,7 @@ namespace Views.Util
         /// </summary>
         public override void Clear()
         {
-            while (this.count > 0)
-            {
-                this.source.RemoveAt(this.offset);
-                --this.count;
-            }
+            this.source.Clear();
         }
 
         /// <summary>
@@ -54,7 +72,7 @@ namespace Views.Util
         /// <returns>The number of elements contained in this list.</returns>
         protected override int DoCount()
         {
-            return this.count;
+            return this.source.Count;
         }
 
         /// <summary>
@@ -64,7 +82,7 @@ namespace Views.Util
         /// <returns>The element at the specified index.</returns>
         protected override T DoGetItem(int index)
         {
-            return this.source[this.offset + index];
+            return this.source[index];
         }
 
         /// <summary>
@@ -74,7 +92,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            this.source[this.offset + index] = item;
+            this.source[index] = item;
         }
 
         /// <summary>
@@ -84,8 +102,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, T item)
         {
-            this.source.Insert(this.offset + index, item);
-            ++this.count;
+            this.source.Insert(index, item);
         }
 
         /// <summary>
@@ -94,8 +111,7 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            this.source.RemoveAt(this.offset + index);
-            --this.count;
+            this.source.RemoveAt(index - 1);
         }
     }
 }

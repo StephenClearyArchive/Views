@@ -372,19 +372,19 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
         /// </summary>
-        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
-        protected virtual bool CanUpdateElementValues()
+        /// <returns>A value indicating whether the collection itself may be updated.</returns>
+        protected virtual bool CanUpdateCollection()
         {
             return true;
         }
 
         /// <summary>
-        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
         /// </summary>
-        /// <returns>A value indicating whether the collection itself may be updated.</returns>
-        protected virtual bool CanUpdateCollection()
+        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
+        protected virtual bool CanUpdateElementValues()
         {
             return true;
         }
