@@ -20,12 +20,12 @@ namespace Views.Util
         /// <summary>
         /// The projection function from source to result.
         /// </summary>
-        private readonly Func<TSource, TResult> selector;
+        private readonly Func<TSource, int, TResult> selector;
 
         /// <summary>
         /// The projection function from result to source.
         /// </summary>
-        private readonly Func<TResult, TSource> reverseSelector;
+        private readonly Func<TResult, int, TSource> reverseSelector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReadWriteProjectList{TSource,TResult}"/> class.
@@ -33,7 +33,7 @@ namespace Views.Util
         /// <param name="source">The source list.</param>
         /// <param name="selector">The projection function from source to result.</param>
         /// <param name="reverseSelector">The projection function from result to source.</param>
-        public ProjectionList(IList<TSource> source, Func<TSource, TResult> selector, Func<TResult, TSource> reverseSelector)
+        public ProjectionList(IList<TSource> source, Func<TSource, int, TResult> selector, Func<TResult, int, TSource> reverseSelector)
         {
             this.source = source;
             this.selector = selector;
@@ -74,7 +74,7 @@ namespace Views.Util
         /// <returns>The element at the specified index.</returns>
         protected override TResult DoGetItem(int index)
         {
-            return this.selector(this.source[index]);
+            return this.selector(this.source[index], index);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, TResult item)
         {
-            this.source[index] = this.reverseSelector(item);
+            this.source[index] = this.reverseSelector(item, index);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, TResult item)
         {
-            this.source.Insert(index, this.reverseSelector(item));
+            this.source.Insert(index, this.reverseSelector(item, index));
         }
 
         /// <summary>

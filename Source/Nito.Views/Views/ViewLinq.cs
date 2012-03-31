@@ -96,12 +96,29 @@ namespace Views
         /// <returns>The projected view.</returns>
         public static IView<TResult> Select<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
         {
+            return Select<TSource, TResult>(
+                source,
+                (read == null) ? (Func<TSource, int, TResult>)null : (item, _) => read(item),
+                (write == null) ? (Func<TResult, int, TSource>)null : (item, _) => write(item));
+        }
+
+        /// <summary>
+        /// Creates a projected view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element contained in the source list.</typeparam>
+        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <param name="source">The source list.</param>
+        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
+        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <returns>The projected view.</returns>
+        public static IView<TResult> Select<TSource, TResult>(this IView<TSource> source, Func<TSource, int, TResult> read = null, Func<TResult, int, TSource> write = null)
+        {
             if (write == null)
             {
                 return new Util.AnonymousReadOnlyList<TResult>
                 {
                     Count = () => source.AsList().Count,
-                    GetItem = i => read(source.AsList()[i]),
+                    GetItem = i => read(source.AsList()[i], i),
                 };
             }
 
