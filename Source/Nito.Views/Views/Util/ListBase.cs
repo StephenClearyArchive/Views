@@ -9,7 +9,7 @@ namespace Views.Util
     /// Provides common implementations of some list methods.
     /// </summary>
     /// <typeparam name="T">The type of element contained in the list.</typeparam>
-    public abstract class ListBase<T> : IList<T>, System.Collections.IList
+    public abstract class ListBase<T> : IList<T>, System.Collections.IList, IView<T>
     {
         /// <summary>
         /// Backing field for <see cref="ICollection.SyncRoot"/>.
@@ -360,6 +360,11 @@ namespace Views.Util
             }
 
             return false;
+        }
+
+        IList<T> IView<T>.AsList()
+        {
+            return this;
         }
 
         /// <summary>
