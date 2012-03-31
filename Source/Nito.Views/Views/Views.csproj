@@ -40,6 +40,7 @@
     <Compile Include="Util\ConcatList.cs" />
     <Compile Include="Util\GenericList.cs" />
     <Compile Include="Util\IndirectList.cs" />
+    <Compile Include="View.cs" />
     <Compile Include="ViewLinq.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\AnonymousComparer.cs" />
