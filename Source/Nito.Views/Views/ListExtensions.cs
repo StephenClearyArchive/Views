@@ -30,7 +30,7 @@ namespace Views
         /// <param name="stop">The index at which to end the slice (exclusive). Defaults to <c>int.MaxValue</c>. If this is in the range <c>[-source.Count, -1]</c>, then it is treated as an index from the end of the source. If this is greater than <c>source.Count</c>, then it is treated as <c>source.Count</c>.</param>
         /// <param name="step">The stride of the slice. Defaults to <c>1</c>. This value may not be less than <c>1</c>.</param>
         /// <returns>The sliced view.</returns>
-        public static IList<T> View<T>(this IList<T> source, int start = 0, int stop = int.MaxValue, int step = 1)
+        public static IList<T> SliceView<T>(this IList<T> source, int start = 0, int stop = int.MaxValue, int step = 1)
         {
             if (step <= 0)
                 throw new ArgumentOutOfRangeException("step", "Invalid step " + step);
@@ -72,7 +72,7 @@ namespace Views
         /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
-        public static IList<TResult> View<TSource, TResult>(this IList<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
+        public static IList<TResult> ProjectView<TSource, TResult>(this IList<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
         {
             if (write == null)
             {
@@ -109,6 +109,41 @@ namespace Views
         public static IList<T> GenericView<T>(this System.Collections.IList source)
         {
             return new Util.GenericList<T>(source);
+        }
+
+        /// <summary>
+        /// Creates a concatenated view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element contained in the list.</typeparam>
+        /// <param name="source">The source list.</param>
+        /// <param name="others">The additional lists to concatenate to the source list.</param>
+        /// <returns>The concatenated view.</returns>
+        public static IList<T> ConcatView<T>(this IList<T> source, params IList<T>[] others)
+        {
+            return new Util.ConcatList<T>(Enumerable.Repeat(source, 1).Concat(others));
+        }
+
+        /// <summary>
+        /// Creates a concatenated view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element contained in the list.</typeparam>
+        /// <param name="source">The source lists to concatenate.</param>
+        /// <returns>The concatenated view.</returns>
+        public static IList<T> ConcatView<T>(this IEnumerable<IList<T>> source)
+        {
+            return new Util.ConcatList<T>(source);
+        }
+
+        /// <summary>
+        /// Creates a rotated view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element contained in the list.</typeparam>
+        /// <param name="source">The source list.</param>
+        /// <param name="offset">The number of elements to rotate. This may be negative to count from the end of the list.</param>
+        /// <returns>The rotated view.</returns>
+        public static IList<T> RotateView<T>(this IList<T> source, int offset)
+        {
+            return source.SliceView(start: offset).ConcatView(source.SliceView(stop: offset));
         }
     }
 }
