@@ -46,7 +46,7 @@ namespace Views.Util
         /// <summary>
         /// Removes all items from this list.
         /// </summary>
-        public override void Clear()
+        protected override void DoClear()
         {
             this.source.Clear();
         }

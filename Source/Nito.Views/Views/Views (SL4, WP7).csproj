@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IView.cs" />
+    <Compile Include="Util\CollectionChangedNotifier.cs" />
     <Compile Include="Util\ConcatList.cs" />
     <Compile Include="Util\GenericList.cs" />
     <Compile Include="Util\IndirectList.cs" />

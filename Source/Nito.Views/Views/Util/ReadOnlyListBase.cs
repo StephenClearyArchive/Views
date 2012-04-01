@@ -41,7 +41,7 @@ namespace Views.Util
         /// <summary>
         /// Removes all elements from the list. This implementation always throws <see cref="NotSupportedException"/>.
         /// </summary>
-        public override void Clear()
+        protected override void DoClear()
         {
             throw this.ReadOnlyException();
         }

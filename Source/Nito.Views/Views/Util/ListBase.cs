@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
@@ -9,7 +11,7 @@ namespace Views.Util
     /// Provides common implementations of some list methods.
     /// </summary>
     /// <typeparam name="T">The type of element contained in the list.</typeparam>
-    public abstract class ListBase<T> : IList<T>, System.Collections.IList, IView<T>
+    public abstract class ListBase<T> : IList<T>, System.Collections.IList, IView<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         /// <summary>
         /// Backing field for <see cref="ICollection.SyncRoot"/>.
@@ -86,7 +88,10 @@ namespace Views.Util
             set
             {
                 ListHelper.CheckExistingIndexArgument(this.Count, index);
+                var notifier = this.CreateNotifier();
+                var oldItem = notifier.CaptureItems() ? (object)this.DoGetItem(index) : null;
                 this.DoSetItem(index, value);
+                notifier.Replaced(index, oldItem, value);
             }
         }
 
@@ -109,6 +114,25 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Notifies listeners of changes in the view.
+        /// </summary>
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+        /// <summary>
+        /// Notifies listeners of changes in the view's properties.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Creates a <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection. The return value may be <c>null</c>.
+        /// </summary>
+        /// <returns>A <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection.</returns>
+        protected CollectionChangedNotifier CreateNotifier()
+        {
+            return CollectionChangedNotifier.Create(this, this.CollectionChanged, this.PropertyChanged);
+        }
+
+        /// <summary>
         /// Inserts an item to this list at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
@@ -123,6 +147,7 @@ namespace Views.Util
         {
             ListHelper.CheckNewIndexArgument(this.Count, index);
             this.DoInsert(index, item);
+            this.CreateNotifier().Added(index, item);
         }
 
         void System.Collections.IList.Insert(int index, object value)
@@ -148,7 +173,10 @@ namespace Views.Util
         public virtual void RemoveAt(int index)
         {
             ListHelper.CheckExistingIndexArgument(this.Count, index);
+            var notifier = this.CreateNotifier();
+            var oldItem = notifier.CaptureItems() ? (object)this.DoGetItem(index) : null;
             this.DoRemoveAt(index);
+            notifier.Removed(index, oldItem);
         }
 
         /// <summary>
@@ -157,7 +185,11 @@ namespace Views.Util
         /// <exception cref="T:System.NotSupportedException">
         /// This list is read-only.
         /// </exception>
-        public abstract void Clear();
+        public virtual void Clear()
+        {
+            this.DoClear();
+            this.CreateNotifier().Reset();
+        }
 
         /// <summary>
         /// Determines the index of a specific item in this list.
@@ -195,7 +227,9 @@ namespace Views.Util
         /// </exception>
         public virtual void Add(T item)
         {
-            this.DoInsert(this.Count, item);
+            var index = this.Count;
+            this.DoInsert(index, item);
+            this.CreateNotifier().Added(index, item);
         }
 
         int System.Collections.IList.Add(object value)
@@ -302,7 +336,10 @@ namespace Views.Util
                 return false;
             }
 
+            var notifier = this.CreateNotifier();
+            var oldItem = notifier.CaptureItems() ? (object)this.DoGetItem(index) : null;
             this.DoRemoveAt(index);
+            notifier.Removed(index, oldItem);
             return true;
         }
 
@@ -399,6 +436,11 @@ namespace Views.Util
         /// </summary>
         /// <returns>The number of elements contained in this list.</returns>
         protected abstract int DoCount();
+
+        /// <summary>
+        /// Removes all elements.
+        /// </summary>
+        protected abstract void DoClear();
 
         /// <summary>
         /// Gets an element at the specified index.
