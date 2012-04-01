@@ -19,6 +19,16 @@ namespace Views.Util
         private readonly object syncRoot;
 
         /// <summary>
+        /// Backing field for <see cref="CollectionChanged"/>.
+        /// </summary>
+        private NotifyCollectionChangedEventHandler collectionChanged;
+
+        /// <summary>
+        /// Backing field for <see cref="PropertyChanged"/>.
+        /// </summary>
+        private PropertyChangedEventHandler propertyChanged;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ListBase&lt;T&gt;"/> class.
         /// </summary>
         public ListBase()
@@ -114,14 +124,46 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Notifies listeners of changes in the view.
+        /// Notifies listeners of changes in the view. This may NOT be accessed by multiple threads.
         /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler CollectionChanged
+        {
+            add
+            {
+                bool subscriptionsActivated = (this.collectionChanged == null && this.propertyChanged == null);
+                this.collectionChanged += value;
+                if (subscriptionsActivated)
+                    this.SubscriptionsActive();
+            }
+
+            remove
+            {
+                this.collectionChanged -= value;
+                if (this.collectionChanged == null && this.propertyChanged == null)
+                    this.SubscriptionsInactive();
+            }
+        }
 
         /// <summary>
-        /// Notifies listeners of changes in the view's properties.
+        /// Notifies listeners of changes in the view's properties. This may NOT be accessed by multiple threads.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                bool subscriptionsActivated = (this.collectionChanged == null && this.propertyChanged == null);
+                this.propertyChanged += value;
+                if (subscriptionsActivated)
+                    this.SubscriptionsActive();
+            }
+
+            remove
+            {
+                this.propertyChanged -= value;
+                if (this.collectionChanged == null && this.propertyChanged == null)
+                    this.SubscriptionsInactive();
+            }
+        }
 
         /// <summary>
         /// Creates a <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection. The return value may be <c>null</c>.
@@ -129,7 +171,21 @@ namespace Views.Util
         /// <returns>A <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection.</returns>
         protected CollectionChangedNotifier CreateNotifier()
         {
-            return CollectionChangedNotifier.Create(this, this.CollectionChanged, this.PropertyChanged);
+            return CollectionChangedNotifier.Create(this, this.collectionChanged, this.propertyChanged);
+        }
+
+        /// <summary>
+        /// Notifies derived classes that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active.
+        /// </summary>
+        protected virtual void SubscriptionsActive()
+        {
+        }
+
+        /// <summary>
+        /// Notifies derived classes that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active.
+        /// </summary>
+        protected virtual void SubscriptionsInactive()
+        {
         }
 
         /// <summary>
