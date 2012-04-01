@@ -163,6 +163,64 @@ namespace Views
         }
 
         /// <summary>
+        /// Creates a projected, flattened view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="selector">The projection.</param>
+        /// <returns>The projected, flattened view.</returns>
+        public static IView<TResult> SelectMany<TSource, TResult>(this IView<TSource> source, Func<TSource, IView<TResult>> selector)
+        {
+            return source.Select(selector).Concat();
+        }
+
+        /// <summary>
+        /// Creates a projected, flattened view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="selector">The projection.</param>
+        /// <returns>The projected, flattened view.</returns>
+        public static IView<TResult> SelectMany<TSource, TResult>(this IView<TSource> source, Func<TSource, int, IView<TResult>> selector)
+        {
+            return source.Select(selector).Concat();
+        }
+
+        /// <summary>
+        /// Creates a projected, flattened view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TCollection">The type of intermediate element in the projected view.</typeparam>
+        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="collectionSelector">The projection from the source data to the intermediate elements.</param>
+        /// <param name="resultSelector">The projection from the source and intermediate data to the elements in the final view.</param>
+        /// <returns>The projected, flattened view.</returns>
+        public static IView<TResult> SelectMany<TSource, TCollection, TResult>(this IView<TSource> source, Func<TSource, IView<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
+        {
+            return source.Select(item => collectionSelector(item).Select(collection => new { Item = item, Collection = collection })).Concat()
+                .Select(x => resultSelector(x.Item, x.Collection));
+        }
+
+        /// <summary>
+        /// Creates a projected, flattened view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TCollection">The type of intermediate element in the projected view.</typeparam>
+        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="collectionSelector">The projection from the source data to the intermediate elements.</param>
+        /// <param name="resultSelector">The projection from the source and intermediate data to the elements in the final view.</param>
+        /// <returns>The projected, flattened view.</returns>
+        public static IView<TResult> SelectMany<TSource, TCollection, TResult>(this IView<TSource> source, Func<TSource, int, IView<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
+        {
+            return source.Select((item, i) => collectionSelector(item, i).Select(collection => new { Item = item, Collection = collection })).Concat()
+                .Select(x => resultSelector(x.Item, x.Collection));
+        }
+
+        /// <summary>
         /// Creates a sorted view of the data.
         /// </summary>
         /// <typeparam name="T">The type of element contained in the list.</typeparam>
