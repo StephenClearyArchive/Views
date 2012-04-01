@@ -86,6 +86,43 @@ namespace Views
         }
 
         /// <summary>
+        /// Creates a sliced view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="offset">The index at which to start the slice (inclusive). If this is in the range <c>[-source.Count, -1]</c>, then it is treated as an index from the end of the source. If this is less than <c>-source.Count</c>, then it is treated as <c>0</c>.</param>
+        /// <returns>The sliced view.</returns>
+        public static IView<T> Skip<T>(this IView<T> source, int offset)
+        {
+            return Slice<T>(source, start: offset);
+        }
+
+        /// <summary>
+        /// Creates a sliced view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="count">The number of elements in the view. If this is in the range <c>[-source.Count, -1]</c>, then it is treated as an index from the end of the source. If this is greater than <c>source.Count</c>, then it is treated as <c>source.Count</c>.</param>
+        /// <returns>The sliced view.</returns>
+        public static IView<T> Take<T>(this IView<T> source, int count)
+        {
+            return Slice<T>(source, stop: count);
+        }
+
+        /// <summary>
+        /// Creates a repeating view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="count">The number of times the source view is repeated. This must be greater than or equal to <c>0</c>.</param>
+        /// <returns>The repeated view.</returns>
+        public static IView<T> Repeat<T>(this IView<T> source, int count)
+        {
+            var list = source.AsList();
+            return Views.View.Generate<T>(i => list[i % list.Count], () => list.Count * count);
+        }
+
+        /// <summary>
         /// Creates a projected view of the data.
         /// </summary>
         /// <typeparam name="TSource">The type of element contained in the source list.</typeparam>
