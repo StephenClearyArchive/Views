@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Views", "Views\Views.csproj", "{51248CF4-EC32-4788-B8C1-C19BE7EAFFE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Views (SL4, WP7)", "Views\Views (SL4, WP7).csproj", "{51248CF4-EC32-4788-B8C1-C19BE7EAFFE3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
