@@ -10,12 +10,17 @@ namespace Views.Util
     /// </summary>
     /// <typeparam name="TSource">The type of object contained in the source list.</typeparam>
     /// <typeparam name="TResult">The type of object contained in the resulting list.</typeparam>
-    public sealed class ProjectionList<TSource, TResult> : ListBase<TResult>
+    public sealed class ProjectionList<TSource, TResult> : ListBase<TResult>, CollectionChangedListener<TSource>.IResponder
     {
         /// <summary>
         /// The source list.
         /// </summary>
         private readonly IList<TSource> source;
+
+        /// <summary>
+        /// The listener for the source list.
+        /// </summary>
+        private readonly CollectionChangedListener<TSource> listener;
 
         /// <summary>
         /// The projection function from source to result.
@@ -38,6 +43,7 @@ namespace Views.Util
             this.source = source;
             this.selector = selector;
             this.reverseSelector = reverseSelector;
+            this.listener = CollectionChangedListener<TSource>.Create(source, this);
         }
 
         /// <summary>
@@ -50,12 +56,47 @@ namespace Views.Util
             get { return this.source.IsReadOnly; }
         }
 
+        void CollectionChangedListener<TSource>.IResponder.Added(int index, TSource item)
+        {
+            var notifier = this.CreateNotifier();
+            if (this.selector == null)
+                notifier.Reset();
+            else
+                notifier.Added(index, this.selector(item, index));
+        }
+
+        void CollectionChangedListener<TSource>.IResponder.Removed(int index, TSource item)
+        {
+            var notifier = this.CreateNotifier();
+            if (this.selector == null)
+                notifier.Reset();
+            else
+                notifier.Removed(index, this.selector(item, index));
+        }
+
+        void CollectionChangedListener<TSource>.IResponder.Replaced(int index, TSource oldItem, TSource newItem)
+        {
+            var notifier = this.CreateNotifier();
+            if (this.selector == null)
+                notifier.Reset();
+            else
+                notifier.Replaced(index, this.selector(oldItem, index), this.selector(newItem, index));
+        }
+
+        void CollectionChangedListener<TSource>.IResponder.Reset()
+        {
+            this.CreateNotifier().Reset();
+        }
+
         /// <summary>
         /// Removes all elements from the list.
         /// </summary>
         protected override void DoClear()
         {
-            this.source.Clear();
+            using (this.listener.Pause())
+            {
+                this.source.Clear();
+            }
         }
 
         /// <summary>
@@ -74,6 +115,9 @@ namespace Views.Util
         /// <returns>The element at the specified index.</returns>
         protected override TResult DoGetItem(int index)
         {
+            if (this.selector == null)
+                throw this.NotSupported();
+
             return this.selector(this.source[index], index);
         }
 
@@ -84,7 +128,13 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, TResult item)
         {
-            this.source[index] = this.reverseSelector(item, index);
+            if (this.reverseSelector == null)
+                throw this.NotSupported();
+
+            using (this.listener.Pause())
+            {
+                this.source[index] = this.reverseSelector(item, index);
+            }
         }
 
         /// <summary>
@@ -94,7 +144,13 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, TResult item)
         {
-            this.source.Insert(index, this.reverseSelector(item, index));
+            if (this.reverseSelector == null)
+                throw this.NotSupported();
+
+            using (this.listener.Pause())
+            {
+                this.source.Insert(index, this.reverseSelector(item, index));
+            }
         }
 
         /// <summary>
@@ -103,7 +159,10 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            this.source.RemoveAt(index);
+            using (this.listener.Pause())
+            {
+                this.source.RemoveAt(index);
+            }
         }
     }
 }
