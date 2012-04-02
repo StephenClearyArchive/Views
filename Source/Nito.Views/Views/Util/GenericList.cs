@@ -9,12 +9,17 @@ namespace Views.Util
     /// Wraps a non-generic source list, treating it as a generic list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class GenericList<T> : ListBase<T>
+    public sealed class GenericList<T> : ListBase<T>, CollectionChangedListener<T>.IResponder
     {
         /// <summary>
         /// The wrapped non-generic list.
         /// </summary>
         private readonly System.Collections.IList source;
+
+        /// <summary>
+        /// The listener for the source list.
+        /// </summary>
+        private readonly CollectionChangedListener<T> listener;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericList&lt;T&gt;"/> class with the specified source.
@@ -23,6 +28,43 @@ namespace Views.Util
         public GenericList(System.Collections.IList source)
         {
             this.source = source;
+            this.listener = CollectionChangedListener<T>.Create(source, this);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+        {
+            this.CreateNotifier().Added(index, item);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+        {
+            this.CreateNotifier().Removed(index, item);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+        {
+            this.CreateNotifier().Replaced(index, oldItem, newItem);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Reset()
+        {
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// A notification that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active. This implementation activates the source listener.
+        /// </summary>
+        protected override void SubscriptionsActive()
+        {
+            this.listener.Activate();
+        }
+
+        /// <summary>
+        /// A notification that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
+        /// </summary>
+        protected override void SubscriptionsInactive()
+        {
+            this.listener.Deactivate();
         }
 
         /// <summary>
