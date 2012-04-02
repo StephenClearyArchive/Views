@@ -21,6 +21,37 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// A notification that the source collection has added an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
+        protected override void SourceCollectionAdded(int index, T item)
+        {
+            this.CreateNotifier().Added(this.source.Count - index - 1, item);
+        }
+
+        /// <summary>
+        /// A notification that the source collection has removed an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="oldItem">The item that was removed.</param>
+        protected override void SourceCollectionRemoved(int index, T item)
+        {
+            this.CreateNotifier().Removed(this.source.Count - index - 1, item);
+        }
+
+        /// <summary>
+        /// A notification that the source collection has replaced an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
+        protected override void SourceCollectionReplaced(int index, T oldItem, T newItem)
+        {
+            this.CreateNotifier().Replaced(this.source.Count - index - 1, oldItem, newItem);
+        }
+
+        /// <summary>
         /// Gets an element at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
@@ -37,7 +68,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            this.source[this.source.Count - index - 1] = item;
+            using (this.listener.Pause())
+            {
+                this.source[this.source.Count - index - 1] = item;
+            }
         }
 
         /// <summary>
@@ -47,7 +81,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, T item)
         {
-            this.source.Insert(this.source.Count - index, item);
+            using (this.listener.Pause())
+            {
+                this.source.Insert(this.source.Count - index, item);
+            }
         }
 
         /// <summary>
@@ -56,7 +93,10 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            this.source.RemoveAt(this.source.Count - index - 1);
+            using (this.listener.Pause())
+            {
+                this.source.RemoveAt(this.source.Count - index - 1);
+            }
         }
     }
 }
