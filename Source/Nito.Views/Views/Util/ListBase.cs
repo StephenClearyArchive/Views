@@ -175,14 +175,14 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Notifies derived classes that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active.
+        /// A notification that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active.
         /// </summary>
         protected virtual void SubscriptionsActive()
         {
         }
 
         /// <summary>
-        /// Notifies derived classes that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active.
+        /// A notification that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active.
         /// </summary>
         protected virtual void SubscriptionsInactive()
         {

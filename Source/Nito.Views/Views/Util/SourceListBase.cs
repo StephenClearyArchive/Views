@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Specialized;
 
 namespace Views.Util
 {
@@ -9,12 +10,17 @@ namespace Views.Util
     /// A view that is based on a source list.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public class SourceListBase<T> : ListBase<T>
+    public class SourceListBase<T> : ListBase<T>, CollectionChangedListener<T>.IResponder
     {
         /// <summary>
         /// The source list.
         /// </summary>
         protected readonly IList<T> source;
+
+        /// <summary>
+        /// The listener for the source list.
+        /// </summary>
+        protected readonly CollectionChangedListener<T> listener;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SourceListBase&lt;T&gt;"/> class over the specified source list.
@@ -23,6 +29,7 @@ namespace Views.Util
         public SourceListBase(IList<T> source)
         {
             this.source = source;
+            this.listener = CollectionChangedListener<T>.Create(source, this);
         }
 
         /// <summary>
@@ -32,6 +39,81 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.source.IsReadOnly; }
+        }
+
+        void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+        {
+            this.SourceCollectionAdded(index, item);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+        {
+            this.SourceCollectionRemoved(index, item);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+        {
+            this.SourceCollectionReplaced(index, oldItem, newItem);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Reset()
+        {
+            this.SourceCollectionReset();
+        }
+
+        /// <summary>
+        /// A notification that the source collection has added an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
+        protected virtual void SourceCollectionAdded(int index, T item)
+        {
+            this.CreateNotifier().Added(index, item);
+        }
+
+        /// <summary>
+        /// A notification that the source collection has removed an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="oldItem">The item that was removed.</param>
+        protected virtual void SourceCollectionRemoved(int index, T item)
+        {
+            this.CreateNotifier().Removed(index, item);
+        }
+
+        /// <summary>
+        /// A notification that the source collection has replaced an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
+        protected virtual void SourceCollectionReplaced(int index, T oldItem, T newItem)
+        {
+            this.CreateNotifier().Replaced(index, oldItem, newItem);
+        }
+
+        /// <summary>
+        /// A notification that the source collection has changed significantly. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        protected virtual void SourceCollectionReset()
+        {
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// A notification that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active. This implementation activates the source listener.
+        /// </summary>
+        protected override void SubscriptionsActive()
+        {
+            this.listener.Activate();
+        }
+
+        /// <summary>
+        /// A notification that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
+        /// </summary>
+        protected override void SubscriptionsInactive()
+        {
+            this.listener.Deactivate();
         }
 
         /// <summary>
