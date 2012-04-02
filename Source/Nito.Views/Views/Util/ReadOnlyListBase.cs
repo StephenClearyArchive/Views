@@ -30,20 +30,11 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Returns an exception stating that this list is read-only.
-        /// </summary>
-        /// <returns>An exception stating that the list is read-only.</returns>
-        protected virtual Exception ReadOnlyException()
-        {
-            return new NotSupportedException("This operation is not supported on a read-only list.");
-        }
-
-        /// <summary>
         /// Removes all elements from the list. This implementation always throws <see cref="NotSupportedException"/>.
         /// </summary>
         protected override void DoClear()
         {
-            throw this.ReadOnlyException();
+            throw this.NotSupported();
         }
 
         /// <summary>
@@ -53,7 +44,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            throw this.ReadOnlyException();
+            throw this.NotSupported();
         }
 
         /// <summary>
@@ -63,7 +54,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, T item)
         {
-            throw this.ReadOnlyException();
+            throw this.NotSupported();
         }
 
         /// <summary>
@@ -72,7 +63,7 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            throw this.ReadOnlyException();
+            throw this.NotSupported();
         }
     }
 }

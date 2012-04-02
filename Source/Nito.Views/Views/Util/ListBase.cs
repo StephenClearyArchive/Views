@@ -470,6 +470,15 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Returns an exception stating that the operation is not supported.
+        /// </summary>
+        /// <returns>An exception stating that the operation is not supported.</returns>
+        protected virtual Exception NotSupported()
+        {
+            return new NotSupportedException("This operation is not supported.");
+        }
+
+        /// <summary>
         /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
         /// </summary>
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
