@@ -90,7 +90,10 @@ namespace Views.Util
         /// </summary>
         protected override void DoClear()
         {
-            this.source.Clear();
+            using (this.listener.Pause())
+            {
+                this.source.Clear();
+            }
         }
 
         /// <summary>
@@ -119,7 +122,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            this.source[index] = item;
+            using (this.listener.Pause())
+            {
+                this.source[index] = item;
+            }
         }
 
         /// <summary>
@@ -129,7 +135,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, T item)
         {
-            this.source.Insert(index, item);
+            using (this.listener.Pause())
+            {
+                this.source.Insert(index, item);
+            }
         }
 
         /// <summary>
@@ -138,7 +147,10 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            this.source.RemoveAt(index);
+            using (this.listener.Pause())
+            {
+                this.source.RemoveAt(index);
+            }
         }
     }
 }
