@@ -150,15 +150,6 @@ namespace Views
         /// <returns>The projected view.</returns>
         public static IView<TResult> Select<TSource, TResult>(this IView<TSource> source, Func<TSource, int, TResult> read = null, Func<TResult, int, TSource> write = null)
         {
-            if (write == null)
-            {
-                return new Util.AnonymousReadOnlyList<TResult>
-                {
-                    Count = () => source.AsList().Count,
-                    GetItem = i => read(source.AsList()[i], i),
-                };
-            }
-
             return new Util.ProjectionList<TSource, TResult>(source.AsList(), read, write);
         }
 
