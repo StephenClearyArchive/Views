@@ -102,63 +102,21 @@ namespace Views.Util
         {
             if (this.Paused)
                 return;
-            if (args.Action == NotifyCollectionChangedAction.Add)
+            if (args.Action == NotifyCollectionChangedAction.Add && args.NewStartingIndex != -1 &&
+                args.NewItems != null && args.NewItems.Count == 1 && args.NewItems[0] is T)
             {
-                if (args.NewStartingIndex == -1 || args.NewItems == null || args.NewItems.Count == 0)
-                {
-                    this.responder.Reset();
-                    return;
-                }
-
-                for (int i = 0; i != args.NewItems.Count; ++i)
-                {
-                    if (!(args.NewItems[i] is T))
-                    {
-                        this.responder.Reset();
-                        return;
-                    }
-
-                    this.responder.Added(args.NewStartingIndex + i, (T)args.NewItems[i]);
-                }
+                this.responder.Added(args.NewStartingIndex, (T)args.NewItems[0]);
             }
-            else if (args.Action == NotifyCollectionChangedAction.Remove)
+            else if (args.Action == NotifyCollectionChangedAction.Remove && args.OldStartingIndex != -1 &&
+                args.OldItems != null && args.OldItems.Count == 1 && args.OldItems[0] is T)
             {
-                if (args.OldStartingIndex == -1 || args.OldItems == null || args.OldItems.Count == 0)
-                {
-                    this.responder.Reset();
-                    return;
-                }
-
-                foreach (var oldItem in args.OldItems)
-                {
-                    if (!(oldItem is T))
-                    {
-                        this.responder.Reset();
-                        return;
-                    }
-
-                    this.responder.Removed(args.OldStartingIndex, (T)oldItem);
-                }
+                this.responder.Removed(args.OldStartingIndex, (T)args.OldItems[0]);
             }
-            else if (args.Action == NotifyCollectionChangedAction.Replace)
+            else if (args.Action == NotifyCollectionChangedAction.Replace && args.NewStartingIndex != -1 &&
+                args.NewStartingIndex == args.OldStartingIndex && args.NewItems != null && args.NewItems.Count == 1 &&
+                args.OldItems != null && args.OldItems.Count == 1 && args.NewItems[0] is T && args.OldItems[0] is T)
             {
-                if (args.NewStartingIndex == -1 || args.NewStartingIndex != args.OldStartingIndex ||
-                    args.NewItems == null || args.NewItems.Count == 0 || args.OldItems == null || args.NewItems.Count != args.OldItems.Count)
-                {
-                    this.responder.Reset();
-                    return;
-                }
-
-                for (int i = 0; i != args.NewItems.Count; ++i)
-                {
-                    if (!(args.NewItems[i] is T) || !(args.OldItems[i] is T))
-                    {
-                        this.responder.Reset();
-                        return;
-                    }
-
-                    this.responder.Replaced(args.NewStartingIndex + i, (T)args.OldItems[i], (T)args.NewItems[i]);
-                }
+                this.responder.Replaced(args.NewStartingIndex, (T)args.OldItems[0], (T)args.NewItems[0]);
             }
             else
             {
