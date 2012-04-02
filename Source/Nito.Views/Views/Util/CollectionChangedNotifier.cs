@@ -8,9 +8,9 @@ using System.Text;
 namespace Views.Util
 {
     /// <summary>
-    /// A type that notifies listeners about collection changes. It is normal for instances of this class to be <c>null</c>.
+    /// A holder class for constant event args.
     /// </summary>
-    public sealed class CollectionChangedNotifier
+    public static class CollectionChangedNotifier
     {
         /// <summary>
         /// A <see cref="PropertyChangedEventArgs"/> for the "Count" property.
@@ -21,7 +21,13 @@ namespace Views.Util
         /// A <see cref="PropertyChangedEventArgs"/> for the "Item[]" property.
         /// </summary>
         public readonly static PropertyChangedEventArgs ItemsPropertyChangedEventArgs = new PropertyChangedEventArgs("Item[]");
-
+    }
+    
+    /// <summary>
+    /// A type that notifies listeners about collection changes. It is normal for instances of this class to be <c>null</c>.
+    /// </summary>
+    public sealed class CollectionChangedNotifier<T>
+    {
         /// <summary>
         /// The instance that initiates the events.
         /// </summary>
@@ -81,11 +87,11 @@ namespace Views.Util
         /// <param name="collectionHandler">A snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.</param>
         /// <param name="propertyHandler">A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.</param>
         /// <returns>An instance of <see cref="CollectionChangedNotifier"/> class, or <c>null</c> if there are no event handlers.</returns>
-        public static CollectionChangedNotifier Create(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
+        public static CollectionChangedNotifier<T> Create(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
         {
             if (collectionHandler == null && propertyHandler == null)
                 return null;
-            return new CollectionChangedNotifier(sender, collectionHandler, propertyHandler);
+            return new CollectionChangedNotifier<T>(sender, collectionHandler, propertyHandler);
         }
     }
 
@@ -99,7 +105,7 @@ namespace Views.Util
         /// </summary>
         /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <returns>A value indicating whether the processing code should capture original item values.</returns>
-        public static bool CaptureItems(this CollectionChangedNotifier notifier)
+        public static bool CaptureItems<T>(this CollectionChangedNotifier<T> notifier)
         {
             if (notifier == null)
                 return false;
@@ -114,7 +120,7 @@ namespace Views.Util
         /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
-        public static void Added(this CollectionChangedNotifier notifier, int index, object item)
+        public static void Added<T>(this CollectionChangedNotifier<T> notifier, int index, T item)
         {
             if (notifier == null)
                 return;
@@ -133,7 +139,7 @@ namespace Views.Util
         /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <param name="index">The index of the removed item.</param>
         /// <param name="oldItem">The item that was removed.</param>
-        public static void Removed(this CollectionChangedNotifier notifier, int index, object oldItem)
+        public static void Removed<T>(this CollectionChangedNotifier<T> notifier, int index, T oldItem)
         {
             if (notifier == null)
                 return;
@@ -153,7 +159,7 @@ namespace Views.Util
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
         /// <param name="newItem">The new item.</param>
-        public static void Replaced(this CollectionChangedNotifier notifier, int index, object oldItem, object newItem)
+        public static void Replaced<T>(this CollectionChangedNotifier<T> notifier, int index, T oldItem, T newItem)
         {
             if (notifier == null)
                 return;
@@ -170,7 +176,7 @@ namespace Views.Util
         /// Notifies listeners that the entire collection has changed.
         /// </summary>
         /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
-        public static void Reset(this CollectionChangedNotifier notifier)
+        public static void Reset<T>(this CollectionChangedNotifier<T> notifier)
         {
             if (notifier == null)
                 return;

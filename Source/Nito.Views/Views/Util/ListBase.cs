@@ -99,7 +99,7 @@ namespace Views.Util
             {
                 ListHelper.CheckExistingIndexArgument(this.Count, index);
                 var notifier = this.CreateNotifier();
-                var oldItem = notifier.CaptureItems() ? (object)this.DoGetItem(index) : null;
+                var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
                 this.DoSetItem(index, value);
                 notifier.Replaced(index, oldItem, value);
             }
@@ -169,9 +169,9 @@ namespace Views.Util
         /// Creates a <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection. The return value may be <c>null</c>.
         /// </summary>
         /// <returns>A <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection.</returns>
-        protected CollectionChangedNotifier CreateNotifier()
+        protected CollectionChangedNotifier<T> CreateNotifier()
         {
-            return CollectionChangedNotifier.Create(this, this.collectionChanged, this.propertyChanged);
+            return CollectionChangedNotifier<T>.Create(this, this.collectionChanged, this.propertyChanged);
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Views.Util
         {
             ListHelper.CheckExistingIndexArgument(this.Count, index);
             var notifier = this.CreateNotifier();
-            var oldItem = notifier.CaptureItems() ? (object)this.DoGetItem(index) : null;
+            var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
             this.DoRemoveAt(index);
             notifier.Removed(index, oldItem);
         }
@@ -393,7 +393,7 @@ namespace Views.Util
             }
 
             var notifier = this.CreateNotifier();
-            var oldItem = notifier.CaptureItems() ? (object)this.DoGetItem(index) : null;
+            var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
             this.DoRemoveAt(index);
             notifier.Removed(index, oldItem);
             return true;
