@@ -273,5 +273,7 @@ namespace Views
             // TODO: more efficient source updates.
             return source.Slice(start: offset).Concat(source.Slice(stop: offset));
         }
+
+        // TODO: Zip, Randomize
     }
 }
