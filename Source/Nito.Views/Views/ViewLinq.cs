@@ -46,8 +46,8 @@ namespace Views
         /// <summary>
         /// Creates a sliced view of the data. The view includes every <paramref name="step"/> elements in the range [<paramref name="start"/>, <paramref name="stop"/>). Empty slices (where <paramref name="start"/> == <paramref name="stop"/>) are valid views over the source. Negative slices (where <paramref name="start"/> &gt; <paramref name="stop"/>) are read-only, empty views not connected to the source.
         /// </summary>
-        /// <typeparam name="T">The type of element contained in the list.</typeparam>
-        /// <param name="source">The source list.</param>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
         /// <param name="start">The index at which to start the slice (inclusive). Defaults to <c>0</c>. If this is in the range <c>[-source.Count, -1]</c>, then it is treated as an index from the end of the source. If this is less than <c>-source.Count</c>, then it is treated as <c>0</c>.</param>
         /// <param name="stop">The index at which to end the slice (exclusive). Defaults to <c>int.MaxValue</c>. If this is in the range <c>[-source.Count, -1]</c>, then it is treated as an index from the end of the source. If this is greater than <c>source.Count</c>, then it is treated as <c>source.Count</c>.</param>
         /// <param name="step">The stride of the slice. Defaults to <c>1</c>. This value may not be less than <c>1</c>.</param>
@@ -118,6 +118,7 @@ namespace Views
         /// <returns>The repeated view.</returns>
         public static IView<T> Repeat<T>(this IView<T> source, int count)
         {
+            // TODO: allow source updates.
             var list = source as IList<T>;
             return Views.View.Generate<T>(i => list[i % list.Count], () => list.Count * count);
         }
@@ -125,9 +126,9 @@ namespace Views
         /// <summary>
         /// Creates a projected view of the data.
         /// </summary>
-        /// <typeparam name="TSource">The type of element contained in the source list.</typeparam>
-        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
-        /// <param name="source">The source list.</param>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
         /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
@@ -142,9 +143,9 @@ namespace Views
         /// <summary>
         /// Creates a projected view of the data.
         /// </summary>
-        /// <typeparam name="TSource">The type of element contained in the source list.</typeparam>
-        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
-        /// <param name="source">The source list.</param>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
         /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
@@ -157,7 +158,7 @@ namespace Views
         /// Creates a projected, flattened view of the data.
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
         /// <param name="source">The source view.</param>
         /// <param name="selector">The projection.</param>
         /// <returns>The projected, flattened view.</returns>
@@ -170,7 +171,7 @@ namespace Views
         /// Creates a projected, flattened view of the data.
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
         /// <param name="source">The source view.</param>
         /// <param name="selector">The projection.</param>
         /// <returns>The projected, flattened view.</returns>
@@ -183,8 +184,8 @@ namespace Views
         /// Creates a projected, flattened view of the data.
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TCollection">The type of intermediate element in the projected view.</typeparam>
-        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <typeparam name="TCollection">The type of element observed by the intermediate view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
         /// <param name="source">The source view.</param>
         /// <param name="collectionSelector">The projection from the source data to the intermediate elements.</param>
         /// <param name="resultSelector">The projection from the source and intermediate data to the elements in the final view.</param>
@@ -199,8 +200,8 @@ namespace Views
         /// Creates a projected, flattened view of the data.
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TCollection">The type of intermediate element in the projected view.</typeparam>
-        /// <typeparam name="TResult">The type of virtual element in the projected view.</typeparam>
+        /// <typeparam name="TCollection">The type of element observed by the intermediate view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
         /// <param name="source">The source view.</param>
         /// <param name="collectionSelector">The projection from the source data to the intermediate elements.</param>
         /// <param name="resultSelector">The projection from the source and intermediate data to the elements in the final view.</param>
@@ -214,12 +215,13 @@ namespace Views
         /// <summary>
         /// Creates a sorted view of the data.
         /// </summary>
-        /// <typeparam name="T">The type of element contained in the list.</typeparam>
-        /// <param name="source">The source list.</param>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
         /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer<T>.Default"/> is used.</param>
         /// <returns>The sorted view.</returns>
         public static IView<T> Sort<T>(this IView<T> source, IComparer<T> comparer = null)
         {
+            // TODO: allow source updates.
             var ret = new Util.IndirectList<T>(source as IList<T>);
             ((List<int>)ret.Indices).Sort(ret.GetComparer(comparer));
             return ret;
@@ -228,9 +230,9 @@ namespace Views
         /// <summary>
         /// Creates a concatenated view of the data.
         /// </summary>
-        /// <typeparam name="T">The type of element contained in the list.</typeparam>
-        /// <param name="source">The source list.</param>
-        /// <param name="others">The additional lists to concatenate to the source list.</param>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="others">The additional views to concatenate to the source view.</param>
         /// <returns>The concatenated view.</returns>
         public static IView<T> Concat<T>(this IView<T> source, params IView<T>[] others)
         {
@@ -240,8 +242,8 @@ namespace Views
         /// <summary>
         /// Creates a concatenated view of the data.
         /// </summary>
-        /// <typeparam name="T">The type of element contained in the list.</typeparam>
-        /// <param name="source">The source lists to concatenate.</param>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source views to concatenate.</param>
         /// <returns>The concatenated view.</returns>
         public static IView<T> Concat<T>(this IEnumerable<IView<T>> source)
         {
@@ -251,8 +253,8 @@ namespace Views
         /// <summary>
         /// Creates a concatenated view of the data.
         /// </summary>
-        /// <typeparam name="T">The type of element contained in the list.</typeparam>
-        /// <param name="source">The source lists to concatenate.</param>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source views to concatenate.</param>
         /// <returns>The concatenated view.</returns>
         public static IView<T> Concat<T>(this IView<IView<T>> source)
         {
@@ -262,12 +264,13 @@ namespace Views
         /// <summary>
         /// Creates a rotated view of the data.
         /// </summary>
-        /// <typeparam name="T">The type of element contained in the list.</typeparam>
-        /// <param name="source">The source list.</param>
-        /// <param name="offset">The number of elements to rotate. This may be negative to count from the end of the list.</param>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="offset">The number of elements to rotate. This may be negative to count from the end of the view.</param>
         /// <returns>The rotated view.</returns>
         public static IView<T> Rotate<T>(this IView<T> source, int offset)
         {
+            // TODO: more efficient source updates.
             return source.Slice(start: offset).Concat(source.Slice(stop: offset));
         }
     }
