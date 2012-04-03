@@ -45,6 +45,7 @@
     <Compile Include="Util\ConcatList.cs" />
     <Compile Include="Util\GenericList.cs" />
     <Compile Include="Util\IndirectList.cs" />
+    <Compile Include="Util\MultiDispose.cs" />
     <Compile Include="View.cs" />
     <Compile Include="ViewExtensions.cs" />
     <Compile Include="ViewLinq.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Specialized;
 
 namespace Views.Util
 {
@@ -9,12 +10,69 @@ namespace Views.Util
     /// Concatenates a list of source lists into a single list.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public sealed class ConcatList<T> : ListBase<T>
+    public sealed class ConcatList<T> : ListBase<T>, CollectionChangedListener<IList<T>>.IResponder
     {
+        /// <summary>
+        /// A type that forwards changes in individual source collections to its parent <see cref="ConcatList{T}"/> instance.
+        /// </summary>
+        private sealed class SourceChangeResponder : CollectionChangedListener<T>.IResponder
+        {
+            /// <summary>
+            /// The parent <see cref="ConcatList{T}"/> instance.
+            /// </summary>
+            private readonly ConcatList<T> parent;
+
+            /// <summary>
+            /// The source collection.
+            /// </summary>
+            private readonly IList<T> source;
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="SourceChangeResponder"/> class.
+            /// </summary>
+            /// <param name="parent">The parent <see cref="ConcatList{T}"/> instance.</param>
+            /// <param name="source">The source collection.</param>
+            public SourceChangeResponder(ConcatList<T> parent, IList<T> source)
+            {
+                this.parent = parent;
+                this.source = source;
+            }
+
+            void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+            {
+                this.parent.Added(this.source, index, item);
+            }
+
+            void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+            {
+                this.parent.Removed(this.source, index, item);
+            }
+
+            void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+            {
+                this.parent.Replaced(this.source, index, oldItem, newItem);
+            }
+
+            void CollectionChangedListener<T>.IResponder.Reset()
+            {
+                this.parent.Reset(this.source);
+            }
+        }
+
         /// <summary>
         /// The sequence of source lists.
         /// </summary>
         private readonly IEnumerable<IList<T>> sources;
+
+        /// <summary>
+        /// The listener for the sequence of source lists.
+        /// </summary>
+        private readonly CollectionChangedListener<IList<T>> listener;
+
+        /// <summary>
+        /// Listeners for each source list.
+        /// </summary>
+        private IEnumerable<CollectionChangedListener<T>> listeners;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConcatList&lt;T&gt;"/> class with the specified source lists.
@@ -23,6 +81,8 @@ namespace Views.Util
         public ConcatList(IEnumerable<IList<T>> sources)
         {
             this.sources = sources;
+            this.listener = CollectionChangedListener<IList<T>>.Create(sources, this);
+            this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
         }
 
         /// <summary>
@@ -32,6 +92,86 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.sources.Any(x => x.IsReadOnly); }
+        }
+
+        /// <summary>
+        /// Responds to the notification that the collection of source collections has changed.
+        /// </summary>
+        void CollectionChangedListener<IList<T>>.IResponder.Added(int index, IList<T> item)
+        {
+            this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// Responds to the notification that the collection of source collections has changed.
+        /// </summary>
+        void CollectionChangedListener<IList<T>>.IResponder.Removed(int index, IList<T> item)
+        {
+            this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// Responds to the notification that the collection of source collections has changed.
+        /// </summary>
+        void CollectionChangedListener<IList<T>>.IResponder.Replaced(int index, IList<T> oldItem, IList<T> newItem)
+        {
+            this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// Responds to the notification that the collection of source collections has changed.
+        /// </summary>
+        void CollectionChangedListener<IList<T>>.IResponder.Reset()
+        {
+            this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// Responds to the notification that one of the source collections has added an item.
+        /// </summary>
+        private void Added(IList<T> source, int index, T item)
+        {
+            var sourceBaseIndex = this.FindBaseIndex(source);
+            if (sourceBaseIndex == -1)
+                this.CreateNotifier().Reset();
+            else
+                this.CreateNotifier().Added(sourceBaseIndex + index, item);
+        }
+
+        /// <summary>
+        /// Responds to the notification that one of the source collections has removed an item.
+        /// </summary>
+        private void Removed(IList<T> source, int index, T item)
+        {
+            var sourceBaseIndex = this.FindBaseIndex(source);
+            if (sourceBaseIndex == -1)
+                this.CreateNotifier().Reset();
+            else
+                this.CreateNotifier().Removed(sourceBaseIndex + index, item);
+        }
+
+        /// <summary>
+        /// Responds to the notification that one of the source collections has replaced an item.
+        /// </summary>
+        private void Replaced(IList<T> source, int index, T oldItem, T newItem)
+        {
+            var sourceBaseIndex = this.FindBaseIndex(source);
+            if (sourceBaseIndex == -1)
+                this.CreateNotifier().Reset();
+            else
+                this.CreateNotifier().Replaced(sourceBaseIndex + index, oldItem, newItem);
+        }
+
+        /// <summary>
+        /// Responds to the notification that one of the source collections has changed.
+        /// </summary>
+        private void Reset(IList<T> source)
+        {
+            this.CreateNotifier().Reset();
         }
 
         /// <summary>
@@ -61,9 +201,13 @@ namespace Views.Util
         /// </summary>
         protected override void DoClear()
         {
-            foreach (var source in this.sources)
+            using (this.listener.Pause())
+            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
             {
-                source.Clear();
+                foreach (var source in this.sources)
+                {
+                    source.Clear();
+                }
             }
         }
 
@@ -99,7 +243,12 @@ namespace Views.Util
             IList<T> source;
             int sourceIndex;
             this.FindExistingIndex(index, out source, out sourceIndex);
-            source[sourceIndex] = item;
+
+            using (this.listener.Pause())
+            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
+            {
+                source[sourceIndex] = item;
+            }
         }
 
         /// <summary>
@@ -112,7 +261,12 @@ namespace Views.Util
             IList<T> source;
             int sourceIndex;
             this.FindNewIndex(index, out source, out sourceIndex);
-            source.Insert(sourceIndex, item);
+
+            using (this.listener.Pause())
+            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
+            {
+                source.Insert(sourceIndex, item);
+            }
         }
 
         /// <summary>
@@ -124,7 +278,12 @@ namespace Views.Util
             IList<T> source;
             int sourceIndex;
             this.FindExistingIndex(index, out source, out sourceIndex);
-            source.RemoveAt(sourceIndex);
+
+            using (this.listener.Pause())
+            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
+            {
+                source.RemoveAt(sourceIndex);
+            }
         }
 
         /// <summary>
@@ -169,6 +328,24 @@ namespace Views.Util
 
                 sourceIndex -= sourceList.Count;
             }
+        }
+
+        /// <summary>
+        /// Finds the base index for a specified source list.
+        /// </summary>
+        /// <param name="source">The source list to find.</param>
+        /// <returns>The base index for the specified source list.</returns>
+        private int FindBaseIndex(IList<T> source)
+        {
+            int ret = 0;
+            foreach (var sourceList in this.sources)
+            {
+                if (sourceList == source)
+                    return ret;
+                ret += sourceList.Count;
+            }
+
+            return -1;
         }
     }
 }
