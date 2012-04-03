@@ -19,7 +19,7 @@ namespace Views
         /// </exception>
         public static void Add<T>(this IView<T> view, T item)
         {
-            view.AsList().Add(item);
+            (view as IList<T>).Add(item);
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Views
         /// </returns>
         public static bool Contains<T>(this IView<T> view, T item)
         {
-            return view.AsList().Contains(item);
+            return (view as IList<T>).Contains(item);
         }
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Views
         /// </exception>
         public static void CopyTo<T>(this IView<T> view, T[] array, int arrayIndex)
         {
-            view.AsList().CopyTo(array, arrayIndex);
+            (view as IList<T>).CopyTo(array, arrayIndex);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Views
         /// <returns>The index of <paramref name="item"/> if found in this list; otherwise, -1.</returns>
         public static int IndexOf<T>(this IView<T> view, T item)
         {
-            return view.AsList().IndexOf(item);
+            return (view as IList<T>).IndexOf(item);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Views
         /// </exception>
         public static bool Remove<T>(this IView<T> view, T item)
         {
-            return view.AsList().Remove(item);
+            return (view as IList<T>).Remove(item);
         }
     }
 }

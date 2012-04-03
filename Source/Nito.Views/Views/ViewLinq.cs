@@ -40,11 +40,11 @@ namespace Views
         /// <returns>The reversed view.</returns>
         public static IView<T> Reverse<T>(this IView<T> source)
         {
-            return new Util.ReverseList<T>(source.AsList());
+            return new Util.ReverseList<T>(source as IList<T>);
         }
 
         /// <summary>
-        /// Creates a sliced view of the data. The view includes every <paramref name="step"/> elements in the range [<paramref name="start"/>, <paramref name="stop"/>). Empty slices (where <paramref name="start"/> == <paramref name="stop"/>) are valid views over the source. Negative slices (where <paramref name="start"/> &gt; <paramref name="stop"/>) are empty views not connected to the source.
+        /// Creates a sliced view of the data. The view includes every <paramref name="step"/> elements in the range [<paramref name="start"/>, <paramref name="stop"/>). Empty slices (where <paramref name="start"/> == <paramref name="stop"/>) are valid views over the source. Negative slices (where <paramref name="start"/> &gt; <paramref name="stop"/>) are read-only, empty views not connected to the source.
         /// </summary>
         /// <typeparam name="T">The type of element contained in the list.</typeparam>
         /// <param name="source">The source list.</param>
@@ -57,7 +57,7 @@ namespace Views
             if (step <= 0)
                 throw new ArgumentOutOfRangeException("step", "Invalid step " + step);
 
-            var count = source.AsList().Count;
+            var count = (source as IList<T>).Count;
 
             // Handle negative start/stop values.
             if (start < 0)
@@ -79,10 +79,10 @@ namespace Views
             }
 
             // Apply the slice if necessary.
-            source = (start == 0 && stop == count) ? source : new Util.SliceList<T>(source.AsList(), start, stop - start);
+            source = (start == 0 && stop == count) ? source : new Util.SliceList<T>(source as IList<T>, start, stop - start);
 
             // Apply the step if necessary.
-            return (step == 1) ? source : new Util.StepList<T>(source.AsList(), step);
+            return (step == 1) ? source : new Util.StepList<T>(source as IList<T>, step);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Views
         /// <returns>The repeated view.</returns>
         public static IView<T> Repeat<T>(this IView<T> source, int count)
         {
-            var list = source.AsList();
+            var list = source as IList<T>;
             return Views.View.Generate<T>(i => list[i % list.Count], () => list.Count * count);
         }
 
@@ -150,7 +150,7 @@ namespace Views
         /// <returns>The projected view.</returns>
         public static IView<TResult> Select<TSource, TResult>(this IView<TSource> source, Func<TSource, int, TResult> read = null, Func<TResult, int, TSource> write = null)
         {
-            return new Util.ProjectionList<TSource, TResult>(source.AsList(), read, write);
+            return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
         }
 
         /// <summary>
@@ -220,7 +220,7 @@ namespace Views
         /// <returns>The sorted view.</returns>
         public static IView<T> Sort<T>(this IView<T> source, IComparer<T> comparer = null)
         {
-            var ret = new Util.IndirectList<T>(source.AsList());
+            var ret = new Util.IndirectList<T>(source as IList<T>);
             ((List<int>)ret.Indices).Sort(ret.GetComparer(comparer));
             return ret;
         }
@@ -245,7 +245,7 @@ namespace Views
         /// <returns>The concatenated view.</returns>
         public static IView<T> Concat<T>(this IEnumerable<IView<T>> source)
         {
-            return new Util.ConcatList<T>(source.Select(x => x.AsList()));
+            return new Util.ConcatList<T>(source.Select(x => x as IList<T>));
         }
 
         /// <summary>
@@ -256,7 +256,7 @@ namespace Views
         /// <returns>The concatenated view.</returns>
         public static IView<T> Concat<T>(this IView<IView<T>> source)
         {
-            return source.AsList().Concat();
+            return (source as IList<IView<T>>).Concat();
         }
 
         /// <summary>
