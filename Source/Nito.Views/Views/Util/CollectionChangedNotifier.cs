@@ -49,7 +49,7 @@ namespace Views.Util
         /// <param name="sender">The instance that initiates the events.</param>
         /// <param name="collectionHandler">A snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.</param>
         /// <param name="propertyHandler">A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.</param>
-        public CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
+        private CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
         {
             this.sender = sender;
             this.collectionHandler = collectionHandler;

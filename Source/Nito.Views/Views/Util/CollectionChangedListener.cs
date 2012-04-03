@@ -65,7 +65,7 @@ namespace Views.Util
         /// </summary>
         /// <param name="collection">The collection to monitor.</param>
         /// <param name="responder">The callback object.</param>
-        public CollectionChangedListener(INotifyCollectionChanged collection, IResponder responder)
+        private CollectionChangedListener(INotifyCollectionChanged collection, IResponder responder)
         {
             this.collection = collection;
             this.subscription = new NotifyCollectionChangedEventHandler(this.CollectionChanged);
