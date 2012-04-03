@@ -12,6 +12,18 @@ namespace Views
     public static class View
     {
         /// <summary>
+        /// A type that caches instances of read-only, empty views.
+        /// </summary>
+        /// <typeparam name="T">The type of elements observed by the view.</typeparam>
+        private static class EmptyInstance<T>
+        {
+            /// <summary>
+            /// The read-only, empty view.
+            /// </summary>
+            public static readonly IView<T> Instance = new Util.AnonymousReadOnlyList<T> { Count = () => 0 };
+        }
+
+        /// <summary>
         /// Returns a read-only view that generates its elements when they are observed, passing the element's index to the generator delegate.
         /// </summary>
         /// <typeparam name="T">The type of elements observed by the view.</typeparam>
@@ -58,10 +70,7 @@ namespace Views
         /// <returns>An empty, read-only view.</returns>
         public static IView<T> Empty<T>()
         {
-            return new Util.AnonymousReadOnlyList<T>
-            {
-                Count = () => 0,
-            };
+            return EmptyInstance<T>.Instance;
         }
 
         /// <summary>

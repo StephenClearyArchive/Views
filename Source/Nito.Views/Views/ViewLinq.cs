@@ -71,12 +71,7 @@ namespace Views
 
             // Ranges of negative size cause problems when the returned collection is modified (e.g., Add).
             if (stop < start)
-            {
-                return new Util.AnonymousReadOnlyList<T>
-                {
-                    Count = () => 0,
-                };
-            }
+                return Views.View.Empty<T>();
 
             // Apply the slice if necessary.
             source = (start == 0 && stop == count) ? source : new Util.SliceList<T>(source as IList<T>, start, stop - start);
