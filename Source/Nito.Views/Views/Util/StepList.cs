@@ -9,12 +9,17 @@ namespace Views.Util
     /// Indexes into a source list using a step size.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public sealed class StepList<T> : ReadOnlyListBase<T>
+    public sealed class StepList<T> : ReadOnlyListBase<T>, CollectionChangedListener<T>.IResponder
     {
         /// <summary>
         /// The source list.
         /// </summary>
         private readonly IList<T> source;
+
+        /// <summary>
+        /// The listener for the source list.
+        /// </summary>
+        private readonly CollectionChangedListener<T> listener;
 
         /// <summary>
         /// The step size to use when traversing the source list.
@@ -34,7 +39,45 @@ namespace Views.Util
             }
 
             this.source = source;
+            this.listener = CollectionChangedListener<T>.Create(source, this);
             this.step = step;
+        }
+
+        void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+        {
+            this.CreateNotifier().Reset();
+        }
+
+        void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+        {
+            this.CreateNotifier().Reset();
+        }
+
+        void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+        {
+            if (index % this.step == 0)
+                this.CreateNotifier().Replaced(index / this.step, oldItem, newItem);
+        }
+
+        void CollectionChangedListener<T>.IResponder.Reset()
+        {
+            this.CreateNotifier().Reset();
+        }
+
+        /// <summary>
+        /// A notification that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active. This implementation activates the source listener.
+        /// </summary>
+        protected override void SubscriptionsActive()
+        {
+            this.listener.Activate();
+        }
+
+        /// <summary>
+        /// A notification that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
+        /// </summary>
+        protected override void SubscriptionsInactive()
+        {
+            this.listener.Deactivate();
         }
 
         /// <summary>
@@ -77,7 +120,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            this.source[index * this.step] = item;
+            using (this.listener.Pause())
+            {
+                this.source[index * this.step] = item;
+            }
         }
     }
 }
