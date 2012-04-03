@@ -37,14 +37,57 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// A notification that the source collection has added an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
+        protected override void SourceCollectionAdded(int index, T item)
+        {
+            if (index >= this.offset && index - this.offset <= this.count)
+            {
+                ++this.count;
+                this.CreateNotifier().Added(index + this.offset, item);
+            }
+        }
+
+        /// <summary>
+        /// A notification that the source collection has removed an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="oldItem">The item that was removed.</param>
+        protected override void SourceCollectionRemoved(int index, T item)
+        {
+            if (index >= this.offset && index - this.offset < this.count)
+            {
+                --this.count;
+                this.CreateNotifier().Removed(index + this.offset, item);
+            }
+        }
+
+        /// <summary>
+        /// A notification that the source collection has replaced an item. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
+        protected override void SourceCollectionReplaced(int index, T oldItem, T newItem)
+        {
+            if (index >= this.offset && index - this.offset < this.count)
+                this.CreateNotifier().Replaced(index + this.offset, oldItem, newItem);
+        }
+
+        /// <summary>
         /// Removes all elements from the list.
         /// </summary>
         protected override void DoClear()
         {
-            while (this.count > 0)
+            using (this.listener.Pause())
             {
-                this.source.RemoveAt(this.offset);
-                --this.count;
+                while (this.count > 0)
+                {
+                    this.source.RemoveAt(this.offset);
+                    --this.count;
+                }
             }
         }
 
@@ -74,7 +117,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            this.source[this.offset + index] = item;
+            using (this.listener.Pause())
+            {
+                this.source[this.offset + index] = item;
+            }
         }
 
         /// <summary>
@@ -84,8 +130,11 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, T item)
         {
-            this.source.Insert(this.offset + index, item);
-            ++this.count;
+            using (this.listener.Pause())
+            {
+                this.source.Insert(this.offset + index, item);
+                ++this.count;
+            }
         }
 
         /// <summary>
@@ -94,8 +143,11 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            this.source.RemoveAt(this.offset + index);
-            --this.count;
+            using (this.listener.Pause())
+            {
+                this.source.RemoveAt(this.offset + index);
+                --this.count;
+            }
         }
     }
 }
