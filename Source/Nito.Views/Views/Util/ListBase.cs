@@ -455,11 +455,6 @@ namespace Views.Util
             return false;
         }
 
-        IList<T> IView<T>.AsList()
-        {
-            return this;
-        }
-
         /// <summary>
         /// Returns an exception indicating that the type of an item indicates it is not appropriate for storing in this list.
         /// </summary>

@@ -52,7 +52,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns an empty, read-only view.
+        /// Returns an empty, read-only view. If you want a modifiable empty view, use <c>new List&lt;T&gt;.View()</c>.
         /// </summary>
         /// <typeparam name="T">The type of elements observed by the view.</typeparam>
         /// <returns>An empty, read-only view.</returns>
