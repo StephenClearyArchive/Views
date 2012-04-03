@@ -13,6 +13,7 @@ namespace Views
         /// <summary>
         /// Adds an item to the end of this view.
         /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="item">The object to add to this view.</param>
         /// <exception cref="T:System.NotSupportedException">
         /// This view is read-only.
@@ -25,6 +26,7 @@ namespace Views
         /// <summary>
         /// Determines whether this view contains a specific value.
         /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="item">The object to locate in this view.</param>
         /// <returns>
         /// true if <paramref name="item"/> is found in this view; otherwise, false.
@@ -37,6 +39,7 @@ namespace Views
         /// <summary>
         /// Copies the elements of this view to an <see cref="T:System.Array"/>, starting at a particular <see cref="T:System.Array"/> index.
         /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="array">The one-dimensional <see cref="T:System.Array"/> that is the destination of the elements copied from this view. The <see cref="T:System.Array"/> must have zero-based indexing.</param>
         /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
         /// <exception cref="T:System.ArgumentNullException">
@@ -56,8 +59,24 @@ namespace Views
         }
 
         /// <summary>
+        /// Copies all elements from one view into another view. The elements are copied in index order.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The source view.</param>
+        /// <param name="destination">The destination view.</param>
+        public static void CopyTo<T>(this IView<T> view, IView<T> destination)
+        {
+            var list = view as IList<T>;
+            var destinationList = destination as IList<T>;
+            var count = list.Count;
+            for (int i = 0; i != count; ++i)
+                destinationList[i] = list[i];
+        }
+
+        /// <summary>
         /// Determines the index of a specific item in this view.
         /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="item">The object to locate in this view.</param>
         /// <returns>The index of <paramref name="item"/> if found in this view; otherwise, -1.</returns>
         public static int IndexOf<T>(this IView<T> view, T item)
@@ -68,6 +87,7 @@ namespace Views
         /// <summary>
         /// Removes the first occurrence of a specific object from this view.
         /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="item">The object to remove from this view.</param>
         /// <returns>
         /// true if <paramref name="item"/> was successfully removed from this view; otherwise, false. This method returns false if <paramref name="item"/> is not found in this view.
@@ -78,6 +98,84 @@ namespace Views
         public static bool Remove<T>(this IView<T> view, T item)
         {
             return (view as IList<T>).Remove(item);
+        }
+
+        /// <summary>
+        /// Determines the index of the last matching element in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="list">The view in which to locate the value.</param>
+        /// <param name="match">The delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The index of the last element that returned true from <paramref name="match"/> if found in the view; otherwise, -1.</returns>
+        public static int LastIndexOf<T>(this IView<T> view, Func<T, bool> match)
+        {
+            var list = view as IList<T>;
+            for (int i = list.Count - 1; i > -1; --i)
+            {
+                if (match(list[i]))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Determines the index of the last matching element in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="list">The view in which to locate the value.</param>
+        /// <param name="value">The value to locate in the view.</param>
+        /// <returns>The index of the last instance of <paramref name="value"/> if found in the view; otherwise, -1.</returns>
+        public static int LastIndexOf<T>(this IView<T> view, T value)
+        {
+            EqualityComparer<T> comparer = EqualityComparer<T>.Default;
+            return view.LastIndexOf((item) => comparer.Equals(value, item));
+        }
+
+        /// <summary>
+        /// Returns the last element of a view that satisfies a specified condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="list">The view in which to locate the value.</param>
+        /// <param name="match">The delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The last element of the view that returned true from <paramref name="match"/>.</returns>
+        /// <exception cref="InvalidOperationException">No element satisfies the condition.</exception>
+        public static T Last<T>(this IView<T> list, Func<T, bool> match)
+        {
+            return (list.Reverse() as IList<T>).First(match);
+        }
+
+        /// <summary>
+        /// Returns the last element of a view that satisfies a specified condition, or a default value if no element is found.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="list">The view in which to locate the value.</param>
+        /// <param name="match">The delegate that defines the conditions of the element to search for.</param>
+        /// <returns>The last element of the view that returned true from <paramref name="match"/>, or <c>default(T)</c> if no element is found.</returns>
+        public static T LastOrDefault<T>(this IView<T> list, Func<T, bool> match)
+        {
+            return (list.Reverse() as IList<T>).FirstOrDefault(match);
+        }
+
+        /// <summary>
+        /// Compares two sequences and determines if they are equal, using the specified element equality comparer.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the views.</typeparam>
+        /// <param name="view">The first source view.</param>
+        /// <param name="other">The second source view.</param>
+        /// <param name="comparer">The comparison object used to compare elements for equality. If this parameter is <c>null</c>, this method uses the default element equality comparer.</param>
+        /// <returns><c>true</c> if every element in both views are equal; otherwise, <c>false</c>.</returns>
+        public static bool SequenceEqual<T>(this IView<T> view, IView<T> other, IEqualityComparer<T> comparer = null)
+        {
+            var list = view as IList<T>;
+            var otherList = other as IList<T>;
+            if (list.Count != otherList.Count)
+                return false;
+            comparer = comparer ?? EqualityComparer<T>.Default;
+
+            return list.SequenceEqual(otherList, comparer);
         }
     }
 }
