@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ViewExtensions.Indexes.cs" />
     <Compile Include="IView.cs" />
     <Compile Include="Util\CollectionChangedListener.cs">
       <SubType>Code</SubType>

@@ -8,7 +8,7 @@ namespace Views
     /// <summary>
     /// Provides extension methods for all views.
     /// </summary>
-    public static class ViewExtensions
+    public static partial class ViewExtensions
     {
         /// <summary>
         /// Adds an item to the end of this view.
@@ -74,17 +74,6 @@ namespace Views
         }
 
         /// <summary>
-        /// Determines the index of a specific item in this view.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="item">The object to locate in this view.</param>
-        /// <returns>The index of <paramref name="item"/> if found in this view; otherwise, -1.</returns>
-        public static int IndexOf<T>(this IView<T> view, T item)
-        {
-            return (view as IList<T>).IndexOf(item);
-        }
-
-        /// <summary>
         /// Removes the first occurrence of a specific object from this view.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
@@ -98,40 +87,6 @@ namespace Views
         public static bool Remove<T>(this IView<T> view, T item)
         {
             return (view as IList<T>).Remove(item);
-        }
-
-        /// <summary>
-        /// Determines the index of the last matching element in a view.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="list">The view in which to locate the value.</param>
-        /// <param name="match">The delegate that defines the conditions of the element to search for.</param>
-        /// <returns>The index of the last element that returned true from <paramref name="match"/> if found in the view; otherwise, -1.</returns>
-        public static int LastIndexOf<T>(this IView<T> view, Func<T, bool> match)
-        {
-            var list = view as IList<T>;
-            for (int i = list.Count - 1; i > -1; --i)
-            {
-                if (match(list[i]))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
-        }
-
-        /// <summary>
-        /// Determines the index of the last matching element in a view.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="list">The view in which to locate the value.</param>
-        /// <param name="value">The value to locate in the view.</param>
-        /// <returns>The index of the last instance of <paramref name="value"/> if found in the view; otherwise, -1.</returns>
-        public static int LastIndexOf<T>(this IView<T> view, T value)
-        {
-            EqualityComparer<T> comparer = EqualityComparer<T>.Default;
-            return view.LastIndexOf((item) => comparer.Equals(value, item));
         }
 
         /// <summary>
