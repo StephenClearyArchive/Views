@@ -137,5 +137,35 @@ namespace Views
                 return defaultValue;
             return (view as IList<T>)[index];
         }
+
+        /// <summary>
+        /// Returns the largest element in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="comparer">The comparison object used to evaluate elements. Defaults to <c>null</c>. If this parameter is <c>null</c>, then this method uses the default comparison object.</param>
+        /// <returns>The largest element in the view.</returns>
+        public static T Max<T>(this IView<T> view, IComparer<T> comparer = null)
+        {
+            var index = view.MaxIndex(comparer);
+            if (index == -1)
+                return default(T);
+            return (view as IList<T>)[index];
+        }
+
+        /// <summary>
+        /// Returns the smallest element in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="comparer">The comparison object used to evaluate elements. Defaults to <c>null</c>. If this parameter is <c>null</c>, then this method uses the default comparison object.</param>
+        /// <returns>The smallest element in the view.</returns>
+        public static T Min<T>(this IView<T> view, IComparer<T> comparer = null)
+        {
+            var index = view.MinIndex(comparer);
+            if (index == -1)
+                return default(T);
+            return (view as IList<T>)[index];
+        }
     }
 }

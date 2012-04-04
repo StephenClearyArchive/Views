@@ -39,7 +39,6 @@
   <ItemGroup>
     <Compile Include="Util\ReadOnlySourceListBase.cs" />
     <Compile Include="Util\OffsetList.cs" />
-    <Compile Include="ViewExtensions.Aggregation.cs" />
     <Compile Include="ViewExtensions.Elements.cs" />
     <Compile Include="ViewExtensions.Indexes.cs" />
     <Compile Include="IView.cs" />
