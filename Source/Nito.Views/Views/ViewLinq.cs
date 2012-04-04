@@ -18,6 +18,9 @@ namespace Views
         /// <returns>The view wrapper.</returns>
         public static IView<T> View<T>(this IList<T> source)
         {
+            var view = source as IView<T>;
+            if (view != null)
+                return view;
             return new Util.SourceListBase<T>(source);
         }
 
@@ -29,6 +32,9 @@ namespace Views
         /// <returns>The view wrapper.</returns>
         public static IView<T> View<T>(this System.Collections.IList source)
         {
+            var view = source as IView<T>;
+            if (view != null)
+                return view;
             return new Util.GenericList<T>(source);
         }
 
