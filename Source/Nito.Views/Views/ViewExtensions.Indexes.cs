@@ -20,7 +20,8 @@ namespace Views
         public static int FirstIndex<T>(this IView<T> view, Func<T, bool> predicate)
         {
             var list = view as IList<T>;
-            for (int i = 0; i != list.Count; ++i)
+            var count = list.Count;
+            for (int i = 0; i != count; ++i)
             {
                 if (predicate(list[i]))
                     return i;
@@ -39,7 +40,8 @@ namespace Views
         public static int LastIndex<T>(this IView<T> view, Func<T, bool> predicate)
         {
             var list = view as IList<T>;
-            for (int i = list.Count - 1; i >= 0; --i)
+            var count = list.Count;
+            for (int i = count - 1; i >= 0; --i)
             {
                 if (predicate(list[i]))
                     return i;
@@ -58,8 +60,9 @@ namespace Views
         public static int SingleIndex<T>(this IView<T> view, Func<T, bool> predicate)
         {
             var list = view as IList<T>;
+            var count = list.Count;
             int ret = -1;
-            for (int i = 0; i != list.Count; ++i)
+            for (int i = 0; i != count; ++i)
             {
                 if (predicate(list[i]))
                 {
@@ -71,6 +74,48 @@ namespace Views
             }
 
             return -1;
+        }
+
+        /// <summary>
+        /// Returns the index of the largest element in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="comparer">The comparison object used to evaluate elements. Defaults to <c>null</c>. If this parameter is <c>null</c>, then this method uses the default comparison object.</param>
+        /// <returns>The index of the largest element in the view.</returns>
+        public static int MaxIndex<T>(this IView<T> view, IComparer<T> comparer = null)
+        {
+            comparer = comparer ?? Comparer<T>.Default;
+            var list = view as IList<T>;
+            var count = list.Count;
+            if (count == 0)
+                return -1;
+            var max = list[0];
+            var maxIndex = 0;
+            for (int i = 1; i != list.Count; ++i)
+            {
+                var item = list[i];
+                if (comparer.Compare(max, item) < 0)
+                {
+                    max = item;
+                    maxIndex = i;
+                }
+            }
+
+            return maxIndex;
+        }
+
+        /// <summary>
+        /// Returns the index of the smallest element in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="comparer">The comparison object used to evaluate elements. Defaults to <c>null</c>. If this parameter is <c>null</c>, then this method uses the default comparison object.</param>
+        /// <returns>The index of the smallest element in the view.</returns>
+        public static int MinIndex<T>(this IView<T> view, IComparer<T> comparer = null)
+        {
+            comparer = comparer ?? Comparer<T>.Default;
+            return view.MaxIndex(new Util.AnonymousComparer<T> { Compare = (x, y) => comparer.Compare(y, x) });
         }
 
         /// <summary>
