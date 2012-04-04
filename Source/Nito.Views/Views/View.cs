@@ -48,6 +48,8 @@ namespace Views
         /// <returns>A read-only view that generates its elements on demand.</returns>
         public static IView<T> Generate<T>(Func<int, T> generator, int count)
         {
+            if (count == 0)
+                return EmptyInstance<T>.Instance;
             return Generate<T>(generator, () => count);
         }
 
@@ -60,6 +62,8 @@ namespace Views
         /// <returns>A read-only view that generates numbers in a sequence.</returns>
         public static IView<int> Range(int start, int count, int step = 1)
         {
+            if (count == 0)
+                return EmptyInstance<int>.Instance;
             return Generate<int>(i => start + i * step, () => count);
         }
 
@@ -82,6 +86,8 @@ namespace Views
         /// <returns>A read-only view observing <paramref name="count"/> elements, all equal to <paramref name="source"/>.</returns>
         public static IView<T> Repeat<T>(T source, int count)
         {
+            if (count == 0)
+                return EmptyInstance<T>.Instance;
             return Generate<T>(_ => source, () => count);
         }
 
