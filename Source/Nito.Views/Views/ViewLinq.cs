@@ -257,7 +257,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Creates a rotated view of the data.
+        /// Creates a rotated view of the data. The returned view does not support clearing, inserting, or removing elements.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="source">The source view.</param>
@@ -265,8 +265,9 @@ namespace Views
         /// <returns>The rotated view.</returns>
         public static IView<T> Rotate<T>(this IView<T> source, int offset)
         {
-            // TODO: more efficient source updates.
-            return source.Slice(start: offset).Concat(source.Slice(stop: offset));
+            if (offset == 0)
+                return source;
+            return new Util.OffsetList<T>(source as IList<T>, offset);
         }
 
         // TODO: Zip, Randomize TakeWhile/SkipWhile, OrderBy/ThenBy, Cast, <MoreLINQ, Rx>
