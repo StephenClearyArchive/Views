@@ -49,6 +49,31 @@ namespace Views
         }
 
         /// <summary>
+        /// Returns the index of the only element in a view that matches a condition, or -1 if no matching elements are found. Throws <see cref="InvalidOperationException"/> if there are multiple matching elements.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view in which to locate the value.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <returns>The index of the only element in a view that matches the condition, or -1 if no matching elements are found.</returns>
+        public static int SingleIndex<T>(this IView<T> view, Func<T, bool> predicate)
+        {
+            var list = view as IList<T>;
+            int ret = -1;
+            for (int i = 0; i != list.Count; ++i)
+            {
+                if (predicate(list[i]))
+                {
+                    if (ret == -1)
+                        ret = i;
+                    else
+                        throw new InvalidOperationException("More than one element matches.");
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
         /// Returns the index of the first matching element in a view, or -1 if no matching elements are found. This is logically equivalent to <see cref="List{T}.IndexOf"/>.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
