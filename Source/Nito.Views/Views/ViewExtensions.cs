@@ -11,6 +11,17 @@ namespace Views
     public static partial class ViewExtensions
     {
         /// <summary>
+        /// Returns the number of elements in a view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <returns>The number of elements in the view.</returns>
+        public static int Count<T>(this IView<T> view)
+        {
+            return (view as IList<T>).Count;
+        }
+
+        /// <summary>
         /// Adds an item to the end of this view.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
