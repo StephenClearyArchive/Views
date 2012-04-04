@@ -269,6 +269,6 @@ namespace Views
             return source.Slice(start: offset).Concat(source.Slice(stop: offset));
         }
 
-        // TODO: Zip, Randomize
+        // TODO: Zip, Randomize TakeWhile/SkipWhile, OrderBy/ThenBy, Cast, <MoreLINQ, Rx>
     }
 }
