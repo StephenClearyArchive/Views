@@ -38,6 +38,12 @@ namespace Views
             return list[index];
         }
 
+        /// <summary>
+        /// Returns the first element in a view. Throws <see cref="InvalidOperationException"/> if the view is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <returns>The first element in a view.</returns>
         public static T First<T>(this IView<T> view)
         {
             var list = view as IList<T>;
@@ -46,6 +52,13 @@ namespace Views
             return list[0];
         }
 
+        /// <summary>
+        /// Returns the first element in a view that matches a condition. Throws <see cref="InvalidOperationException"/> if no elements in the view match the condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <returns>The first element in a view that matches a condition.</returns>
         public static T First<T>(this IView<T> view, Func<T, bool> predicate)
         {
             var index = view.FirstIndex(predicate);
@@ -54,6 +67,13 @@ namespace Views
             return (view as IList<T>)[index];
         }
 
+        /// <summary>
+        /// Returns the first element in a view, or <paramref name="defaultValue"/> if the view is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="defaultValue">The default value to return if the view is empty. Defaults to <c>default(T)</c>.</param>
+        /// <returns>The first element in a view, or <paramref name="defaultValue"/> if the view is empty..</returns>
         public static T FirstOrDefault<T>(this IView<T> view, T defaultValue = default(T))
         {
             var list = view as IList<T>;
@@ -62,6 +82,14 @@ namespace Views
             return list[0];
         }
 
+        /// <summary>
+        /// Returns the first element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <param name="defaultValue">The default value to return if no elements in the view match the condition. Defaults to <c>default(T)</c>.</param>
+        /// <returns>The first element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.</returns>
         public static T FirstOrDefault<T>(this IView<T> view, Func<T, bool> predicate, T defaultValue = default(T))
         {
             var index = view.FirstIndex(predicate);
@@ -70,6 +98,12 @@ namespace Views
             return (view as IList<T>)[index];
         }
 
+        /// <summary>
+        /// Returns the last element in a view. Throws <see cref="InvalidOperationException"/> if the view is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <returns>The first element in a view.</returns>
         public static T Last<T>(this IView<T> view)
         {
             var list = view as IList<T>;
@@ -79,6 +113,13 @@ namespace Views
             return list[count - 1];
         }
 
+        /// <summary>
+        /// Returns the last element in a view that matches a condition. Throws <see cref="InvalidOperationException"/> if no elements in the view match the condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <returns>The last element in a view that matches a condition.</returns>
         public static T Last<T>(this IView<T> view, Func<T, bool> predicate)
         {
             var index = view.LastIndex(predicate);
@@ -87,6 +128,13 @@ namespace Views
             return (view as IList<T>)[index];
         }
 
+        /// <summary>
+        /// Returns the last element in a view, or <paramref name="defaultValue"/> if the view is empty.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="defaultValue">The default value to return if the view is empty. Defaults to <c>default(T)</c>.</param>
+        /// <returns>The last element in a view, or <paramref name="defaultValue"/> if the view is empty..</returns>
         public static T LastOrDefault<T>(this IView<T> view, T defaultValue = default(T))
         {
             var list = view as IList<T>;
@@ -96,6 +144,14 @@ namespace Views
             return list[count - 1];
         }
 
+        /// <summary>
+        /// Returns the last element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <param name="defaultValue">The default value to return if no elements in the view match the condition. Defaults to <c>default(T)</c>.</param>
+        /// <returns>The last element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.</returns>
         public static T LastOrDefault<T>(this IView<T> view, Func<T, bool> predicate, T defaultValue = default(T))
         {
             var index = view.LastIndex(predicate);
@@ -104,6 +160,12 @@ namespace Views
             return (view as IList<T>)[index];
         }
 
+        /// <summary>
+        /// Returns the only element in a view. Throws <see cref="InvalidOperationException"/> if the view does not contain exactly one element.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <returns>The only element in a view.</returns>
         public static T Single<T>(this IView<T> view)
         {
             var list = view as IList<T>;
@@ -113,6 +175,13 @@ namespace Views
             return list[0];
         }
 
+        /// <summary>
+        /// Returns the only element in a view that matches a condition. Throws <see cref="InvalidOperationException"/> if there is not exactly one element in the view that matches the condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <returns>The only element in a view that matches a condition.</returns>
         public static T Single<T>(this IView<T> view, Func<T, bool> predicate)
         {
             var index = view.SingleIndex(predicate);
@@ -121,15 +190,14 @@ namespace Views
             return (view as IList<T>)[index];
         }
 
-        public static T SingleOrDefault<T>(this IView<T> view, T defaultValue = default(T))
-        {
-            var list = view as IList<T>;
-            var count = list.Count;
-            if (count != 1)
-                return defaultValue;
-            return list[0];
-        }
-
+        /// <summary>
+        /// Returns the only element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition. Throws <see cref="InvalidOperationException"/> if multiple elements match the condition.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The view.</param>
+        /// <param name="predicate">The condition used to evaluate elements.</param>
+        /// <param name="defaultValue">The default value to return if no elements in the view match the condition. Defaults to <c>default(T)</c>.</param>
+        /// <returns>The last element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.</returns>
         public static T SingleOrDefault<T>(this IView<T> view, Func<T, bool> predicate, T defaultValue = default(T))
         {
             var index = view.SingleIndex(predicate);
