@@ -90,31 +90,6 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the last element of a view that satisfies a specified condition.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="list">The view in which to locate the value.</param>
-        /// <param name="match">The delegate that defines the conditions of the element to search for.</param>
-        /// <returns>The last element of the view that returned true from <paramref name="match"/>.</returns>
-        /// <exception cref="InvalidOperationException">No element satisfies the condition.</exception>
-        public static T Last<T>(this IView<T> list, Func<T, bool> match)
-        {
-            return (list.Reverse() as IList<T>).First(match);
-        }
-
-        /// <summary>
-        /// Returns the last element of a view that satisfies a specified condition, or a default value if no element is found.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="list">The view in which to locate the value.</param>
-        /// <param name="match">The delegate that defines the conditions of the element to search for.</param>
-        /// <returns>The last element of the view that returned true from <paramref name="match"/>, or <c>default(T)</c> if no element is found.</returns>
-        public static T LastOrDefault<T>(this IView<T> list, Func<T, bool> match)
-        {
-            return (list.Reverse() as IList<T>).FirstOrDefault(match);
-        }
-
-        /// <summary>
         /// Compares two sequences and determines if they are equal, using the specified element equality comparer.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the views.</typeparam>
