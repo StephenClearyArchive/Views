@@ -48,6 +48,7 @@
     <Compile Include="Util\CollectionChangedListener.cs" />
     <Compile Include="Util\CollectionChangedNotifier.cs" />
     <Compile Include="Util\ConcatList.cs" />
+    <Compile Include="Util\ProjectionList3.cs" />
     <Compile Include="Util\GenericList.cs" />
     <Compile Include="Util\IndirectList.cs" />
     <Compile Include="Util\ListBase.cs" />
@@ -55,6 +56,9 @@
     <Compile Include="Util\MultiDispose.cs" />
     <Compile Include="Util\OffsetList.cs" />
     <Compile Include="Util\ProjectionList.cs" />
+    <Compile Include="Util\ProjectionList2.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Util\ReadOnlyListBase.cs" />
     <Compile Include="Util\ReadOnlySourceListBase.cs" />
     <Compile Include="Util\ReverseList.cs" />
