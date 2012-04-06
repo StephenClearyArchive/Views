@@ -350,6 +350,31 @@ namespace Views
             return new Util.ProjectionList<TSource0, TSource1, TSource2, TResult>(source0 as IList<TSource0>, source1 as IList<TSource1>, source2 as IList<TSource2>, read, write);
         }
 
-        // TODO: Randomize, TakeWhile/SkipWhile, OrderBy/ThenBy, Pad (from MoreLINQ), TakeLast/SkipLast/Buffer (from Rx)
+        /// <summary>
+        /// Pads a view with a background view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The priority source view.</param>
+        /// <param name="backgroundSource">The background source view.</param>
+        /// <returns>The padded view.</returns>
+        public static IView<T> Pad<T>(this IView<T> source, IView<T> backgroundSource)
+        {
+            return new Util.LayeredList<T>(backgroundSource as IList<T>, source as IList<T>);
+        }
+
+        /// <summary>
+        /// Pads a view with a default value.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="count">The length of the resulting view.</param>
+        /// <param name="value">The value with which to pad the source view until it observes at least <paramref name="count"/> elements.</param>
+        /// <returns>The padded view.</returns>
+        public static IView<T> Pad<T>(this IView<T> source, int count, T value = default(T))
+        {
+            return source.Pad(Views.View.Repeat(value, count));
+        }
+
+        // TODO: Randomize, TakeWhile/SkipWhile, OrderBy/ThenBy, TakeLast/SkipLast/Buffer (from Rx)
     }
 }
