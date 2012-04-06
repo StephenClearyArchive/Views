@@ -92,14 +92,14 @@ namespace Views
         }
 
         /// <summary>
-        /// Converts a single value into a read-only view which observes that value.
+        /// Converts values into a read-only view which observes those values.
         /// </summary>
-        /// <typeparam name="T">The type of the value.</typeparam>
-        /// <param name="source">The value.</param>
-        /// <returns>A read-only view observing a single element, <paramref name="source"/>.</returns>
-        public static IView<T> Return<T>(T source)
+        /// <typeparam name="T">The type of the values.</typeparam>
+        /// <param name="sources">The values.</param>
+        /// <returns>A read-only view observing the given values.</returns>
+        public static IView<T> Return<T>(params T[] sources)
         {
-            return Generate<T>(_ => source, () => 1);
+            return Generate<T>(i => sources[i], () => sources.Length);
         }
     }
 }
