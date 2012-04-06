@@ -3,15 +3,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{51248CF4-EC32-4788-B8C1-C19BE7EAFFE3}</ProjectGuid>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0EB8C366-13FE-487D-95B2-80FBC93EF575}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Views</RootNamespace>
     <AssemblyName>Views</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Profile4</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,42 +34,40 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Windows" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Util\ReadOnlySourceListBase.cs" />
-    <Compile Include="Util\OffsetList.cs" />
-    <Compile Include="ViewExtensions.Elements.cs" />
-    <Compile Include="ViewExtensions.Indexes.cs" />
     <Compile Include="IView.cs" />
-    <Compile Include="Util\CollectionChangedListener.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\AnonymousComparer.cs" />
+    <Compile Include="Util\AnonymousReadOnlyList.cs" />
+    <Compile Include="Util\CollectionChangedListener.cs" />
     <Compile Include="Util\CollectionChangedNotifier.cs" />
     <Compile Include="Util\ConcatList.cs" />
     <Compile Include="Util\GenericList.cs" />
     <Compile Include="Util\IndirectList.cs" />
-    <Compile Include="Util\MultiDispose.cs" />
-    <Compile Include="View.cs" />
-    <Compile Include="ViewExtensions.cs" />
-    <Compile Include="ViewLinq.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\AnonymousComparer.cs" />
-    <Compile Include="Util\AnonymousReadOnlyList.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Util\ListBase.cs" />
     <Compile Include="Util\ListHelper.cs" />
+    <Compile Include="Util\MultiDispose.cs" />
+    <Compile Include="Util\OffsetList.cs" />
     <Compile Include="Util\ProjectionList.cs" />
     <Compile Include="Util\ReadOnlyListBase.cs" />
+    <Compile Include="Util\ReadOnlySourceListBase.cs" />
     <Compile Include="Util\ReverseList.cs" />
     <Compile Include="Util\SliceList.cs" />
     <Compile Include="Util\SourceListBase.cs" />
     <Compile Include="Util\StepList.cs" />
+    <Compile Include="View.cs" />
+    <Compile Include="ViewExtensions.cs" />
+    <Compile Include="ViewExtensions.Elements.cs" />
+    <Compile Include="ViewExtensions.Indexes.cs" />
+    <Compile Include="ViewLinq.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
