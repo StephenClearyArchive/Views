@@ -39,6 +39,28 @@ namespace Views
         }
 
         /// <summary>
+        /// Creates a new list containing the elements currently in the specified view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <returns>A new list containing the elements currently in the specified view.</returns>
+        public static List<T> ToList<T>(this IView<T> view)
+        {
+            return new List<T>(view as IList<T>);
+        }
+
+        /// <summary>
+        /// Creates a new array containing the elements currently in the specified view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <returns>A new array containing the elements currently in the specified view.</returns>
+        public static T[] ToArray<T>(this IView<T> view)
+        {
+            return (view as IList<T>).ToArray();
+        }
+
+        /// <summary>
         /// Creates a reversed view of the data.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
