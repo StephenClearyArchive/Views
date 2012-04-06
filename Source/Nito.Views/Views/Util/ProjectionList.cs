@@ -33,7 +33,7 @@ namespace Views.Util
         private readonly Func<TResult, int, TSource> reverseSelector;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadWriteProjectList{TSource,TResult}"/> class.
+        /// Initializes a new instance of the <see cref="ProjectionList{TSource,TResult}"/> class.
         /// </summary>
         /// <param name="source">The source list.</param>
         /// <param name="selector">The projection function from source to result.</param>
