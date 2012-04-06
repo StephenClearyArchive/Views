@@ -350,6 +350,6 @@ namespace Views
             return new Util.ProjectionList<TSource0, TSource1, TSource2, TResult>(source0 as IList<TSource0>, source1 as IList<TSource1>, source2 as IList<TSource2>, read, write);
         }
 
-        // TODO: Randomize TakeWhile/SkipWhile, OrderBy/ThenBy, <MoreLINQ, Rx>
+        // TODO: Randomize, TakeWhile/SkipWhile, OrderBy/ThenBy, Pad (from MoreLINQ), TakeLast/SkipLast/Buffer (from Rx)
     }
 }
