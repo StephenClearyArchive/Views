@@ -22,18 +22,20 @@ namespace Views
         }
 
         /// <summary>
-        /// Copies all elements from one view into another view. The elements are copied in index order.
+        /// Copies all elements from one view into another view. The elements are copied in index order. Returns the source view.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The source view.</param>
         /// <param name="destination">The destination view.</param>
-        public static void CopyTo<T>(this IView<T> view, IView<T> destination)
+        /// <returns>The source view.</returns>
+        public static IView<T> CopyTo<T>(this IView<T> view, IView<T> destination)
         {
             var list = view as IList<T>;
             var destinationList = destination as IList<T>;
             var count = list.Count;
             for (int i = 0; i != count; ++i)
                 destinationList[i] = list[i];
+            return view;
         }
 
         /// <summary>
@@ -53,6 +55,59 @@ namespace Views
             comparer = comparer ?? EqualityComparer<T>.Default;
 
             return list.SequenceEqual(otherList, comparer);
+        }
+
+        /// <summary>
+        /// Removes all elements from a view, returning the source view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The source view.</param>
+        /// <returns>The source view.</returns>
+        public static IView<T> Clear<T>(this IView<T> view)
+        {
+            (view as IList<T>).Clear();
+            return view;
+        }
+
+        /// <summary>
+        /// Inserts an element into a view, returning the source view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The source view.</param>
+        /// <param name="index">The index at which to insert the item.</param>
+        /// <param name="item">The item to insert.</param>
+        /// <returns>The source view.</returns>
+        public static IView<T> Insert<T>(this IView<T> view, int index, T item)
+        {
+            (view as IList<T>).Insert(index, item);
+            return view;
+        }
+
+        /// <summary>
+        /// Removes an element from a view, returning the source view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The source view.</param>
+        /// <param name="index">The index of the item to remove.</param>
+        /// <returns>The source view.</returns>
+        public static IView<T> Remove<T>(this IView<T> view, int index)
+        {
+            (view as IList<T>).RemoveAt(index);
+            return view;
+        }
+
+        /// <summary>
+        /// Sets the value of an element into a view, returning the source view.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="view">The source view.</param>
+        /// <param name="index">The index of the element to set.</param>
+        /// <param name="item">The new value of the element.</param>
+        /// <returns>The source view.</returns>
+        public static IView<T> SetItem<T>(this IView<T> view, int index, T item)
+        {
+            (view as IList<T>)[index] = item;
+            return view;
         }
     }
 }
