@@ -18,6 +18,16 @@ namespace Views
         private static class EmptyInstance<T>
         {
             /// <summary>
+            /// Static constructor to force lazy initialization of this type; see
+            ///  https://msmvps.com/blogs/jon_skeet/archive/2010/01/26/type-initialization-changes-in-net-4-0.aspx
+            /// and
+            ///  http://msmvps.com/blogs/jon_skeet/archive/2012/04/07/type-initializer-circular-dependencies.aspx
+            /// </summary>
+            static EmptyInstance()
+            {
+            }
+
+            /// <summary>
             /// The read-only, empty view.
             /// </summary>
             public static readonly IView<T> Instance = new Util.AnonymousReadOnlyList<T> { Count = () => 0 };
