@@ -397,6 +397,6 @@ namespace Views
             return source.Pad(Views.View.Repeat(value, count));
         }
 
-        // TODO: Randomize, TakeWhile/SkipWhile, OrderBy/ThenBy, TakeLast/SkipLast/Buffer (from Rx)
+        // TODO: Randomize, TakeWhile/SkipWhile, OrderBy/ThenBy, Buffer (from Rx)
     }
 }
