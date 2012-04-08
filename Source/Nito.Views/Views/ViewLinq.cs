@@ -246,7 +246,7 @@ namespace Views
         {
             // TODO: allow source updates.
             var ret = new Util.IndirectList<T>(source as IList<T>);
-            ((List<int>)ret.Indices).Sort(ret.GetComparer(comparer));
+            ((List<int>)ret.ListIndices).Sort(ret.GetComparer(comparer));
             return ret;
         }
 

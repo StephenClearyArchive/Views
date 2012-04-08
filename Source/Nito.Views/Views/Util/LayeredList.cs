@@ -14,12 +14,12 @@ namespace Views.Util
         /// <summary>
         /// The priority source list.
         /// </summary>
-        protected readonly IList<T> prioritySource;
+        private readonly IList<T> prioritySource;
 
         /// <summary>
         /// The listener for the priority source list.
         /// </summary>
-        protected readonly CollectionChangedListener<T> priorityListener;
+        private readonly CollectionChangedListener<T> priorityListener;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayeredList&lt;T&gt;"/> class over the specified source lists.
