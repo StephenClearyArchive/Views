@@ -24,16 +24,20 @@ namespace Views.Util
         public IndirectListBase(IList<T> source, IList<int> indices = null)
             : base(source)
         {
-            if (indices == null)
-            {
-                var list = new List<int>(this.source.Count);
-                for (var i = 0; i != list.Count; ++i)
-                    list[i] = i;
-            }
-            else
-            {
-                this.indices = indices;
-            }
+            this.indices = indices ?? DefaultIndices(source);
+        }
+
+        /// <summary>
+        /// Creates a new list of indices matching the specified source list.
+        /// </summary>
+        /// <param name="source">The source list.</param>
+        /// <returns>A new list of indices matching the specified source list.</returns>
+        private static List<int> DefaultIndices(IList<T> source)
+        {
+            var list = new List<int>(source.Count);
+            for (var i = 0; i != list.Count; ++i)
+                list[i] = i;
+            return list;
         }
 
         /// <summary>
@@ -118,9 +122,9 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Returns an indirect comparer which may be used to sort or compare elements in <see cref="Indices"/>, based on a source comparer.
+        /// Returns an indirect comparer which may be used to sort or compare elements in this list, based on a source list comparer.
         /// </summary>
-        /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer<T>.Default"/> is used.</param>
+        /// <param name="comparer">The source list comparer. If this is <c>null</c>, then <see cref="Comparer{T}.Default"/> is used.</param>
         /// <returns>The indirect comparer.</returns>
         public IComparer<int> GetComparer(IComparer<T> comparer = null)
         {
