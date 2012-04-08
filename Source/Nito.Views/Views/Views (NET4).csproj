@@ -63,6 +63,7 @@
     </Compile>
     <Compile Include="Util\ReadOnlyListBase.cs" />
     <Compile Include="Util\ReadOnlySourceListBase.cs" />
+    <Compile Include="Util\RepeatList.cs" />
     <Compile Include="Util\ReverseList.cs" />
     <Compile Include="Util\SliceList.cs" />
     <Compile Include="Util\SortedList.cs">
