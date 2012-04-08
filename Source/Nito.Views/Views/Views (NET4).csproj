@@ -65,6 +65,9 @@
     <Compile Include="Util\ReadOnlySourceListBase.cs" />
     <Compile Include="Util\ReverseList.cs" />
     <Compile Include="Util\SliceList.cs" />
+    <Compile Include="Util\SortedList.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Util\SourceListBase.cs" />
     <Compile Include="Util\StepList.cs" />
     <Compile Include="View.cs" />

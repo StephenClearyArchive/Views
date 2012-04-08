@@ -240,14 +240,11 @@ namespace Views
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="source">The source view.</param>
-        /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer<T>.Default"/> is used.</param>
+        /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer{T}.Default"/> is used.</param>
         /// <returns>The sorted view.</returns>
         public static IView<T> Sort<T>(this IView<T> source, IComparer<T> comparer = null)
         {
-            // TODO: allow source updates.
-            var ret = new Util.IndirectList<T>(source as IList<T>);
-            ((List<int>)ret.ListIndices).Sort(ret.GetComparer(comparer));
-            return ret;
+            return new Util.SortedList<T>(source as IList<T>, comparer);
         }
 
         /// <summary>
