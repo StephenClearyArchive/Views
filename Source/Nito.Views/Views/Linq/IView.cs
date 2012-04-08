@@ -11,4 +11,16 @@ namespace Views.Linq
     public interface IView
     {
     }
+
+    /// <summary>
+    /// An ordered view.
+    /// </summary>
+    /// <typeparam name="T">The type of item observed by the view.</typeparam>
+    public interface IOrderedView<T> : IView<T>
+    {
+        /// <summary>
+        /// Gets the comparer that defines how the elements are sorted in this view.
+        /// </summary>
+        IComparer<T> Comparer { get; }
+    }
 }
