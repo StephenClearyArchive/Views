@@ -5,10 +5,7 @@ using System.Text;
 
 namespace Views
 {
-    /// <summary>
-    /// Provides extension methods for using views.
-    /// </summary>
-    public static class ViewLinq
+    public static partial class ViewExtensions
     {
         /// <summary>
         /// Creates a view of the (typed) data.
@@ -142,95 +139,6 @@ namespace Views
         public static IView<T> Repeat<T>(this IView<T> source, int repeatCount)
         {
             return new Util.RepeatList<T>(source as IList<T>, repeatCount);
-        }
-
-        /// <summary>
-        /// Creates a projected view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
-        /// <returns>The projected view.</returns>
-        public static IView<TResult> Select<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
-        {
-            return Select<TSource, TResult>(
-                source,
-                (read == null) ? (Func<TSource, int, TResult>)null : (item, _) => read(item),
-                (write == null) ? (Func<TResult, int, TSource>)null : (item, _) => write(item));
-        }
-
-        /// <summary>
-        /// Creates a projected view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
-        /// <returns>The projected view.</returns>
-        public static IView<TResult> Select<TSource, TResult>(this IView<TSource> source, Func<TSource, int, TResult> read = null, Func<TResult, int, TSource> write = null)
-        {
-            return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
-        }
-
-        /// <summary>
-        /// Creates a projected, flattened view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="selector">The projection.</param>
-        /// <returns>The projected, flattened view.</returns>
-        public static IView<TResult> SelectMany<TSource, TResult>(this IView<TSource> source, Func<TSource, IView<TResult>> selector)
-        {
-            return source.Select(selector).Concat();
-        }
-
-        /// <summary>
-        /// Creates a projected, flattened view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="selector">The projection.</param>
-        /// <returns>The projected, flattened view.</returns>
-        public static IView<TResult> SelectMany<TSource, TResult>(this IView<TSource> source, Func<TSource, int, IView<TResult>> selector)
-        {
-            return source.Select(selector).Concat();
-        }
-
-        /// <summary>
-        /// Creates a projected, flattened view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TCollection">The type of element observed by the intermediate view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="collectionSelector">The projection from the source data to the intermediate elements.</param>
-        /// <param name="resultSelector">The projection from the source and intermediate data to the elements in the final view.</param>
-        /// <returns>The projected, flattened view.</returns>
-        public static IView<TResult> SelectMany<TSource, TCollection, TResult>(this IView<TSource> source, Func<TSource, IView<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
-        {
-            return source.Select(item => collectionSelector(item).Select(collection => new { Item = item, Collection = collection })).Concat()
-                .Select(x => resultSelector(x.Item, x.Collection));
-        }
-
-        /// <summary>
-        /// Creates a projected, flattened view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TCollection">The type of element observed by the intermediate view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="collectionSelector">The projection from the source data to the intermediate elements.</param>
-        /// <param name="resultSelector">The projection from the source and intermediate data to the elements in the final view.</param>
-        /// <returns>The projected, flattened view.</returns>
-        public static IView<TResult> SelectMany<TSource, TCollection, TResult>(this IView<TSource> source, Func<TSource, int, IView<TCollection>> collectionSelector, Func<TSource, TCollection, TResult> resultSelector)
-        {
-            return source.Select((item, i) => collectionSelector(item, i).Select(collection => new { Item = item, Collection = collection })).Concat()
-                .Select(x => resultSelector(x.Item, x.Collection));
         }
 
         /// <summary>
@@ -392,6 +300,37 @@ namespace Views
             return source.Pad(Views.View.Repeat(value, count));
         }
 
-        // TODO: Randomize, Where, TakeWhile/SkipWhile, OrderBy/ThenBy, Buffer (from Rx), Permutations.
+        /// <summary>
+        /// Creates a projected view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
+        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <returns>The projected view.</returns>
+        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
+        {
+            return Map<TSource, TResult>(
+                source,
+                (read == null) ? (Func<TSource, int, TResult>)null : (item, _) => read(item),
+                (write == null) ? (Func<TResult, int, TSource>)null : (item, _) => write(item));
+        }
+
+        /// <summary>
+        /// Creates a projected view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
+        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <returns>The projected view.</returns>
+        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, int, TResult> read = null, Func<TResult, int, TSource> write = null)
+        {
+            return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
+        }
+
+        // TODO: Randomize, TakeWhile/SkipWhile, Buffer (from Rx), Permutations.
     }
 }
