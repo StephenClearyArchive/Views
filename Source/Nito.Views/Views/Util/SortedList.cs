@@ -9,8 +9,13 @@ namespace Views.Util
     /// A sorted list, which provides a sorted view into a source list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class SortedList<T> : IndirectListBase<T>
+    public sealed class SortedList<T> : IndirectListBase<T>, Views.Linq.IOrderedView<T>
     {
+        /// <summary>
+        /// The comparer used to compare source list elements.
+        /// </summary>
+        private readonly IComparer<T> comparer;
+
         /// <summary>
         /// The comparer used to indirectly compare source list elements.
         /// </summary>
@@ -24,8 +29,14 @@ namespace Views.Util
         public SortedList(IList<T> source, IComparer<T> comparer)
             : base(source, null)
         {
+            this.comparer = comparer ?? Comparer<T>.Default;
             this.indexComparer = this.GetComparer(comparer);
             ((List<int>)this.indices).Sort(this.indexComparer);
+        }
+
+        IComparer<T> Linq.IOrderedView<T>.Comparer
+        {
+            get { return this.comparer; }
         }
 
         /// <summary>
