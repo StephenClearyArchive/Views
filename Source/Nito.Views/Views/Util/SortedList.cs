@@ -126,5 +126,24 @@ namespace Views.Util
             list.Sort(this.indexComparer);
             this.CreateNotifier().Reset();
         }
+
+        /// <summary>
+        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// </summary>
+        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
+        protected override bool CanUpdateElementValues()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Sets an element at the specified index. This implementation always throws <see cref="NotSupportedException"/>.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
+        /// <param name="item">The element to store in the list.</param>
+        protected override void DoSetItem(int index, T item)
+        {
+            throw this.NotSupported();
+        }
     }
 }

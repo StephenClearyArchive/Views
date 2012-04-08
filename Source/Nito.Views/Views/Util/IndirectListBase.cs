@@ -109,7 +109,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Sets an element at the specified index. This implementation always throws <see cref="NotSupportedException"/>.
+        /// Sets an element at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
         /// <param name="item">The element to store in the list.</param>
