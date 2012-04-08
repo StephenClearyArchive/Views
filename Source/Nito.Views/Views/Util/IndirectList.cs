@@ -9,17 +9,12 @@ namespace Views.Util
     /// An indirect list, which provides a layer of indirection for the index values of a source list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class IndirectList<T> : ReadOnlyListBase<T>
+    public sealed class IndirectList<T> : IndirectListBase<T>, CollectionChangedListener<int>.IResponder
     {
         /// <summary>
-        /// The source list.
+        /// The listener for the list of redirected index values.
         /// </summary>
-        private readonly IList<T> source;
-
-        /// <summary>
-        /// The redirected index values.
-        /// </summary>
-        private readonly IList<int> indices;
+        protected readonly CollectionChangedListener<int> indicesListener;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IndirectList&lt;T&gt;"/> class for the given source list, using the given redirected index values.
@@ -27,18 +22,9 @@ namespace Views.Util
         /// <param name="source">The source list.</param>
         /// <param name="indices">The redirected index values. If this is <c>null</c>, then a new list of indices is created matching the current source indices.</param>
         public IndirectList(IList<T> source, IList<int> indices = null)
+            : base(source, indices)
         {
-            this.source = source;
-            if (indices == null)
-            {
-                var list = new List<int>(source.Count);
-                for (var i = 0; i != list.Count; ++i)
-                    list[i] = i;
-            }
-            else
-            {
-                this.indices = indices;
-            }
+            this.indicesListener = CollectionChangedListener<int>.Create(this.indices, this);
         }
 
         /// <summary>
@@ -57,33 +43,48 @@ namespace Views.Util
             get { return this.indices; }
         }
 
-        /// <summary>
-        /// Returns an indirect comparer which may be used to sort or compare elements in <see cref="Indices"/>, based on a source comparer.
-        /// </summary>
-        /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer<T>.Default"/> is used.</param>
-        /// <returns>The indirect comparer.</returns>
-        public IComparer<int> GetComparer(IComparer<T> comparer = null)
+        void CollectionChangedListener<int>.IResponder.Added(int index, int item)
         {
-            comparer = comparer ?? Comparer<T>.Default;
-            return new AnonymousComparer<int> { Compare = (x, y) => comparer.Compare(this[x], this[y]) };
+            this.CreateNotifier().Added(index, this.source[item]);
+        }
+
+        void CollectionChangedListener<int>.IResponder.Removed(int index, int item)
+        {
+            if (item < this.source.Count)
+                this.CreateNotifier().Removed(index, this.source[item]);
+            else
+                this.CreateNotifier().Reset();
+        }
+
+        void CollectionChangedListener<int>.IResponder.Replaced(int index, int oldItem, int newItem)
+        {
+            if (oldItem < this.source.Count)
+                this.CreateNotifier().Replaced(index, this.source[oldItem], this.source[newItem]);
+            else
+                this.CreateNotifier().Reset();
+        }
+
+        void CollectionChangedListener<int>.IResponder.Reset()
+        {
+            this.CreateNotifier().Reset();
         }
 
         /// <summary>
-        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
+        /// A notification that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active. This implementation activates the source listener.
         /// </summary>
-        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
-        protected override bool CanUpdateElementValues()
+        protected override void SubscriptionsActive()
         {
-            return true;
+            this.indicesListener.Activate();
+            base.SubscriptionsActive();
         }
 
         /// <summary>
-        /// Gets the number of elements contained in this list.
+        /// A notification that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
         /// </summary>
-        /// <returns>The number of elements contained in this list.</returns>
-        protected override int DoCount()
+        protected override void SubscriptionsInactive()
         {
-            return this.indices.Count;
+            this.indicesListener.Deactivate();
+            base.SubscriptionsInactive();
         }
 
         /// <summary>
@@ -93,7 +94,10 @@ namespace Views.Util
         /// <returns>The element at the specified index.</returns>
         protected override T DoGetItem(int index)
         {
-            return this.Source[this.indices[index]];
+            using (this.indicesListener.Pause())
+            {
+                return base.DoGetItem(index);
+            }
         }
 
         /// <summary>
@@ -103,7 +107,10 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            this.Source[this.indices[index]] = item;
+            using (this.indicesListener.Pause())
+            {
+                base.DoSetItem(index, item);
+            }
         }
     }
 }
