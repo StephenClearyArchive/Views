@@ -137,13 +137,11 @@ namespace Views
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="source">The source view.</param>
-        /// <param name="count">The number of times the source view is repeated. This must be greater than or equal to <c>0</c>.</param>
+        /// <param name="repeatCount">The number of times the source view is repeated. This must be greater than or equal to <c>0</c>.</param>
         /// <returns>The repeated view.</returns>
-        public static IView<T> Repeat<T>(this IView<T> source, int count)
+        public static IView<T> Repeat<T>(this IView<T> source, int repeatCount)
         {
-            // TODO: allow source updates.
-            var list = source as IList<T>;
-            return Views.View.Generate<T>(i => list[i % list.Count], () => list.Count * count);
+            return new Util.RepeatList<T>(source as IList<T>, repeatCount);
         }
 
         /// <summary>
@@ -394,6 +392,6 @@ namespace Views
             return source.Pad(Views.View.Repeat(value, count));
         }
 
-        // TODO: Randomize, TakeWhile/SkipWhile, OrderBy/ThenBy, Buffer (from Rx), Permutations.
+        // TODO: Randomize, Where, TakeWhile/SkipWhile, OrderBy/ThenBy, Buffer (from Rx), Permutations.
     }
 }
