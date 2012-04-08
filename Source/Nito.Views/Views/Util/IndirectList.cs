@@ -14,7 +14,7 @@ namespace Views.Util
         /// <summary>
         /// The listener for the list of redirected index values.
         /// </summary>
-        protected readonly CollectionChangedListener<int> indicesListener;
+        private readonly CollectionChangedListener<int> indicesListener;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IndirectList&lt;T&gt;"/> class for the given source list, using the given redirected index values.
@@ -30,7 +30,7 @@ namespace Views.Util
         /// <summary>
         /// Gets the source list.
         /// </summary>
-        public IList<T> Source
+        public IList<T> SourceList
         {
             get { return this.source; }
         }
@@ -38,7 +38,7 @@ namespace Views.Util
         /// <summary>
         /// Gets the redirected index values.
         /// </summary>
-        public IList<int> Indices
+        public IList<int> ListIndices
         {
             get { return this.indices; }
         }
