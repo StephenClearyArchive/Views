@@ -214,25 +214,6 @@ namespace Views
         /// <returns>The projected view.</returns>
         public static IView<TResult> Zip<TSource0, TSource1, TResult>(this IView<TSource0> source0, IView<TSource1> source1, Func<TSource0, TSource1, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1>> write = null)
         {
-            return Zip<TSource0, TSource1, TResult>(
-                source0, source1,
-                (read == null) ? (Func<TSource0, TSource1, int, TResult>)null : (item0, item1, _) => read(item0, item1),
-                (write == null) ? (Func<TResult, int, Tuple<TSource0, TSource1>>)null : (item, _) => write(item));
-        }
-
-        /// <summary>
-        /// Creates a projected view of two views.
-        /// </summary>
-        /// <typeparam name="TSource0">The type of element observed by the first source view.</typeparam>
-        /// <typeparam name="TSource1">The type of element observed by the second source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source0">The first source view.</param>
-        /// <param name="source1">The second source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
-        /// <returns>The projected view.</returns>
-        public static IView<TResult> Zip<TSource0, TSource1, TResult>(this IView<TSource0> source0, IView<TSource1> source1, Func<TSource0, TSource1, int, TResult> read = null, Func<TResult, int, Tuple<TSource0, TSource1>> write = null)
-        {
             return new Util.ProjectionList<TSource0, TSource1, TResult>(source0 as IList<TSource0>, source1 as IList<TSource1>, read, write);
         }
 
@@ -250,27 +231,6 @@ namespace Views
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
         public static IView<TResult> Zip<TSource0, TSource1, TSource2, TResult>(this IView<TSource0> source0, IView<TSource1> source1, IView<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1, TSource2>> write = null)
-        {
-            return Zip<TSource0, TSource1, TSource2, TResult>(
-                source0, source1, source2,
-                (read == null) ? (Func<TSource0, TSource1, TSource2, int, TResult>)null : (item0, item1, item2, _) => read(item0, item1, item2),
-                (write == null) ? (Func<TResult, int, Tuple<TSource0, TSource1, TSource2>>)null : (item, _) => write(item));
-        }
-
-        /// <summary>
-        /// Creates a projected view of three views.
-        /// </summary>
-        /// <typeparam name="TSource0">The type of element observed by the first source view.</typeparam>
-        /// <typeparam name="TSource1">The type of element observed by the second source view.</typeparam>
-        /// <typeparam name="TSource2">The type of element observed by the third source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source0">The first source view.</param>
-        /// <param name="source1">The second source view.</param>
-        /// <param name="source2">The third source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
-        /// <returns>The projected view.</returns>
-        public static IView<TResult> Zip<TSource0, TSource1, TSource2, TResult>(this IView<TSource0> source0, IView<TSource1> source1, IView<TSource2> source2, Func<TSource0, TSource1, TSource2, int, TResult> read = null, Func<TResult, int, Tuple<TSource0, TSource1, TSource2>> write = null)
         {
             return new Util.ProjectionList<TSource0, TSource1, TSource2, TResult>(source0 as IList<TSource0>, source1 as IList<TSource1>, source2 as IList<TSource2>, read, write);
         }
@@ -310,23 +270,6 @@ namespace Views
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
         public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
-        {
-            return Map<TSource, TResult>(
-                source,
-                (read == null) ? (Func<TSource, int, TResult>)null : (item, _) => read(item),
-                (write == null) ? (Func<TResult, int, TSource>)null : (item, _) => write(item));
-        }
-
-        /// <summary>
-        /// Creates a projected view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
-        /// <returns>The projected view.</returns>
-        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, int, TResult> read = null, Func<TResult, int, TSource> write = null)
         {
             return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
         }
