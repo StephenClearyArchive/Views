@@ -120,6 +120,18 @@ namespace Views.Linq
             }) as IOrderedView<T>;
         }
 
-        // TODO: Where, Join, GroupJoin, GroupBy.
+        /// <summary>
+        /// Creates a filtered view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Filter"/> instead).
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="predicate">The filter method to apply on the data.</param>
+        /// <returns>The filtered view.</returns>
+        public static IView<T> Where<T>(this IView<T> source, Func<T, bool> predicate)
+        {
+            return source.Filter(predicate);
+        }
+
+        // TODO: Join, GroupJoin, GroupBy.
     }
 }

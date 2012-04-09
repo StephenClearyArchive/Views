@@ -49,6 +49,9 @@
     <Compile Include="Util\CollectionChangedListener.cs" />
     <Compile Include="Util\CollectionChangedNotifier.cs" />
     <Compile Include="Util\ConcatList.cs" />
+    <Compile Include="Util\FilteredList.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Util\IndirectListBase.cs" />
     <Compile Include="Util\LayeredList.cs" />
     <Compile Include="Util\ProjectionList3.cs" />
