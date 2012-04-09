@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views
 {
@@ -19,6 +20,10 @@ namespace Views
         /// <returns>The index of the first element in a view that matches the condition, or -1 if no matching elements are found.</returns>
         public static int FirstIndex<T>(this IView<T> view, Func<T, bool> predicate)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             var list = view as IList<T>;
             var count = list.Count;
             for (int i = 0; i != count; ++i)
@@ -39,6 +44,10 @@ namespace Views
         /// <returns>The index of the last element in a view that matches a condition, or -1 if no matching elements are found.</returns>
         public static int LastIndex<T>(this IView<T> view, Func<T, bool> predicate)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             var list = view as IList<T>;
             var count = list.Count;
             for (int i = count - 1; i >= 0; --i)
@@ -59,6 +68,10 @@ namespace Views
         /// <returns>The index of the only element in a view that matches the condition, or -1 if no matching elements are found.</returns>
         public static int SingleIndex<T>(this IView<T> view, Func<T, bool> predicate)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             var list = view as IList<T>;
             var count = list.Count;
             int ret = -1;
@@ -85,6 +98,9 @@ namespace Views
         /// <returns>The index of the largest element in the view.</returns>
         public static int MaxIndex<T>(this IView<T> view, IComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             comparer = comparer ?? Comparer<T>.Default;
             var list = view as IList<T>;
             var count = list.Count;
@@ -114,6 +130,9 @@ namespace Views
         /// <returns>The index of the smallest element in the view.</returns>
         public static int MinIndex<T>(this IView<T> view, IComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             comparer = comparer ?? Comparer<T>.Default;
             return view.MaxIndex(new Util.AnonymousComparer<T> { Compare = (x, y) => comparer.Compare(y, x) });
         }
@@ -128,6 +147,9 @@ namespace Views
         /// <returns>The index of the first matching element in a view, or -1 if no matching elements are found.</returns>
         public static int FirstIndexOf<T>(this IView<T> view, T item, IEqualityComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             comparer = comparer ?? EqualityComparer<T>.Default;
             return view.FirstIndex(x => comparer.Equals(item, x));
         }
@@ -142,6 +164,9 @@ namespace Views
         /// <returns>The index of the last matching element in a view, or -1 if no matching elements are found.</returns>
         public static int LastIndexOf<T>(this IView<T> view, T item, IEqualityComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < (view as IList<T>).Count));
             comparer = comparer ?? EqualityComparer<T>.Default;
             return view.LastIndex(x => comparer.Equals(item, x));
         }
@@ -156,6 +181,8 @@ namespace Views
         /// <returns>The index of <paramref name="item"/> if it was in the view; otherwise, the bitwise complement of the next larger element in the view.</returns>
         public static int BinarySearch<T>(this IView<T> view, T item, IComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
             comparer = comparer ?? Comparer<T>.Default;
             return view.BinarySearch(x => comparer.Compare(item, x));
         }
@@ -169,6 +196,9 @@ namespace Views
         /// <returns>The index of an item that causes <paramref name="finder"/> to return 0, if any; otherwise, the bitwise complement of the next larger element in the view.</returns>
         public static int BinarySearch<T>(this IView<T> view, Func<T, int> finder)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(finder != null);
             var list = view as IList<T>;
             int begin = 0, end = list.Count;
             return BinarySearchCore(list, finder, ref begin, ref end);
@@ -184,6 +214,8 @@ namespace Views
         /// <returns>The index of the first occurence of <paramref name="item"/> if it was in the view; otherwise, the bitwise complement of the next larger element in the view.</returns>
         public static int LowerBound<T>(this IView<T> view, T item, IComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
             comparer = comparer ?? Comparer<T>.Default;
             return view.LowerBound(x => comparer.Compare(item, x));
         }
@@ -197,6 +229,9 @@ namespace Views
         /// <returns>The index of the first item that causes <paramref name="finder"/> to return 0, if any; otherwise, the bitwise complement of the next larger element in the view.</returns>
         public static int LowerBound<T>(this IView<T> view, Func<T, int> finder)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(finder != null);
             var list = view as IList<T>;
             int begin = 0, end = list.Count;
             int mid = BinarySearchCore(list, finder, ref begin, ref end);
@@ -219,6 +254,8 @@ namespace Views
         /// <returns>The index one past the last occurence of <paramref name="item"/> if it was in the view; otherwise, the bitwise complement of the next larger element in the view.</returns>
         public static int UpperBound<T>(this IView<T> view, T item, IComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
             comparer = comparer ?? Comparer<T>.Default;
             return view.UpperBound(x => comparer.Compare(item, x));
         }
@@ -232,6 +269,9 @@ namespace Views
         /// <returns>The index one past the last item that causes <paramref name="finder"/> to return 0, if any; otherwise, the bitwise complement of the index one past the last item that causes <paramref name="finder"/> to return a positive result.</returns>
         public static int UpperBound<T>(this IView<T> view, Func<T, int> finder)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(finder != null);
             var list = view as IList<T>;
             int begin = 0, end = list.Count;
             int mid = BinarySearchCore(list, finder, ref begin, ref end);
@@ -253,6 +293,11 @@ namespace Views
         /// <param name="comparer">The object used to compare items. Defaults to <c>null</c>. If this parameter is <c>null</c>, the default comparer is used.</param>
         public static Tuple<int, int> EqualRange<T>(this IView<T> view, T item, IComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<Tuple<int, int>>().Item1 >= 0 && Contract.Result<Tuple<int, int>>().Item1 <= (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<Tuple<int, int>>().Item2 >= 0 && Contract.Result<Tuple<int, int>>().Item2 <= (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<Tuple<int, int>>().Item1 <= Contract.Result<Tuple<int, int>>().Item2);
             comparer = comparer ?? Comparer<T>.Default;
             return view.EqualRange(x => comparer.Compare(item, x));
         }
@@ -265,6 +310,12 @@ namespace Views
         /// <param name="finder">The finder function to use to find the item. This function should return 0 for a match, a negative value (meaning "search lower") if its parameter is too large, or a positive value (meaning "search higher") if its parameter is too small.</param>
         public static Tuple<int, int> EqualRange<T>(this IView<T> view, Func<T, int> finder)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(finder != null);
+            Contract.Ensures(Contract.Result<Tuple<int, int>>().Item1 >= 0 && Contract.Result<Tuple<int, int>>().Item1 <= (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<Tuple<int, int>>().Item2 >= 0 && Contract.Result<Tuple<int, int>>().Item2 <= (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<Tuple<int, int>>().Item1 <= Contract.Result<Tuple<int, int>>().Item2);
             var list = view as IList<T>;
             var begin = 0;
             var end = list.Count;
@@ -290,9 +341,19 @@ namespace Views
         /// <returns>The index of an item that causes <paramref name="finder"/> to return 0, if any; otherwise, the bitwise complement of the next larger element in the list.</returns>
         private static int BinarySearchCore<T>(IList<T> list, Func<T, int> finder, ref int begin, ref int end)
         {
+            Contract.Requires(list != null);
+            Contract.Requires(finder != null);
+            Contract.Requires(begin >= 0 && begin <= list.Count);
+            Contract.Requires(end >= 0 && end <= list.Count);
+            Contract.Requires(begin <= end);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out begin) >= 0 && Contract.ValueAtReturn<int>(out begin) <= list.Count);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out end) >= 0 && Contract.ValueAtReturn<int>(out end) <= list.Count);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out begin) <= Contract.ValueAtReturn<int>(out end));
             while (begin != end)
             {
                 int mid = begin + ((end - begin) / 2);
+                Contract.Assert(mid >= begin);
+                Contract.Assert(mid < end);
                 int test = finder(list[mid]);
                 if (test == 0)
                 {
@@ -321,9 +382,18 @@ namespace Views
         /// <param name="end">The ending index at which to search. The item at this index must match.</param>
         private static void LowerBoundCore<T>(IList<T> list, Func<T, int> finder, ref int begin, int end)
         {
+            Contract.Requires(list != null);
+            Contract.Requires(finder != null);
+            Contract.Requires(begin >= 0 && begin <= list.Count);
+            Contract.Requires(end >= 0 && end <= list.Count);
+            Contract.Requires(begin <= end);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out begin) >= 0 && Contract.ValueAtReturn<int>(out begin) <= list.Count);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out begin) <= end);
             while (begin != end)
             {
                 int mid = begin + ((end - begin) / 2);
+                Contract.Assert(mid >= begin);
+                Contract.Assert(mid < end);
                 int test = finder(list[mid]);
                 if (test == 0)
                 {
@@ -331,6 +401,7 @@ namespace Views
                 }
                 else
                 {
+                    Contract.Assert(test > 0);
                     begin = mid + 1;
                 }
             }
@@ -346,9 +417,18 @@ namespace Views
         /// <param name="end">On input, contains the ending index at which to search. On output, contains the index one past the last matching item.</param>
         private static void UpperBoundCore<T>(IList<T> list, Func<T, int> finder, int begin, ref int end)
         {
+            Contract.Requires(list != null);
+            Contract.Requires(finder != null);
+            Contract.Requires(begin >= 0 && begin <= list.Count);
+            Contract.Requires(end >= 0 && end <= list.Count);
+            Contract.Requires(begin <= end);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out end) >= 0 && Contract.ValueAtReturn<int>(out end) <= list.Count);
+            Contract.Ensures(begin <= Contract.ValueAtReturn<int>(out end));
             while (begin != end)
             {
                 int mid = begin + ((end - begin) / 2);
+                Contract.Assert(mid >= begin);
+                Contract.Assert(mid < end);
                 int test = finder(list[mid]);
                 if (test == 0)
                 {
@@ -356,6 +436,7 @@ namespace Views
                 }
                 else
                 {
+                    Contract.Assert(test < 0);
                     end = mid;
                 }
             }

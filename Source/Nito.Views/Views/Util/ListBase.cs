@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -44,6 +45,7 @@ namespace Views.Util
         {
             get
             {
+                Contract.Ensures(Contract.Result<int>() >= 0);
                 return this.DoCount();
             }
         }
@@ -165,6 +167,12 @@ namespace Views.Util
             }
         }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.syncRoot != null);
+        }
+
         /// <summary>
         /// Creates a <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection. The return value may be <c>null</c>.
         /// </summary>
@@ -233,6 +241,11 @@ namespace Views.Util
             var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
             this.DoRemoveAt(index);
             notifier.Removed(index, oldItem);
+        }
+
+        void System.Collections.IList.RemoveAt(int index)
+        {
+            this.RemoveAt(index);
         }
 
         /// <summary>

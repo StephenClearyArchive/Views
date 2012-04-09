@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -67,6 +68,8 @@ namespace Views.Util
         /// <param name="responder">The callback object.</param>
         private CollectionChangedListener(INotifyCollectionChanged collection, IResponder responder)
         {
+            Contract.Requires(collection != null);
+            Contract.Requires(responder != null);
             this.collection = collection;
             this.subscription = new NotifyCollectionChangedEventHandler(this.CollectionChanged);
             this.responder = responder;
@@ -77,7 +80,11 @@ namespace Views.Util
         /// </summary>
         public INotifyCollectionChanged Collection
         {
-            get { return this.collection; }
+            get
+            {
+                Contract.Ensures(Contract.Result<INotifyCollectionChanged>() != null);
+                return this.collection;
+            }
         }
 
         /// <summary>
@@ -85,13 +92,25 @@ namespace Views.Util
         /// </summary>
         public NotifyCollectionChangedEventHandler Subscription
         {
-            get { return this.subscription; }
+            get
+            {
+                Contract.Ensures(Contract.Result<NotifyCollectionChangedEventHandler>() != null);
+                return this.subscription;
+            }
         }
 
         /// <summary>
         /// Gets or sets a value indicating whether the listener is paused.
         /// </summary>
         public bool Paused { get; set; }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.collection != null);
+            Contract.Invariant(this.subscription != null);
+            Contract.Invariant(this.responder != null);
+        }
 
         /// <summary>
         /// Handles the collection's <see cref="INotifyCollectionChanged.CollectionChanged"/> event.
@@ -132,6 +151,8 @@ namespace Views.Util
         /// <returns>A new <see cref="CollectionChangedListener{T}"/> or <c>null</c>.</returns>
         public static CollectionChangedListener<T> Create(object collection, IResponder responder)
         {
+            Contract.Requires(collection != null);
+            Contract.Requires(responder != null);
             var supportedCollection = collection as INotifyCollectionChanged;
             if (supportedCollection == null)
                 return null;
@@ -199,6 +220,7 @@ namespace Views.Util
             /// <param name="listener">The listener to resume. This may not be <c>null</c>.</param>
             public Resumer(CollectionChangedListener<T> listener)
             {
+                Contract.Requires(listener != null);
                 this.listener = listener;
             }
 

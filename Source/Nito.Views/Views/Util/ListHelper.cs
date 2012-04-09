@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -20,6 +21,7 @@ namespace Views.Util
         /// <exception cref="ArgumentException">The range [offset, offset + count) is not within the range [0, sourceLength).</exception>
         public static void CheckRangeArguments(int sourceLength, int offset, int count)
         {
+            Contract.Requires(sourceLength >= 0);
             if (offset < 0)
             {
                 throw new ArgumentOutOfRangeException("offset", "Invalid offset " + offset);
@@ -44,6 +46,7 @@ namespace Views.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is not a valid index to an existing element for the source.</exception>
         public static void CheckExistingIndexArgument(int sourceLength, int index)
         {
+            Contract.Requires(sourceLength >= 0);
             if (index < 0 || index >= sourceLength)
             {
                 throw new ArgumentOutOfRangeException("index", "Invalid existing index " + index + " for source length " + sourceLength);
@@ -58,6 +61,7 @@ namespace Views.Util
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="index"/> is not a valid index to an insertion point for the source.</exception>
         public static void CheckNewIndexArgument(int sourceLength, int index)
         {
+            Contract.Requires(sourceLength >= 0);
             if (index < 0 || index > sourceLength)
             {
                 throw new ArgumentOutOfRangeException("index", "Invalid new index " + index + " for source length " + sourceLength);
@@ -72,6 +76,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the specified collection itself may be updated, or <c>null</c> if it's not possible to know.</returns>
         public static bool? CanUpdateCollection<T>(ICollection<T> source)
         {
+            Contract.Requires(source != null);
             var list = source as System.Collections.IList;
             if (list != null)
                 return !list.IsFixedSize;
@@ -88,6 +93,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within the specified collection may be updated, or <c>null</c> if it's not possible to know.</returns>
         public static bool? CanUpdateElementValues<T>(ICollection<T> source)
         {
+            Contract.Requires(source != null);
             var list = source as System.Collections.IList;
             if (list != null)
                 return !list.IsReadOnly;
@@ -104,6 +110,8 @@ namespace Views.Util
         /// <returns>A value indicating whether all of the specified collections themselves may be updated, or <c>null</c> if it's not possible to know.</returns>
         public static bool? CanUpdateCollection<T>(IEnumerable<ICollection<T>> sources)
         {
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources, x => x != null));
             var results = sources.Select(CanUpdateCollection);
             if (results.Any(x => x == false))
                 return false;
@@ -120,6 +128,8 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within all of the specified collections may be updated, or <c>null</c> if it's not possible to know.</returns>
         public static bool? CanUpdateElementValues<T>(IEnumerable<ICollection<T>> sources)
         {
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources, x => x != null));
             var results = sources.Select(CanUpdateElementValues);
             if (results.Any(x => x == false))
                 return false;
@@ -136,6 +146,8 @@ namespace Views.Util
         /// <returns>A value indicating whether all of the specified collections themselves may be updated, or <c>null</c> if it's not possible to know.</returns>
         public static bool? CanUpdateCollection<T>(params ICollection<T>[] sources)
         {
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources, x => x != null));
             return CanUpdateCollection((IEnumerable<ICollection<T>>)sources);
         }
 
@@ -147,6 +159,8 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within all of the specified collections may be updated, or <c>null</c> if it's not possible to know.</returns>
         public static bool? CanUpdateElementValues<T>(params ICollection<T>[] sources)
         {
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources, x => x != null));
             return CanUpdateElementValues((IEnumerable<ICollection<T>>)sources);
         }
     }

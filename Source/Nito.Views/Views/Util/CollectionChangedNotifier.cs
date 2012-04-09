@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -51,6 +52,8 @@ namespace Views.Util
         /// <param name="propertyHandler">A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.</param>
         private CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
         {
+            Contract.Requires(sender != null);
+            Contract.Requires(collectionHandler != null || propertyHandler != null);
             this.sender = sender;
             this.collectionHandler = collectionHandler;
             this.propertyHandler = propertyHandler;
@@ -61,7 +64,11 @@ namespace Views.Util
         /// </summary>
         public object Sender
         {
-            get { return this.sender; }
+            get
+            {
+                Contract.Ensures(Contract.Result<object>() != null);
+                return this.sender;
+            }
         }
 
         /// <summary>
@@ -80,6 +87,13 @@ namespace Views.Util
             get { return this.propertyHandler; }
         }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.sender != null);
+            Contract.Invariant(this.collectionHandler != null || this.propertyHandler != null);
+        }
+
         /// <summary>
         /// Creates an instance of <see cref="CollectionChangedNotifier"/> class, or <c>null</c> if there are no event handlers.
         /// </summary>
@@ -89,6 +103,7 @@ namespace Views.Util
         /// <returns>An instance of <see cref="CollectionChangedNotifier"/> class, or <c>null</c> if there are no event handlers.</returns>
         public static CollectionChangedNotifier<T> Create(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
         {
+            Contract.Requires(sender != null);
             if (collectionHandler == null && propertyHandler == null)
                 return null;
             return new CollectionChangedNotifier<T>(sender, collectionHandler, propertyHandler);
