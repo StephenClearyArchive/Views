@@ -22,7 +22,7 @@ namespace Views.Util
         /// <param name="source">The source list.</param>
         /// <param name="indices">The redirected index values. If this is <c>null</c>, then a new list of indices is created matching the current source indices.</param>
         public IndirectList(IList<T> source, IList<int> indices = null)
-            : base(source, indices)
+            : base(source, indices ?? DefaultIndices(source))
         {
             this.indicesListener = CollectionChangedListener<int>.Create(this.indices, this);
         }
