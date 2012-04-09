@@ -14,17 +14,17 @@ namespace Views.Util
         /// <summary>
         /// The redirected index values.
         /// </summary>
-        protected readonly IList<int> indices;
+        protected IList<int> indices;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IndirectListBase&lt;T&gt;"/> class for the given source list, using the given redirected index values.
         /// </summary>
         /// <param name="source">The source list.</param>
-        /// <param name="indices">The redirected index values. If this is <c>null</c>, then a new list of indices is created matching the current source indices.</param>
-        public IndirectListBase(IList<T> source, IList<int> indices = null)
+        /// <param name="indices">The redirected index values.</param>
+        public IndirectListBase(IList<T> source, IList<int> indices)
             : base(source)
         {
-            this.indices = indices ?? DefaultIndices(source);
+            this.indices = indices;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace Views.Util
         /// </summary>
         /// <param name="source">The source list.</param>
         /// <returns>A new list of indices matching the specified source list.</returns>
-        private static List<int> DefaultIndices(IList<T> source)
+        protected static List<int> DefaultIndices(IList<T> source)
         {
             var list = new List<int>(source.Count);
             for (var i = 0; i != list.Count; ++i)

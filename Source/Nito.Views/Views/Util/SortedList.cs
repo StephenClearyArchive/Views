@@ -30,13 +30,25 @@ namespace Views.Util
             : base(source, null)
         {
             this.comparer = comparer ?? Comparer<T>.Default;
-            this.indexComparer = this.GetComparer(comparer);
-            ((List<int>)this.indices).Sort(this.indexComparer);
+            this.indexComparer = this.GetComparer(this.comparer);
+            this.ResetIndices();
         }
 
         IComparer<T> Linq.IOrderedView<T>.Comparer
         {
             get { return this.comparer; }
+        }
+
+        /// <summary>
+        /// Creates a new sorted list of redirected indices.
+        /// </summary>
+        /// <param name="source">The source list.</param>
+        /// <param name="indexComparer">The comparer used to indirectly compare source list elements.</param>
+        private void ResetIndices()
+        {
+            var newIndices = DefaultIndices(this.source);
+            this.indices = newIndices;
+            newIndices.Sort(indexComparer);
         }
 
         /// <summary>
@@ -118,23 +130,7 @@ namespace Views.Util
         /// </summary>
         protected override void SourceCollectionReset()
         {
-            var list = (List<int>)this.indices;
-            var count = this.source.Count;
-            if (count < list.Count)
-            {
-                list.Clear();
-                list.Capacity = count;
-                for (int i = 0; i != count; ++i)
-                    list.Add(i);
-            }
-            else if (count > list.Count)
-            {
-                list.Capacity = count;
-                for (int i = list.Count; i != count; ++i)
-                    list.Add(i);
-            }
-
-            list.Sort(this.indexComparer);
+            this.ResetIndices();
             this.CreateNotifier().Reset();
         }
 
