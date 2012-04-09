@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views
 {
@@ -18,6 +19,9 @@ namespace Views
         /// <returns>The number of elements in the view.</returns>
         public static int Count<T>(this IView<T> view)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<int>() >= 0);
             return (view as IList<T>).Count;
         }
 
@@ -30,6 +34,11 @@ namespace Views
         /// <returns>The source view.</returns>
         public static IView<T> CopyTo<T>(this IView<T> view, IView<T> destination)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(destination != null);
+            Contract.Requires(destination is IList<T>);
+            Contract.Ensures(Contract.Result<IView<T>>() == view);
             var list = view as IList<T>;
             var destinationList = destination as IList<T>;
             var count = list.Count;
@@ -48,6 +57,10 @@ namespace Views
         /// <returns><c>true</c> if every element in both views are equal; otherwise, <c>false</c>.</returns>
         public static bool SequenceEqual<T>(this IView<T> view, IView<T> other, IEqualityComparer<T> comparer = null)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(other != null);
+            Contract.Requires(other is IList<T>);
             var list = view as IList<T>;
             var otherList = other as IList<T>;
             if (list.Count != otherList.Count)
@@ -65,6 +78,9 @@ namespace Views
         /// <returns>The source view.</returns>
         public static IView<T> Clear<T>(this IView<T> view)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Ensures(Contract.Result<IView<T>>() == view);
             (view as IList<T>).Clear();
             return view;
         }
@@ -79,6 +95,11 @@ namespace Views
         /// <returns>The source view.</returns>
         public static IView<T> Insert<T>(this IView<T> view, int index, T item)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(index >= 0);
+            Contract.Requires(index <= (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<IView<T>>() == view);
             (view as IList<T>).Insert(index, item);
             return view;
         }
@@ -92,6 +113,11 @@ namespace Views
         /// <returns>The source view.</returns>
         public static IView<T> Remove<T>(this IView<T> view, int index)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(index >= 0);
+            Contract.Requires(index < (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<IView<T>>() == view);
             (view as IList<T>).RemoveAt(index);
             return view;
         }
@@ -106,6 +132,11 @@ namespace Views
         /// <returns>The source view.</returns>
         public static IView<T> SetItem<T>(this IView<T> view, int index, T item)
         {
+            Contract.Requires(view != null);
+            Contract.Requires(view is IList<T>);
+            Contract.Requires(index >= 0);
+            Contract.Requires(index < (view as IList<T>).Count);
+            Contract.Ensures(Contract.Result<IView<T>>() == view);
             (view as IList<T>)[index] = item;
             return view;
         }

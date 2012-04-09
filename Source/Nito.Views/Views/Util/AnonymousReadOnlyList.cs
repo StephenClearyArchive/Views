@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -27,6 +28,7 @@ namespace Views.Util
         /// <returns>The number of elements contained in this list.</returns>
         protected override int DoCount()
         {
+            Contract.Assert(this.Count != null);
             return this.Count();
         }
 
@@ -37,6 +39,7 @@ namespace Views.Util
         /// <returns>The element at the specified index.</returns>
         protected override T DoGetItem(int index)
         {
+            Contract.Assert(this.GetItem != null);
             return this.GetItem(index);
         }
     }

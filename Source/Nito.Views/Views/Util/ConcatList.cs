@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -34,8 +35,17 @@ namespace Views.Util
             /// <param name="source">The source collection.</param>
             public SourceChangeResponder(ConcatList<T> parent, IList<T> source)
             {
+                Contract.Requires(parent != null);
+                Contract.Requires(source != null);
                 this.parent = parent;
                 this.source = source;
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.parent != null);
+                Contract.Invariant(this.source != null);
             }
 
             void CollectionChangedListener<T>.IResponder.Added(int index, T item)
@@ -80,6 +90,8 @@ namespace Views.Util
         /// <param name="sources">The source lists to concatenate.</param>
         public ConcatList(IEnumerable<IList<T>> sources)
         {
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources, x => x != null));
             this.sources = sources;
             this.listener = CollectionChangedListener<IList<T>>.Create(sources, this);
             this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
@@ -92,6 +104,13 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.sources.Any(x => x.IsReadOnly); }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.sources != null);
+            Contract.Invariant(this.listeners != null);
         }
 
         /// <summary>
