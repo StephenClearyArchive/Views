@@ -331,6 +331,18 @@ namespace Views
             return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
         }
 
+        /// <summary>
+        /// Creates a filtered view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="filter">The filter method to apply on the data.</param>
+        /// <returns>The filtered view.</returns>
+        public static IView<T> Filter<T>(this IView<T> source, Func<T, bool> filter)
+        {
+            return new Util.FilteredList<T>(source as IList<T>, filter);
+        }
+
         // TODO: Randomize, TakeWhile/SkipWhile, Buffer (from Rx), Permutations.
     }
 }

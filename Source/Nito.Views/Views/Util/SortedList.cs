@@ -42,8 +42,6 @@ namespace Views.Util
         /// <summary>
         /// Creates a new sorted list of redirected indices.
         /// </summary>
-        /// <param name="source">The source list.</param>
-        /// <param name="indexComparer">The comparer used to indirectly compare source list elements.</param>
         private void ResetIndices()
         {
             var newIndices = DefaultIndices(this.source);
