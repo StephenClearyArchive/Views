@@ -54,7 +54,7 @@ namespace Views.Util
         /// A notification that the source collection has removed an item.
         /// </summary>
         /// <param name="index">The index of the removed item.</param>
-        /// <param name="oldItem">The item that was removed.</param>
+        /// <param name="item">The item that was removed.</param>
         protected override void SourceCollectionRemoved(int index, T item)
         {
             this.CreateNotifier().Reset();

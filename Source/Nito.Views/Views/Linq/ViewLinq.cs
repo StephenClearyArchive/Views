@@ -35,7 +35,7 @@ namespace Views.Linq
         }
 
         /// <summary>
-        /// Creates a projected, flattened view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map"/> and <see cref="ViewExtensions.Concat"/> instead).
+        /// Creates a projected, flattened view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map"/> and <see cref="O:ViewExtensions.Concat"/> instead).
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
         /// <typeparam name="TCollection">The type of element observed by the intermediate view.</typeparam>

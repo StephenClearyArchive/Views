@@ -27,16 +27,32 @@ namespace Views.Util
             this.repeatCount = repeatCount;
         }
 
+        /// <summary>
+        /// A notification that the source collection has added an item.
+        /// </summary>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
         protected override void SourceCollectionAdded(int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
+        /// <summary>
+        /// A notification that the source collection has removed an item.
+        /// </summary>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="item">The item that was removed.</param>
         protected override void SourceCollectionRemoved(int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
+        /// <summary>
+        /// A notification that the source collection has replaced an item.
+        /// </summary>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
         protected override void SourceCollectionReplaced(int index, T oldItem, T newItem)
         {
             this.CreateNotifier().Reset();

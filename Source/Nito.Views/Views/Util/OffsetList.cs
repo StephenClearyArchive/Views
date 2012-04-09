@@ -28,7 +28,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that the source collection has added an item. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has added an item.
         /// </summary>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
@@ -38,17 +38,17 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that the source collection has removed an item. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has removed an item.
         /// </summary>
         /// <param name="index">The index of the removed item.</param>
-        /// <param name="oldItem">The item that was removed.</param>
+        /// <param name="item">The item that was removed.</param>
         protected override void SourceCollectionRemoved(int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
         /// <summary>
-        /// A notification that the source collection has replaced an item. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has replaced an item.
         /// </summary>
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
@@ -59,7 +59,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="ICollection{T}.Add"/>, <see cref="ICollection{T}.Clear"/>, etc.
         /// </summary>
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
         protected override bool CanUpdateCollection()
@@ -118,7 +118,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Takes an index and applies a modulus so that it is in the range <c>[0, <paramref name="maxValueExclusive"/>)</c>.
+        /// Takes an index and applies a modulus so that it is in the range <c>[0, <see cref="ListBase{T}.Count"/>)</c>.
         /// </summary>
         /// <param name="index">The index to normalize.</param>
         /// <returns>The normalized index.</returns>

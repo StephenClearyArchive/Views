@@ -175,7 +175,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="ICollection{T}.Add"/>, <see cref="ICollection{T}.Clear"/>, etc.
         /// </summary>
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
         protected override bool CanUpdateCollection()
