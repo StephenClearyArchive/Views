@@ -115,7 +115,7 @@ namespace Views.Util
             var results = sources.Select(CanUpdateCollection);
             if (results.Any(x => x == false))
                 return false;
-            if (results.All(x => x == true))
+            if (results.Any() && results.All(x => x == true))
                 return true;
             return null;
         }
@@ -133,7 +133,7 @@ namespace Views.Util
             var results = sources.Select(CanUpdateElementValues);
             if (results.Any(x => x == false))
                 return false;
-            if (results.All(x => x == true))
+            if (results.Any() && results.All(x => x == true))
                 return true;
             return null;
         }
