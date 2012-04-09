@@ -15,7 +15,7 @@ namespace Views.Util
         /// <summary>
         /// The offset into the source list where this slice begins.
         /// </summary>
-        private readonly int offset;
+        private int offset;
 
         /// <summary>
         /// The number of objects in this slice.
@@ -55,10 +55,17 @@ namespace Views.Util
         /// <param name="item">The item that was added.</param>
         protected override void SourceCollectionAdded(int index, T item)
         {
-            if (index >= this.offset && index - this.offset <= this.count)
+            if (index >= this.offset)
             {
-                ++this.count;
-                this.CreateNotifier().Added(index + this.offset, item);
+                if (index - this.offset <= this.count)
+                {
+                    ++this.count;
+                    this.CreateNotifier().Added(index + this.offset, item);
+                }
+            }
+            else
+            {
+                ++this.offset;
             }
         }
 
@@ -69,10 +76,17 @@ namespace Views.Util
         /// <param name="item">The item that was removed.</param>
         protected override void SourceCollectionRemoved(int index, T item)
         {
-            if (index >= this.offset && index - this.offset < this.count)
+            if (index >= this.offset)
             {
-                --this.count;
-                this.CreateNotifier().Removed(index + this.offset, item);
+                if (index - this.offset < this.count)
+                {
+                    --this.count;
+                    this.CreateNotifier().Removed(index + this.offset, item);
+                }
+            }
+            else
+            {
+                --this.offset;
             }
         }
 
