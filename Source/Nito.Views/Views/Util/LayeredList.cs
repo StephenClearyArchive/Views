@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -29,6 +30,8 @@ namespace Views.Util
         public LayeredList(IList<T> source, IList<T> prioritySource)
             : base(source)
         {
+            Contract.Requires(source != null);
+            Contract.Requires(prioritySource != null);
             this.prioritySource = prioritySource;
             this.priorityListener = CollectionChangedListener<T>.Create(prioritySource, this);
         }
@@ -40,6 +43,12 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.source.IsReadOnly || this.prioritySource.IsReadOnly; }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.prioritySource != null);
         }
 
         void CollectionChangedListener<T>.IResponder.Added(int index, T item)

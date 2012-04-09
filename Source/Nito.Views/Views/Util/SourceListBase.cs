@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -28,6 +29,7 @@ namespace Views.Util
         /// <param name="source">The source list.</param>
         public SourceListBase(IList<T> source)
         {
+            Contract.Requires(source != null);
             this.source = source;
             this.listener = CollectionChangedListener<T>.Create(source, this);
         }
@@ -39,6 +41,12 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.source.IsReadOnly; }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.source != null);
         }
 
         void CollectionChangedListener<T>.IResponder.Added(int index, T item)

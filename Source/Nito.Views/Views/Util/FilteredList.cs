@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -24,8 +25,17 @@ namespace Views.Util
         public FilteredList(IList<T> source, Func<T, bool> filter)
             : base(source, null)
         {
+            Contract.Requires(source != null);
+            Contract.Requires(filter != null);
             this.filter = filter;
             this.ResetIndices();
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.filter != null);
+            Contract.Invariant(this.indices.Count <= this.source.Count);
         }
 
         /// <summary>

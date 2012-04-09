@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -40,6 +41,9 @@ namespace Views.Util
         /// <param name="reverseSelector">The projection function from result to source.</param>
         public ProjectionList(IList<TSource> source, Func<TSource, TResult> selector, Func<TResult, TSource> reverseSelector)
         {
+            Contract.Requires(source != null);
+            Contract.Requires(selector != null);
+            Contract.Requires(reverseSelector != null);
             this.source = source;
             this.selector = selector;
             this.reverseSelector = reverseSelector;
@@ -54,6 +58,14 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.source.IsReadOnly; }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.source != null);
+            Contract.Invariant(this.selector != null);
+            Contract.Invariant(this.reverseSelector != null);
         }
 
         void CollectionChangedListener<TSource>.IResponder.Added(int index, TSource item)

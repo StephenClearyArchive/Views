@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -18,6 +19,7 @@ namespace Views.Util
         public ReadOnlySourceListBase(IList<T> source)
             : base(source)
         {
+            Contract.Requires(source != null);
         }
 
         /// <summary>

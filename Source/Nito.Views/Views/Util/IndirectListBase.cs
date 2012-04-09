@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -20,11 +21,18 @@ namespace Views.Util
         /// Initializes a new instance of the <see cref="IndirectListBase&lt;T&gt;"/> class for the given source list, using the given redirected index values.
         /// </summary>
         /// <param name="source">The source list.</param>
-        /// <param name="indices">The redirected index values.</param>
+        /// <param name="indices">The redirected index values. This may be <c>null</c>, but the derived class constructor must initialize <see cref="indices"/> before it completes.</param>
         public IndirectListBase(IList<T> source, IList<int> indices)
             : base(source)
         {
+            Contract.Requires(source != null);
             this.indices = indices;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.indices != null);
         }
 
         /// <summary>
@@ -34,6 +42,8 @@ namespace Views.Util
         /// <returns>A new list of indices matching the specified source list.</returns>
         protected static List<int> DefaultIndices(IList<T> source)
         {
+            Contract.Requires(source != null);
+            Contract.Ensures(Contract.Result<List<int>>() != null);
             var list = new List<int>(source.Count);
             for (var i = 0; i != list.Count; ++i)
                 list[i] = i;
@@ -128,6 +138,7 @@ namespace Views.Util
         /// <returns>The indirect comparer.</returns>
         public IComparer<int> GetComparer(IComparer<T> comparer = null)
         {
+            Contract.Ensures(Contract.Result<IComparer<T>>() != null);
             comparer = comparer ?? Comparer<T>.Default;
             return new AnonymousComparer<int> { Compare = (x, y) => comparer.Compare(this[x], this[y]) };
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -24,8 +25,15 @@ namespace Views.Util
         public SortedList(IList<T> source, IComparer<T> comparer)
             : base(source, null)
         {
+            Contract.Requires(source != null);
             this.indexComparer = this.GetComparer(comparer);
             this.ResetIndices();
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.indexComparer != null);
         }
 
         /// <summary>

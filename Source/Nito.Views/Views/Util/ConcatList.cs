@@ -309,6 +309,9 @@ namespace Views.Util
         /// <param name="sourceIndex">On return, holds the source list index corresponding to the concatenated index.</param>
         private void FindExistingIndex(int concatIndex, out IList<T> source, out int sourceIndex)
         {
+            Contract.Requires(concatIndex >= 0 && concatIndex < this.Count);
+            Contract.Ensures(Contract.ValueAtReturn<IList<T>>(out source) != null);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out sourceIndex) >= 0 && Contract.ValueAtReturn<int>(out sourceIndex) < Contract.ValueAtReturn<IList<T>>(out source).Count);
             source = null;
             sourceIndex = concatIndex;
             foreach (var sourceList in this.sources)
@@ -331,6 +334,9 @@ namespace Views.Util
         /// <param name="sourceIndex">On return, holds the source list index corresponding to the concatenated index.</param>
         private void FindNewIndex(int concatIndex, out IList<T> source, out int sourceIndex)
         {
+            Contract.Requires(concatIndex >= 0 && concatIndex <= this.Count);
+            Contract.Ensures(Contract.ValueAtReturn<IList<T>>(out source) != null);
+            Contract.Ensures(Contract.ValueAtReturn<int>(out sourceIndex) >= 0 && Contract.ValueAtReturn<int>(out sourceIndex) <= Contract.ValueAtReturn<IList<T>>(out source).Count);
             source = null;
             sourceIndex = concatIndex;
             foreach (var sourceList in this.sources)
@@ -352,6 +358,8 @@ namespace Views.Util
         /// <returns>The base index for the specified source list.</returns>
         private int FindBaseIndex(IList<T> source)
         {
+            Contract.Requires(source != null);
+            Contract.Ensures(Contract.Result<int>() >= 0 && Contract.Result<int>() < this.Count);
             int ret = 0;
             foreach (var sourceList in this.sources)
             {

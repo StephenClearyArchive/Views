@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -31,7 +32,14 @@ namespace Views.Util
             /// <param name="parent">The parent list.</param>
             public SourceChangeResponder0(ProjectionList<TSource0, TSource1, TSource2, TResult> parent)
             {
+                Contract.Requires(parent != null);
                 this.parent = parent;
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.parent != null);
             }
 
             void CollectionChangedListener<TSource0>.IResponder.Added(int index, TSource0 item)
@@ -77,7 +85,14 @@ namespace Views.Util
             /// <param name="parent">The parent list.</param>
             public SourceChangeResponder1(ProjectionList<TSource0, TSource1, TSource2, TResult> parent)
             {
+                Contract.Requires(parent != null);
                 this.parent = parent;
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.parent != null);
             }
 
             void CollectionChangedListener<TSource1>.IResponder.Added(int index, TSource1 item)
@@ -123,7 +138,14 @@ namespace Views.Util
             /// <param name="parent">The parent list.</param>
             public SourceChangeResponder2(ProjectionList<TSource0, TSource1, TSource2, TResult> parent)
             {
+                Contract.Requires(parent != null);
                 this.parent = parent;
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.parent != null);
             }
 
             void CollectionChangedListener<TSource2>.IResponder.Added(int index, TSource2 item)
@@ -203,6 +225,11 @@ namespace Views.Util
         /// <param name="reverseSelector">The projection function from result to sources.</param>
         public ProjectionList(IList<TSource0> source0, IList<TSource1> source1, IList<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> selector, Func<TResult, Tuple<TSource0, TSource1, TSource2>> reverseSelector)
         {
+            Contract.Requires(source0 != null);
+            Contract.Requires(source1 != null);
+            Contract.Requires(source2 != null);
+            Contract.Requires(selector != null);
+            Contract.Requires(reverseSelector != null);
             this.source0 = source0;
             this.source1 = source1;
             this.source2 = source2;
@@ -221,6 +248,16 @@ namespace Views.Util
         public override bool IsReadOnly
         {
             get { return this.source0.IsReadOnly || this.source1.IsReadOnly || this.source2.IsReadOnly; }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.source0 != null);
+            Contract.Invariant(this.source1 != null);
+            Contract.Invariant(this.source2 != null);
+            Contract.Invariant(this.selector != null);
+            Contract.Invariant(this.reverseSelector != null);
         }
 
         /// <summary>

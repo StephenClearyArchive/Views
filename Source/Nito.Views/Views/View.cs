@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
 
-// TODO: check parameters in all source and linq methods.
 namespace Views
 {
     /// <summary>

@@ -224,6 +224,12 @@ namespace Views.Util
                 this.listener = listener;
             }
 
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.listener != null);
+            }
+
             /// <summary>
             /// Disposes the resumer, which resumes the listener (if it has not already done so).
             /// </summary>

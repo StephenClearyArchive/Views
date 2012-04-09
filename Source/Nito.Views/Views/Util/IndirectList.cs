@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -24,6 +25,7 @@ namespace Views.Util
         public IndirectList(IList<T> source, IList<int> indices = null)
             : base(source, indices ?? DefaultIndices(source))
         {
+            Contract.Requires(source != null);
             this.indicesListener = CollectionChangedListener<int>.Create(this.indices, this);
         }
 
@@ -32,7 +34,11 @@ namespace Views.Util
         /// </summary>
         public IList<T> SourceList
         {
-            get { return this.source; }
+            get
+            {
+                Contract.Ensures(Contract.Result<IList<T>>() != null);
+                return this.source;
+            }
         }
 
         /// <summary>
@@ -40,7 +46,11 @@ namespace Views.Util
         /// </summary>
         public IList<int> ListIndices
         {
-            get { return this.indices; }
+            get
+            {
+                Contract.Ensures(Contract.Result<IList<int>>() != null);
+                return this.indices;
+            }
         }
 
         void CollectionChangedListener<int>.IResponder.Added(int index, int item)
