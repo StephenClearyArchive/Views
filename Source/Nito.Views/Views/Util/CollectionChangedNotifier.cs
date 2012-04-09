@@ -25,183 +25,120 @@ namespace Views.Util
     }
     
     /// <summary>
-    /// A type that notifies listeners about collection changes. It is normal for instances of this class to be <c>null</c>.
+    /// A type that notifies listeners about collection changes.
     /// </summary>
-    public sealed class CollectionChangedNotifier<T>
+    public struct CollectionChangedNotifier<T>
     {
         /// <summary>
-        /// The instance that initiates the events.
+        /// The instance that initiates the events. If this is <c>null</c>, then there are no listeners.
         /// </summary>
-        private readonly object sender;
+        private object sender;
 
         /// <summary>
         /// A snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.
         /// </summary>
-        private readonly NotifyCollectionChangedEventHandler collectionHandler;
+        private NotifyCollectionChangedEventHandler collectionHandler;
 
         /// <summary>
         /// A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.
         /// </summary>
-        private readonly PropertyChangedEventHandler propertyHandler;
+        private PropertyChangedEventHandler propertyHandler;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CollectionChangedNotifier"/> class.
-        /// </summary>
-        /// <param name="sender">The instance that initiates the events.</param>
-        /// <param name="collectionHandler">A snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.</param>
-        /// <param name="propertyHandler">A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.</param>
-        private CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
-        {
-            Contract.Requires(sender != null);
-            Contract.Requires(collectionHandler != null || propertyHandler != null);
-            this.sender = sender;
-            this.collectionHandler = collectionHandler;
-            this.propertyHandler = propertyHandler;
-        }
-
-        /// <summary>
-        /// Gets the instance that initiates the events.
-        /// </summary>
-        public object Sender
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<object>() != null);
-                return this.sender;
-            }
-        }
-
-        /// <summary>
-        /// Gets a snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.
-        /// </summary>
-        public NotifyCollectionChangedEventHandler CollectionHandler
-        {
-            get { return this.collectionHandler; }
-        }
-
-        /// <summary>
-        /// Gets a snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.
-        /// </summary>
-        public PropertyChangedEventHandler PropertyHandler
-        {
-            get { return this.propertyHandler; }
-        }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(this.sender != null);
-            Contract.Invariant(this.collectionHandler != null || this.propertyHandler != null);
-        }
-
-        /// <summary>
-        /// Creates an instance of <see cref="CollectionChangedNotifier"/> class, or <c>null</c> if there are no event handlers.
+        /// Initializes an instance of the <see cref="CollectionChangedNotifier"/> struct.
         /// </summary>
         /// <param name="sender">The instance that initiates the events.</param>
         /// <param name="collectionHandler">A snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.</param>
         /// <param name="propertyHandler">A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.</param>
         /// <returns>An instance of <see cref="CollectionChangedNotifier"/> class, or <c>null</c> if there are no event handlers.</returns>
-        public static CollectionChangedNotifier<T> Create(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
+        public CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
         {
             Contract.Requires(sender != null);
             if (collectionHandler == null && propertyHandler == null)
-                return null;
-            return new CollectionChangedNotifier<T>(sender, collectionHandler, propertyHandler);
+            {
+                this.sender = null;
+                this.collectionHandler = null;
+                this.propertyHandler = null;
+            }
+            else
+            {
+                this.sender = sender;
+                this.collectionHandler = collectionHandler;
+                this.propertyHandler = propertyHandler;
+            }
         }
-    }
 
-    /// <summary>
-    /// Provides extension methods for the <see cref="CollectionChangedNotifier"/> class. These methods work for <c>null</c> instances.
-    /// </summary>
-    public static class CollectionChangedNotifierExtensions
-    {
         /// <summary>
-        /// Returns a value indicating whether the processing code should capture original item values. This is <c>true</c> if <c>CollectionChanged</c> is not <c>null</c>.
+        /// Returns a value indicating whether the processing code should capture original item values.
         /// </summary>
-        /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <returns>A value indicating whether the processing code should capture original item values.</returns>
-        public static bool CaptureItems<T>(this CollectionChangedNotifier<T> notifier)
+        public bool CaptureItems()
         {
-            if (notifier == null)
-                return false;
-            if (notifier.CollectionHandler == null)
-                return false;
-            return true;
+            return (this.collectionHandler != null);
+        }
+
+        private void InvokePropertyHandler()
+        {
+            if (this.propertyHandler != null)
+            {
+                this.propertyHandler(this.sender, CollectionChangedNotifier.CountPropertyChangedEventArgs);
+                this.propertyHandler(this.sender, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
+            }
         }
 
         /// <summary>
         /// Notifies listeners that an item was added.
         /// </summary>
-        /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
-        public static void Added<T>(this CollectionChangedNotifier<T> notifier, int index, T item)
+        public void Added(int index, T item)
         {
-            if (notifier == null)
+            if (this.sender == null)
                 return;
-            if (notifier.CollectionHandler != null)
-                notifier.CollectionHandler(notifier.Sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
-            if (notifier.PropertyHandler != null)
-            {
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.CountPropertyChangedEventArgs);
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
-            }
+            if (this.collectionHandler != null)
+                this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
+            this.InvokePropertyHandler();
         }
 
         /// <summary>
         /// Notifies listeners that an item was removed.
         /// </summary>
-        /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <param name="index">The index of the removed item.</param>
         /// <param name="oldItem">The item that was removed.</param>
-        public static void Removed<T>(this CollectionChangedNotifier<T> notifier, int index, T oldItem)
+        public void Removed(int index, T oldItem)
         {
-            if (notifier == null)
+            if (this.sender == null)
                 return;
-            if (notifier.CollectionHandler != null)
-                notifier.CollectionHandler(notifier.Sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, index));
-            if (notifier.PropertyHandler != null)
-            {
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.CountPropertyChangedEventArgs);
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
-            }
+            if (this.collectionHandler != null)
+                this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, index));
+            this.InvokePropertyHandler();
         }
 
         /// <summary>
         /// Notifies listeners that an item was replaced with a new item.
         /// </summary>
-        /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
         /// <param name="newItem">The new item.</param>
-        public static void Replaced<T>(this CollectionChangedNotifier<T> notifier, int index, T oldItem, T newItem)
+        public void Replaced(int index, T oldItem, T newItem)
         {
-            if (notifier == null)
+            if (this.sender == null)
                 return;
-            if (notifier.CollectionHandler != null)
-                notifier.CollectionHandler(notifier.Sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, index));
-            if (notifier.PropertyHandler != null)
-            {
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.CountPropertyChangedEventArgs);
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
-            }
+            if (this.collectionHandler != null)
+                this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, index));
+            this.InvokePropertyHandler();
         }
 
         /// <summary>
         /// Notifies listeners that the entire collection has changed.
         /// </summary>
-        /// <param name="notifier">The notifier. This may be <c>null</c>.</param>
-        public static void Reset<T>(this CollectionChangedNotifier<T> notifier)
+        public void Reset()
         {
-            if (notifier == null)
+            if (this.sender == null)
                 return;
-            if (notifier.CollectionHandler != null)
-                notifier.CollectionHandler(notifier.Sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            if (notifier.PropertyHandler != null)
-            {
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.CountPropertyChangedEventArgs);
-                notifier.PropertyHandler(notifier.Sender, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
-            }
+            if (this.collectionHandler != null)
+                this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            this.InvokePropertyHandler();
         }
     }
 }

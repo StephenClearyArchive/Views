@@ -179,7 +179,7 @@ namespace Views.Util
         /// <returns>A <see cref="CollectionChangedNotifier"/> for notifying of changes to this collection.</returns>
         protected CollectionChangedNotifier<T> CreateNotifier()
         {
-            return CollectionChangedNotifier<T>.Create(this, this.collectionChanged, this.propertyChanged);
+            return new CollectionChangedNotifier<T>(this, this.collectionChanged, this.propertyChanged);
         }
 
         /// <summary>
