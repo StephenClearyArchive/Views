@@ -39,7 +39,7 @@ namespace Views
         /// Creates a new list containing the elements currently in the specified view.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="source">The source view.</param>
+        /// <param name="view">The source view.</param>
         /// <returns>A new list containing the elements currently in the specified view.</returns>
         public static List<T> ToList<T>(this IView<T> view)
         {
@@ -50,7 +50,7 @@ namespace Views
         /// Creates a new array containing the elements currently in the specified view.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="source">The source view.</param>
+        /// <param name="view">The source view.</param>
         /// <returns>A new array containing the elements currently in the specified view.</returns>
         public static T[] ToArray<T>(this IView<T> view)
         {

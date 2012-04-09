@@ -70,7 +70,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that there is at least one <see cref="CollectionChanged"/> or <see cref="PropertyChanged"/> subscription active. This implementation activates the source listener.
+        /// A notification that there is at least one <see cref="ListBase{T}.CollectionChanged"/> or <see cref="ListBase{T}.PropertyChanged"/> subscription active. This implementation activates the source listener.
         /// </summary>
         protected override void SubscriptionsActive()
         {
@@ -79,7 +79,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that there are no <see cref="CollectionChanged"/> nor <see cref="PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
+        /// A notification that there are no <see cref="ListBase{T}.CollectionChanged"/> nor <see cref="ListBase{T}.PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
         /// </summary>
         protected override void SubscriptionsInactive()
         {

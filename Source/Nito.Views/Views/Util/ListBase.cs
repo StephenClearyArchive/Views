@@ -14,7 +14,7 @@ namespace Views.Util
     public abstract class ListBase<T> : IList<T>, System.Collections.IList, IView<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         /// <summary>
-        /// Backing field for <see cref="ICollection.SyncRoot"/>.
+        /// Backing field for <see cref="System.Collections.ICollection.SyncRoot"/>.
         /// </summary>
         private readonly object syncRoot;
 

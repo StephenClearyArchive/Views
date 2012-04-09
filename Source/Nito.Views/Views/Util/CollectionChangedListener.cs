@@ -28,7 +28,7 @@ namespace Views.Util
             /// The collection removed an item.
             /// </summary>
             /// <param name="index">The index of the removed item.</param>
-            /// <param name="oldItem">The item that was removed.</param>
+            /// <param name="item">The item that was removed.</param>
             void Removed(int index, T item);
 
             /// <summary>
@@ -61,7 +61,7 @@ namespace Views.Util
         private readonly IResponder responder;
 
         /// <summary>
-        /// Creates a new instance of the <see cref="CollectionChangedListener"/> class. The instance is initially inactive.
+        /// Creates a new instance of the <see cref="CollectionChangedListener{T}"/> class. The instance is initially inactive.
         /// </summary>
         /// <param name="collection">The collection to monitor.</param>
         /// <param name="responder">The callback object.</param>
@@ -140,7 +140,7 @@ namespace Views.Util
     }
 
     /// <summary>
-    /// Provides extension methods for the <see cref="CollectionChangedListener"/> class. These methods work for <c>null</c> instances.
+    /// Provides extension methods for the <see cref="CollectionChangedListener{T}"/> class. These methods work for <c>null</c> instances.
     /// </summary>
     public static class CollectionChangedListenerExtensions
     {
@@ -194,7 +194,7 @@ namespace Views.Util
             private CollectionChangedListener<T> listener;
 
             /// <summary>
-            /// Creates a new instance of the <see cref="Resumer"/> class to resume the specified listener.
+            /// Creates a new instance of the <see cref="Resumer{T}"/> class to resume the specified listener.
             /// </summary>
             /// <param name="listener">The listener to resume. This may not be <c>null</c>.</param>
             public Resumer(CollectionChangedListener<T> listener)

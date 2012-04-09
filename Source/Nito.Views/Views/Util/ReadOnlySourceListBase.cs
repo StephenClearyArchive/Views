@@ -12,7 +12,7 @@ namespace Views.Util
     public abstract class ReadOnlySourceListBase<T> : SourceListBase<T>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ReadOnlySourceListBase"/> class over the specified list.
+        /// Initializes a new instance of the <see cref="ReadOnlySourceListBase{T}"/> class over the specified list.
         /// </summary>
         /// <param name="source">The source list.</param>
         public ReadOnlySourceListBase(IList<T> source)
@@ -30,7 +30,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="Add"/>, <see cref="Clear"/>, etc.
+        /// Returns a value indicating whether the collection itself may be updated, e.g., <see cref="ICollection{T}.Add"/>, <see cref="ICollection{T}.Clear"/>, etc.
         /// </summary>
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
         protected override bool CanUpdateCollection()

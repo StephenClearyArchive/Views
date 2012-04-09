@@ -26,7 +26,7 @@ namespace Views.Util
             private readonly ProjectionList<TSource0, TSource1, TSource2, TResult> parent;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="SourceChangeResponder"/> class.
+            /// Initializes a new instance of the <see cref="SourceChangeResponder0"/> class.
             /// </summary>
             /// <param name="parent">The parent list.</param>
             public SourceChangeResponder0(ProjectionList<TSource0, TSource1, TSource2, TResult> parent)
@@ -72,7 +72,7 @@ namespace Views.Util
             private readonly ProjectionList<TSource0, TSource1, TSource2, TResult> parent;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="SourceChangeResponder"/> class.
+            /// Initializes a new instance of the <see cref="SourceChangeResponder1"/> class.
             /// </summary>
             /// <param name="parent">The parent list.</param>
             public SourceChangeResponder1(ProjectionList<TSource0, TSource1, TSource2, TResult> parent)
@@ -118,7 +118,7 @@ namespace Views.Util
             private readonly ProjectionList<TSource0, TSource1, TSource2, TResult> parent;
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="SourceChangeResponder"/> class.
+            /// Initializes a new instance of the <see cref="SourceChangeResponder2"/> class.
             /// </summary>
             /// <param name="parent">The parent list.</param>
             public SourceChangeResponder2(ProjectionList<TSource0, TSource1, TSource2, TResult> parent)

@@ -37,7 +37,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that the source collection has added an item. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has added an item.
         /// </summary>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
@@ -51,10 +51,10 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that the source collection has removed an item. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has removed an item.
         /// </summary>
         /// <param name="index">The index of the removed item.</param>
-        /// <param name="oldItem">The item that was removed.</param>
+        /// <param name="item">The item that was removed.</param>
         protected override void SourceCollectionRemoved(int index, T item)
         {
             if (index >= this.offset && index - this.offset < this.count)
@@ -65,7 +65,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that the source collection has replaced an item. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has replaced an item.
         /// </summary>
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
