@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -21,7 +22,14 @@ namespace Views.Util
         /// <param name="disposables">The collection of disposable objects. Elements in this collection may be <c>null</c>.</param>
         public MultiDispose(IEnumerable<IDisposable> disposables)
         {
+            Contract.Requires(disposables != null);
             this.disposables = disposables;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.disposables != null);
         }
 
         /// <summary>

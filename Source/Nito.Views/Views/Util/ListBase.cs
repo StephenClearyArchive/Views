@@ -8,10 +8,46 @@ using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
+    [ContractClassFor(typeof(ListBase<>))]
+    internal abstract class ListBaseContracts<T> : ListBase<T>
+    {
+        protected override int DoCount()
+        {
+            Contract.Ensures(Contract.Result<int>() >= 0);
+            return 0;
+        }
+
+        protected override void DoClear()
+        {
+        }
+
+        protected override T DoGetItem(int index)
+        {
+            Contract.Requires(index >= 0 && index < this.Count);
+            return default(T);
+        }
+
+        protected override void DoSetItem(int index, T item)
+        {
+            Contract.Requires(index >= 0 && index < this.Count);
+        }
+
+        protected override void DoInsert(int index, T item)
+        {
+            Contract.Requires(index >= 0 && index <= this.Count);
+        }
+
+        protected override void DoRemoveAt(int index)
+        {
+            Contract.Requires(index >= 0 && index < this.Count);
+        }
+    }
+
     /// <summary>
     /// Provides common implementations of some list methods.
     /// </summary>
     /// <typeparam name="T">The type of element contained in the list.</typeparam>
+    [ContractClass(typeof(ListBaseContracts<>))]
     public abstract class ListBase<T> : IList<T>, System.Collections.IList, IView<T>, INotifyCollectionChanged, INotifyPropertyChanged
     {
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -24,12 +25,14 @@ namespace Views.Util
         public StepList(IList<T> source, int step)
             : base(source)
         {
-            if (step <= 0)
-            {
-                throw new ArgumentOutOfRangeException("step", "The step parameter must be greater than 0");
-            }
-
+            Contract.Requires(step > 0);
             this.step = step;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.step > 0);
         }
 
         /// <summary>

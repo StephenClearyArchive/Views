@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics.Contracts;
 
 namespace Views.Util
 {
@@ -30,10 +31,21 @@ namespace Views.Util
         public SliceList(IList<T> source, int offset, int count)
             : base(source)
         {
-            ListHelper.CheckRangeArguments(source.Count, offset, count);
+            Contract.Requires(source != null);
+            Contract.Requires(offset >= 0 && offset <= source.Count);
+            Contract.Requires(count <= source.Count);
+            Contract.Requires(offset <= source.Count - count);
 
             this.offset = offset;
             this.count = count;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(this.offset >= 0 && this.offset <= this.source.Count);
+            Contract.Invariant(this.count <= this.source.Count);
+            Contract.Invariant(this.offset <= this.source.Count - this.count);
         }
 
         /// <summary>
