@@ -51,8 +51,8 @@ namespace Views.Util
                 if (selector == null)
                     notifier.Reset();
                 else
-                    notifier.Replaced(index, selector(oldItem, this.parent.source1[index], this.parent.source2[index], index),
-                        selector(newItem, this.parent.source1[index], this.parent.source2[index], index));
+                    notifier.Replaced(index, selector(oldItem, this.parent.source1[index], this.parent.source2[index]),
+                        selector(newItem, this.parent.source1[index], this.parent.source2[index]));
             }
 
             void CollectionChangedListener<TSource0>.IResponder.Reset()
@@ -97,8 +97,8 @@ namespace Views.Util
                 if (selector == null)
                     notifier.Reset();
                 else
-                    notifier.Replaced(index, selector(this.parent.source0[index], oldItem, this.parent.source2[index], index),
-                        selector(this.parent.source0[index], newItem, this.parent.source2[index], index));
+                    notifier.Replaced(index, selector(this.parent.source0[index], oldItem, this.parent.source2[index]),
+                        selector(this.parent.source0[index], newItem, this.parent.source2[index]));
             }
 
             void CollectionChangedListener<TSource1>.IResponder.Reset()
@@ -143,8 +143,8 @@ namespace Views.Util
                 if (selector == null)
                     notifier.Reset();
                 else
-                    notifier.Replaced(index, selector(this.parent.source0[index], this.parent.source1[index], oldItem, index),
-                        selector(this.parent.source0[index], this.parent.source1[index], newItem, index));
+                    notifier.Replaced(index, selector(this.parent.source0[index], this.parent.source1[index], oldItem),
+                        selector(this.parent.source0[index], this.parent.source1[index], newItem));
             }
 
             void CollectionChangedListener<TSource2>.IResponder.Reset()
@@ -186,12 +186,12 @@ namespace Views.Util
         /// <summary>
         /// The projection function from sources to result.
         /// </summary>
-        private readonly Func<TSource0, TSource1, TSource2, int, TResult> selector;
+        private readonly Func<TSource0, TSource1, TSource2, TResult> selector;
 
         /// <summary>
         /// The projection function from result to source.
         /// </summary>
-        private readonly Func<TResult, int, Tuple<TSource0, TSource1, TSource2>> reverseSelector;
+        private readonly Func<TResult, Tuple<TSource0, TSource1, TSource2>> reverseSelector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectionList{TSource0,TSource1,TSource2,TResult}"/> class.
@@ -201,7 +201,7 @@ namespace Views.Util
         /// <param name="source2">Source list 2.</param>
         /// <param name="selector">The projection function from sources to result.</param>
         /// <param name="reverseSelector">The projection function from result to sources.</param>
-        public ProjectionList(IList<TSource0> source0, IList<TSource1> source1, IList<TSource2> source2, Func<TSource0, TSource1, TSource2, int, TResult> selector, Func<TResult, int, Tuple<TSource0, TSource1, TSource2>> reverseSelector)
+        public ProjectionList(IList<TSource0> source0, IList<TSource1> source1, IList<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> selector, Func<TResult, Tuple<TSource0, TSource1, TSource2>> reverseSelector)
         {
             this.source0 = source0;
             this.source1 = source1;
@@ -257,7 +257,7 @@ namespace Views.Util
             if (this.selector == null)
                 throw this.NotSupported();
 
-            return this.selector(this.source0[index], this.source1[index], this.source2[index], index);
+            return this.selector(this.source0[index], this.source1[index], this.source2[index]);
         }
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace Views.Util
             using (this.listener1.Pause())
             using (this.listener2.Pause())
             {
-                var items = this.reverseSelector(item, index);
+                var items = this.reverseSelector(item);
                 this.source0[index] = items.Item1;
                 this.source1[index] = items.Item2;
                 this.source2[index] = items.Item3;
@@ -295,7 +295,7 @@ namespace Views.Util
             using (this.listener1.Pause())
             using (this.listener2.Pause())
             {
-                var items = this.reverseSelector(item, index);
+                var items = this.reverseSelector(item);
                 this.source0.Insert(index, items.Item1);
                 this.source1.Insert(index, items.Item2);
                 this.source2.Insert(index, items.Item3);

@@ -50,7 +50,7 @@ namespace Views.Util
                 if (selector == null)
                     notifier.Reset();
                 else
-                    notifier.Replaced(index, selector(oldItem, this.parent.source1[index], index), selector(newItem, this.parent.source1[index], index));
+                    notifier.Replaced(index, selector(oldItem, this.parent.source1[index]), selector(newItem, this.parent.source1[index]));
             }
 
             void CollectionChangedListener<TSource0>.IResponder.Reset()
@@ -95,7 +95,7 @@ namespace Views.Util
                 if (selector == null)
                     notifier.Reset();
                 else
-                    notifier.Replaced(index, selector(this.parent.source0[index], oldItem, index), selector(this.parent.source0[index], newItem, index));
+                    notifier.Replaced(index, selector(this.parent.source0[index], oldItem), selector(this.parent.source0[index], newItem));
             }
 
             void CollectionChangedListener<TSource1>.IResponder.Reset()
@@ -127,12 +127,12 @@ namespace Views.Util
         /// <summary>
         /// The projection function from sources to result.
         /// </summary>
-        private readonly Func<TSource0, TSource1, int, TResult> selector;
+        private readonly Func<TSource0, TSource1, TResult> selector;
 
         /// <summary>
         /// The projection function from result to source.
         /// </summary>
-        private readonly Func<TResult, int, Tuple<TSource0, TSource1>> reverseSelector;
+        private readonly Func<TResult, Tuple<TSource0, TSource1>> reverseSelector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectionList{TSource0,TSource1,TResult}"/> class.
@@ -141,7 +141,7 @@ namespace Views.Util
         /// <param name="source1">Source list 1.</param>
         /// <param name="selector">The projection function from sources to result.</param>
         /// <param name="reverseSelector">The projection function from result to sources.</param>
-        public ProjectionList(IList<TSource0> source0, IList<TSource1> source1, Func<TSource0, TSource1, int, TResult> selector, Func<TResult, int, Tuple<TSource0, TSource1>> reverseSelector)
+        public ProjectionList(IList<TSource0> source0, IList<TSource1> source1, Func<TSource0, TSource1, TResult> selector, Func<TResult, Tuple<TSource0, TSource1>> reverseSelector)
         {
             this.source0 = source0;
             this.source1 = source1;
@@ -193,7 +193,7 @@ namespace Views.Util
             if (this.selector == null)
                 throw this.NotSupported();
 
-            return this.selector(this.source0[index], this.source1[index], index);
+            return this.selector(this.source0[index], this.source1[index]);
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace Views.Util
             using (this.listener0.Pause())
             using (this.listener1.Pause())
             {
-                var items = this.reverseSelector(item, index);
+                var items = this.reverseSelector(item);
                 this.source0[index] = items.Item1;
                 this.source1[index] = items.Item2;
             }
@@ -228,7 +228,7 @@ namespace Views.Util
             using (this.listener0.Pause())
             using (this.listener1.Pause())
             {
-                var items = this.reverseSelector(item, index);
+                var items = this.reverseSelector(item);
                 this.source0.Insert(index, items.Item1);
                 this.source1.Insert(index, items.Item2);
             }

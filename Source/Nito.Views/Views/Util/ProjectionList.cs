@@ -25,12 +25,12 @@ namespace Views.Util
         /// <summary>
         /// The projection function from source to result.
         /// </summary>
-        private readonly Func<TSource, int, TResult> selector;
+        private readonly Func<TSource, TResult> selector;
 
         /// <summary>
         /// The projection function from result to source.
         /// </summary>
-        private readonly Func<TResult, int, TSource> reverseSelector;
+        private readonly Func<TResult, TSource> reverseSelector;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectionList{TSource,TResult}"/> class.
@@ -38,7 +38,7 @@ namespace Views.Util
         /// <param name="source">The source list.</param>
         /// <param name="selector">The projection function from source to result.</param>
         /// <param name="reverseSelector">The projection function from result to source.</param>
-        public ProjectionList(IList<TSource> source, Func<TSource, int, TResult> selector, Func<TResult, int, TSource> reverseSelector)
+        public ProjectionList(IList<TSource> source, Func<TSource, TResult> selector, Func<TResult, TSource> reverseSelector)
         {
             this.source = source;
             this.selector = selector;
@@ -62,7 +62,7 @@ namespace Views.Util
             if (this.selector == null)
                 notifier.Reset();
             else
-                notifier.Added(index, this.selector(item, index));
+                notifier.Added(index, this.selector(item));
         }
 
         void CollectionChangedListener<TSource>.IResponder.Removed(int index, TSource item)
@@ -71,7 +71,7 @@ namespace Views.Util
             if (this.selector == null)
                 notifier.Reset();
             else
-                notifier.Removed(index, this.selector(item, index));
+                notifier.Removed(index, this.selector(item));
         }
 
         void CollectionChangedListener<TSource>.IResponder.Replaced(int index, TSource oldItem, TSource newItem)
@@ -80,7 +80,7 @@ namespace Views.Util
             if (this.selector == null)
                 notifier.Reset();
             else
-                notifier.Replaced(index, this.selector(oldItem, index), this.selector(newItem, index));
+                notifier.Replaced(index, this.selector(oldItem), this.selector(newItem));
         }
 
         void CollectionChangedListener<TSource>.IResponder.Reset()
@@ -118,7 +118,7 @@ namespace Views.Util
             if (this.selector == null)
                 throw this.NotSupported();
 
-            return this.selector(this.source[index], index);
+            return this.selector(this.source[index]);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Views.Util
 
             using (this.listener.Pause())
             {
-                this.source[index] = this.reverseSelector(item, index);
+                this.source[index] = this.reverseSelector(item);
             }
         }
 
@@ -149,7 +149,7 @@ namespace Views.Util
 
             using (this.listener.Pause())
             {
-                this.source.Insert(index, this.reverseSelector(item, index));
+                this.source.Insert(index, this.reverseSelector(item));
             }
         }
 
