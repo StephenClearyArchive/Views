@@ -180,9 +180,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
         protected override bool CanUpdateCollection()
         {
-            if (this.sources.OfType<System.Collections.IList>().Any(list => list.IsFixedSize))
-                return false;
-            return !this.IsReadOnly;
+            return ListHelper.CanUpdateCollection(this.sources) ?? false;
         }
 
         /// <summary>
@@ -191,9 +189,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
         protected override bool CanUpdateElementValues()
         {
-            if (this.sources.OfType<System.Collections.IList>().Any(list => list.IsReadOnly))
-                return false;
-            return !this.IsReadOnly;
+            return ListHelper.CanUpdateElementValues(this.sources) ?? false;
         }
 
         /// <summary>

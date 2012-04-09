@@ -122,10 +122,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the collection itself may be updated.</returns>
         protected override bool CanUpdateCollection()
         {
-            var list = this.source as System.Collections.IList;
-            if (list != null)
-                return !list.IsFixedSize;
-            return !this.source.IsReadOnly;
+            return ListHelper.CanUpdateCollection(this.source) ?? false;
         }
 
         /// <summary>
@@ -134,10 +131,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
         protected override bool CanUpdateElementValues()
         {
-            var list = this.source as System.Collections.IList;
-            if (list != null)
-                return !list.IsReadOnly;
-            return !this.source.IsReadOnly;
+            return ListHelper.CanUpdateElementValues(this.source) ?? false;
         }
 
         /// <summary>

@@ -118,13 +118,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
         protected override bool CanUpdateElementValues()
         {
-            var list = this.source as System.Collections.IList;
-            var priorityList = this.prioritySource as System.Collections.IList;
-            if (list != null && list.IsReadOnly)
-                return false;
-            if (priorityList != null && priorityList.IsReadOnly)
-                return false;
-            return !this.IsReadOnly;
+            return ListHelper.CanUpdateElementValues(this.source, this.prioritySource) ?? false;
         }
 
         /// <summary>
