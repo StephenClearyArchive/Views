@@ -60,7 +60,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> OrderBy<T, TKey>(this IView<T> source, Func<T, TKey> selector)
         {
-            return source.Sort(new Util.AnonymousComparer<T> { Compare = (x, y) => Comparer<TKey>.Default.Compare(selector(x), selector(y)) }) as IOrderedView<T>;
+            return new OrderedView<T>(source as IList<T>, new Util.AnonymousComparer<T> { Compare = (x, y) => Comparer<TKey>.Default.Compare(selector(x), selector(y)) });
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> OrderByDescending<T, TKey>(this IView<T> source, Func<T, TKey> selector)
         {
-            return source.Sort(new Util.AnonymousComparer<T> { Compare = (x, y) => Comparer<TKey>.Default.Compare(selector(y), selector(x)) }) as IOrderedView<T>;
+            return new OrderedView<T>(source as IList<T>, new Util.AnonymousComparer<T> { Compare = (x, y) => Comparer<TKey>.Default.Compare(selector(y), selector(x)) });
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> ThenBy<T, TKey>(this IOrderedView<T> source, Func<T, TKey> selector)
         {
-            return source.Sort(new Util.AnonymousComparer<T>
+            return new OrderedView<T>(source as IList<T>, new Util.AnonymousComparer<T>
             {
                 Compare = (x, y) =>
                 {
@@ -95,7 +95,7 @@ namespace Views.Linq
                         return primarySortResult;
                     return Comparer<TKey>.Default.Compare(selector(x), selector(y));
                 }
-            }) as IOrderedView<T>;
+            });
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> ThenByDescending<T, TKey>(this IOrderedView<T> source, Func<T, TKey> selector)
         {
-            return source.Sort(new Util.AnonymousComparer<T>
+            return new OrderedView<T>(source as IList<T>, new Util.AnonymousComparer<T>
             {
                 Compare = (x, y) =>
                 {
@@ -117,7 +117,7 @@ namespace Views.Linq
                         return primarySortResult;
                     return Comparer<TKey>.Default.Compare(selector(y), selector(x));
                 }
-            }) as IOrderedView<T>;
+            });
         }
 
         /// <summary>

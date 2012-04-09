@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="IView.cs" />
     <Compile Include="Linq\IView.cs" />
+    <Compile Include="Linq\OrderedView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\AnonymousComparer.cs" />
     <Compile Include="Util\AnonymousReadOnlyList.cs" />
