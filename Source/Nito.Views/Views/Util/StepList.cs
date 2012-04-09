@@ -54,7 +54,7 @@ namespace Views.Util
         /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
         protected override bool CanUpdateElementValues()
         {
-            return true;
+            return ListHelper.CanUpdateElementValues(this.source) ?? false;
         }
 
         /// <summary>
