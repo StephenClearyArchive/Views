@@ -101,14 +101,20 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Pauses all notification listeners for source collections. Returns a disposable that will resume the listeners when disposed.
+        /// </summary>
+        /// <returns>A disposable that will resume the listeners when disposed.</returns>
+        protected override IDisposable PauseListeners()
+        {
+            return base.PauseListeners();
+        }
+
+        /// <summary>
         /// Removes all elements from the list.
         /// </summary>
         protected override void DoClear()
         {
-            using (this.listener.Pause())
-            {
-                this.source.Clear();
-            }
+            this.source.Clear();
         }
 
         /// <summary>
@@ -143,10 +149,7 @@ namespace Views.Util
             if (this.reverseSelector == null)
                 throw this.NotSupported();
 
-            using (this.listener.Pause())
-            {
-                this.source[index] = this.reverseSelector(item);
-            }
+            this.source[index] = this.reverseSelector(item);
         }
 
         /// <summary>
@@ -159,10 +162,7 @@ namespace Views.Util
             if (this.reverseSelector == null)
                 throw this.NotSupported();
 
-            using (this.listener.Pause())
-            {
-                this.source.Insert(index, this.reverseSelector(item));
-            }
+            this.source.Insert(index, this.reverseSelector(item));
         }
 
         /// <summary>
@@ -171,10 +171,7 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            using (this.listener.Pause())
-            {
-                this.source.RemoveAt(index);
-            }
+            this.source.RemoveAt(index);
         }
     }
 }

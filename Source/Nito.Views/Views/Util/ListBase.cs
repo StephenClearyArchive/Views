@@ -138,7 +138,10 @@ namespace Views.Util
                 ListHelper.CheckExistingIndexArgument(this.Count, index);
                 var notifier = this.CreateNotifier();
                 var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
-                this.DoSetItem(index, value);
+                using (this.PauseListeners())
+                {
+                    this.DoSetItem(index, value);
+                }
                 notifier.Replaced(index, oldItem, value);
             }
         }
@@ -246,7 +249,10 @@ namespace Views.Util
         public virtual void Insert(int index, T item)
         {
             ListHelper.CheckNewIndexArgument(this.Count, index);
-            this.DoInsert(index, item);
+            using (this.PauseListeners())
+            {
+                this.DoInsert(index, item);
+            }
             this.CreateNotifier().Added(index, item);
         }
 
@@ -275,7 +281,10 @@ namespace Views.Util
             ListHelper.CheckExistingIndexArgument(this.Count, index);
             var notifier = this.CreateNotifier();
             var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
-            this.DoRemoveAt(index);
+            using (this.PauseListeners())
+            {
+                this.DoRemoveAt(index);
+            }
             notifier.Removed(index, oldItem);
         }
 
@@ -292,7 +301,10 @@ namespace Views.Util
         /// </exception>
         public virtual void Clear()
         {
-            this.DoClear();
+            using (this.PauseListeners())
+            {
+                this.DoClear();
+            }
             this.CreateNotifier().Reset();
         }
 
@@ -333,7 +345,10 @@ namespace Views.Util
         public virtual void Add(T item)
         {
             var index = this.Count;
-            this.DoInsert(index, item);
+            using (this.PauseListeners())
+            {
+                this.DoInsert(index, item);
+            }
             this.CreateNotifier().Added(index, item);
         }
 
@@ -443,7 +458,10 @@ namespace Views.Util
 
             var notifier = this.CreateNotifier();
             var oldItem = notifier.CaptureItems() ? this.DoGetItem(index) : default(T);
-            this.DoRemoveAt(index);
+            using (this.PauseListeners())
+            {
+                this.DoRemoveAt(index);
+            }
             notifier.Removed(index, oldItem);
             return true;
         }
@@ -538,6 +556,15 @@ namespace Views.Util
         protected virtual bool CanUpdateElementValues()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Pauses all notification listeners for source collections. Returns a disposable that will resume the listeners when disposed.
+        /// </summary>
+        /// <returns>A disposable that will resume the listeners when disposed.</returns>
+        protected virtual IDisposable PauseListeners()
+        {
+            return null;
         }
 
         /// <summary>
