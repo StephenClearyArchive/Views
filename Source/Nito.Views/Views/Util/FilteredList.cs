@@ -62,7 +62,7 @@ namespace Views.Util
         protected override void SourceCollectionAdded(int index, T item)
         {
             // Update our existing indexes.
-            var newIndex = this.indices.View().BinarySearch(index);
+            var newIndex = (this.indices as List<int>).BinarySearch(index);
             if (newIndex < 0)
                 newIndex = ~newIndex;
             for (int i = newIndex; i != this.indices.Count; ++i)
@@ -87,7 +87,7 @@ namespace Views.Util
         protected override void SourceCollectionRemoved(int index, T item)
         {
             // Update our existing indexes.
-            var removedIndex = this.indices.View().BinarySearch(index);
+            var removedIndex = (this.indices as List<int>).BinarySearch(index);
             var start = (removedIndex < 0) ? ~removedIndex : removedIndex;
             for (int i = start; i != this.indices.Count; ++i)
                 --this.indices[i];
@@ -120,7 +120,7 @@ namespace Views.Util
                     return;
 
                 // Act like this is an insertion.
-                var newIndex = ~this.indices.View().BinarySearch(index);
+                var newIndex = ~(this.indices as List<int>).BinarySearch(index);
                 this.indices.Insert(newIndex, index);
 
                 // Notify our listeners that the item was added.
@@ -131,13 +131,13 @@ namespace Views.Util
                 if (newItemPassesFilter)
                 {
                     // This is an actual replacement.
-                    var replacedIndex = this.indices.View().BinarySearch(index);
+                    var replacedIndex = (this.indices as List<int>).BinarySearch(index);
                     this.CreateNotifier().Replaced(replacedIndex, oldItem, newItem);
                 }
                 else
                 {
                     // Act like this is a removal.
-                    var removedIndex = this.indices.View().BinarySearch(index);
+                    var removedIndex = (this.indices as List<int>).BinarySearch(index);
                     this.indices.RemoveAt(removedIndex);
 
                     // Notify our listeners that the item was removed.
