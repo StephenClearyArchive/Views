@@ -61,7 +61,7 @@ namespace Views.Util
             }
 
             // Find where the new item belongs in our sorted view.
-            var newIndex = this.indices.View().BinarySearch(index, this.indexComparer);
+            var newIndex = (this.indices as List<int>).BinarySearch(index, this.indexComparer);
             if (newIndex < 0)
                 newIndex = ~newIndex;
 
@@ -108,7 +108,7 @@ namespace Views.Util
             // Note that the other source indices do not change, so this code is simpler than an *actual* element removal and insert.
             var removedIndex = this.indices.IndexOf(index);
             this.indices.RemoveAt(removedIndex);
-            var newIndex = this.indices.View().BinarySearch(index, this.indexComparer);
+            var newIndex = (this.indices as List<int>).BinarySearch(index, this.indexComparer);
             if (newIndex < 0)
                 newIndex = ~newIndex;
             this.indices.Insert(newIndex, index);
