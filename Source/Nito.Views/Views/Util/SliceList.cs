@@ -107,13 +107,10 @@ namespace Views.Util
         /// </summary>
         protected override void DoClear()
         {
-            using (this.listener.Pause())
+            while (this.count > 0)
             {
-                while (this.count > 0)
-                {
-                    this.source.RemoveAt(this.offset);
-                    --this.count;
-                }
+                this.source.RemoveAt(this.offset);
+                --this.count;
             }
         }
 
@@ -143,10 +140,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            using (this.listener.Pause())
-            {
-                this.source[this.offset + index] = item;
-            }
+            this.source[this.offset + index] = item;
         }
 
         /// <summary>
@@ -156,11 +150,8 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoInsert(int index, T item)
         {
-            using (this.listener.Pause())
-            {
-                this.source.Insert(this.offset + index, item);
-                ++this.count;
-            }
+            this.source.Insert(this.offset + index, item);
+            ++this.count;
         }
 
         /// <summary>
@@ -169,11 +160,8 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            using (this.listener.Pause())
-            {
-                this.source.RemoveAt(this.offset + index);
-                --this.count;
-            }
+            this.source.RemoveAt(this.offset + index);
+            --this.count;
         }
     }
 }

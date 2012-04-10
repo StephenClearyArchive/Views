@@ -92,10 +92,7 @@ namespace Views.Util
         /// <param name="item">The element to store in the list.</param>
         protected override void DoSetItem(int index, T item)
         {
-            using (this.listener.Pause())
-            {
-                this.source[this.ViewToSourceIndex(index)] = item;
-            }
+            this.source[this.ViewToSourceIndex(index)] = item;
         }
 
         /// <summary>

@@ -212,17 +212,22 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Pauses all notification listeners for source collections. Returns a disposable that will resume the listeners when disposed.
+        /// </summary>
+        /// <returns>A disposable that will resume the listeners when disposed.</returns>
+        protected override IDisposable PauseListeners()
+        {
+            return MultiDispose.Create(this.listeners.Select(x => x.Pause())).Add(this.listener.Pause());
+        }
+
+        /// <summary>
         /// Removes all elements from the list.
         /// </summary>
         protected override void DoClear()
         {
-            using (this.listener.Pause())
-            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
+            foreach (var source in this.sources)
             {
-                foreach (var source in this.sources)
-                {
-                    source.Clear();
-                }
+                source.Clear();
             }
         }
 
@@ -258,12 +263,7 @@ namespace Views.Util
             IList<T> source;
             int sourceIndex;
             this.FindExistingIndex(index, out source, out sourceIndex);
-
-            using (this.listener.Pause())
-            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
-            {
-                source[sourceIndex] = item;
-            }
+            source[sourceIndex] = item;
         }
 
         /// <summary>
@@ -276,12 +276,7 @@ namespace Views.Util
             IList<T> source;
             int sourceIndex;
             this.FindNewIndex(index, out source, out sourceIndex);
-
-            using (this.listener.Pause())
-            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
-            {
-                source.Insert(sourceIndex, item);
-            }
+            source.Insert(sourceIndex, item);
         }
 
         /// <summary>
@@ -293,12 +288,7 @@ namespace Views.Util
             IList<T> source;
             int sourceIndex;
             this.FindExistingIndex(index, out source, out sourceIndex);
-
-            using (this.listener.Pause())
-            using (new MultiDispose(this.listeners.Select(x => x.Pause())))
-            {
-                source.RemoveAt(sourceIndex);
-            }
+            source.RemoveAt(sourceIndex);
         }
 
         /// <summary>

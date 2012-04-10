@@ -190,16 +190,21 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Pauses all notification listeners for source collections. Returns a disposable that will resume the listeners when disposed.
+        /// </summary>
+        /// <returns>A disposable that will resume the listeners when disposed.</returns>
+        protected override IDisposable PauseListeners()
+        {
+            return MultiDispose.Create(this.listener0.Pause(), this.listener1.Pause());
+        }
+
+        /// <summary>
         /// Removes all elements from the list.
         /// </summary>
         protected override void DoClear()
         {
-            using (this.listener0.Pause())
-            using (this.listener1.Pause())
-            {
-                this.source0.Clear();
-                this.source1.Clear();
-            }
+            this.source0.Clear();
+            this.source1.Clear();
         }
 
         /// <summary>
@@ -234,13 +239,9 @@ namespace Views.Util
             if (this.reverseSelector == null)
                 throw this.NotSupported();
 
-            using (this.listener0.Pause())
-            using (this.listener1.Pause())
-            {
-                var items = this.reverseSelector(item);
-                this.source0[index] = items.Item1;
-                this.source1[index] = items.Item2;
-            }
+            var items = this.reverseSelector(item);
+            this.source0[index] = items.Item1;
+            this.source1[index] = items.Item2;
         }
 
         /// <summary>
@@ -253,13 +254,9 @@ namespace Views.Util
             if (this.reverseSelector == null)
                 throw this.NotSupported();
 
-            using (this.listener0.Pause())
-            using (this.listener1.Pause())
-            {
-                var items = this.reverseSelector(item);
-                this.source0.Insert(index, items.Item1);
-                this.source1.Insert(index, items.Item2);
-            }
+            var items = this.reverseSelector(item);
+            this.source0.Insert(index, items.Item1);
+            this.source1.Insert(index, items.Item2);
         }
 
         /// <summary>
@@ -268,12 +265,8 @@ namespace Views.Util
         /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
         protected override void DoRemoveAt(int index)
         {
-            using (this.listener0.Pause())
-            using (this.listener1.Pause())
-            {
-                this.source0.RemoveAt(index);
-                this.source1.RemoveAt(index);
-            }
+            this.source0.RemoveAt(index);
+            this.source1.RemoveAt(index);
         }
     }
 }
