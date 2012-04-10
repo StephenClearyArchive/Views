@@ -248,6 +248,23 @@ namespace Views
         }
 
         /// <summary>
+        /// Creates a projected view of the data.
+        /// </summary>
+        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
+        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
+        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <returns>The projected view.</returns>
+        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
+        {
+            Contract.Requires(source != null);
+            Contract.Requires(source is IList<TSource>);
+            Contract.Ensures(Contract.Result<IView<TResult>>() != null);
+            return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
+        }
+
+        /// <summary>
         /// Creates a projected view of two views.
         /// </summary>
         /// <typeparam name="TSource0">The type of element observed by the first source view.</typeparam>
@@ -258,7 +275,7 @@ namespace Views
         /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
-        public static IView<TResult> Zip<TSource0, TSource1, TResult>(this IView<TSource0> source0, IView<TSource1> source1, Func<TSource0, TSource1, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1>> write = null)
+        public static IView<TResult> Map<TSource0, TSource1, TResult>(this IView<TSource0> source0, IView<TSource1> source1, Func<TSource0, TSource1, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1>> write = null)
         {
             Contract.Requires(source0 != null);
             Contract.Requires(source0 is IList<TSource0>);
@@ -281,7 +298,7 @@ namespace Views
         /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
         /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
         /// <returns>The projected view.</returns>
-        public static IView<TResult> Zip<TSource0, TSource1, TSource2, TResult>(this IView<TSource0> source0, IView<TSource1> source1, IView<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1, TSource2>> write = null)
+        public static IView<TResult> Map<TSource0, TSource1, TSource2, TResult>(this IView<TSource0> source0, IView<TSource1> source1, IView<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1, TSource2>> write = null)
         {
             Contract.Requires(source0 != null);
             Contract.Requires(source0 is IList<TSource0>);
@@ -325,23 +342,6 @@ namespace Views
             Contract.Requires(count >= 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             return source.Pad(Views.View.Repeat(value, count));
-        }
-
-        /// <summary>
-        /// Creates a projected view of the data.
-        /// </summary>
-        /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
-        /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
-        /// <returns>The projected view.</returns>
-        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
-        {
-            Contract.Requires(source != null);
-            Contract.Requires(source is IList<TSource>);
-            Contract.Ensures(Contract.Result<IView<TResult>>() != null);
-            return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
         }
 
         /// <summary>
