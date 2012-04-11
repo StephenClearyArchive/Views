@@ -78,7 +78,7 @@ namespace Views.Util
         /// <summary>
         /// Gets the collection to monitor.
         /// </summary>
-        public INotifyCollectionChanged Collection
+        internal INotifyCollectionChanged Collection
         {
             get
             {
@@ -90,7 +90,7 @@ namespace Views.Util
         /// <summary>
         /// Gets the subscription object, which may or may not actually be subscribed.
         /// </summary>
-        public NotifyCollectionChangedEventHandler Subscription
+        internal NotifyCollectionChangedEventHandler Subscription
         {
             get
             {
@@ -102,7 +102,7 @@ namespace Views.Util
         /// <summary>
         /// Gets or sets a value indicating whether the listener is paused.
         /// </summary>
-        public bool Paused { get; set; }
+        internal bool Paused { get; set; }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
