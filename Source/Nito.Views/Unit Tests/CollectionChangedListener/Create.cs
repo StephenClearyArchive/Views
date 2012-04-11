@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Views.Util;
 using System.Collections.ObjectModel;
 
-namespace CollectionChangedListener
+namespace t.CollectionChangedListener
 {
     internal sealed class IntResponder : CollectionChangedListener<int>.IResponder
     {
