@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Views;
 
-namespace SourceListBase
+namespace t.SourceListBase
 {
     [TestClass]
     public class GenericEnumerable
