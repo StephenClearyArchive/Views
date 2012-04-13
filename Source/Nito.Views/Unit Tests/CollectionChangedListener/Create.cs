@@ -20,7 +20,7 @@ namespace t.CollectionChangedListener
         }
 
         [TestMethod]
-        public void ReturnsInstanceifSourceImplementsINotifyCollectionChanged()
+        public void ReturnsInstanceIfSourceImplementsINotifyCollectionChanged()
         {
             var listener = CollectionChangedListener<int>.Create(new ObservableCollection<int>(), new SICollectionChangedResponder<int>());
             Assert.IsNotNull(listener);
