@@ -15,7 +15,7 @@ namespace t.SourceListBase
         {
             var array = new int[] { 7, 13, 17 };
             var view = array.View();
-            SequenceAssert.AreEquivalent(array, view as IList<int>);
+            SequenceAssert.AreEquivalent(array, view);
         }
     }
 }

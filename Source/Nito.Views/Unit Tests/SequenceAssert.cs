@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Views;
 
 public static class SequenceAssert
 {
@@ -11,9 +12,13 @@ public static class SequenceAssert
         CollectionAssert.AreEquivalent(expected.ToList(), actual.ToList());
     }
 
-    public static void ForEach<T>(IEnumerable<T> result, Action<T> test)
+    public static void AreEquivalent<T>(IEnumerable<T> expected, IView<T> actual)
     {
-        foreach (var value in result)
-            test(value);
+        AreEquivalent<T>(expected, actual as IList<T>);
+    }
+
+    public static void AreEquivalent<T>(IView<T> expected, IView<T> actual)
+    {
+        AreEquivalent<T>(expected as IList<T>, actual as IList<T>);
     }
 }
