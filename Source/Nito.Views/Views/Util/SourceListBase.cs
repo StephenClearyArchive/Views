@@ -11,7 +11,7 @@ namespace Views.Util
     /// A view that is based on a source list.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public class SourceListBase<T> : ListBase<T>, CollectionChangedListener<T>.IResponder
+    public class SourceListBase<T> : ListBase<T>, ICollectionChangedResponder<T>
     {
         /// <summary>
         /// The source list.
@@ -49,22 +49,22 @@ namespace Views.Util
             Contract.Invariant(this.source != null);
         }
 
-        void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+        void ICollectionChangedResponder<T>.Added(int index, T item)
         {
             this.SourceCollectionAdded(index, item);
         }
 
-        void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+        void ICollectionChangedResponder<T>.Removed(int index, T item)
         {
             this.SourceCollectionRemoved(index, item);
         }
 
-        void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+        void ICollectionChangedResponder<T>.Replaced(int index, T oldItem, T newItem)
         {
             this.SourceCollectionReplaced(index, oldItem, newItem);
         }
 
-        void CollectionChangedListener<T>.IResponder.Reset()
+        void ICollectionChangedResponder<T>.Reset()
         {
             this.SourceCollectionReset();
         }

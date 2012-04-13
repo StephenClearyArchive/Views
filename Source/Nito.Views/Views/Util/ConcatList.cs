@@ -11,12 +11,12 @@ namespace Views.Util
     /// Concatenates a list of source lists into a single list.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public sealed class ConcatList<T> : ListBase<T>, CollectionChangedListener<IList<T>>.IResponder
+    public sealed class ConcatList<T> : ListBase<T>, ICollectionChangedResponder<IList<T>>
     {
         /// <summary>
         /// A type that forwards changes in individual source collections to its parent <see cref="ConcatList{T}"/> instance.
         /// </summary>
-        private sealed class SourceChangeResponder : CollectionChangedListener<T>.IResponder
+        private sealed class SourceChangeResponder : ICollectionChangedResponder<T>
         {
             /// <summary>
             /// The parent <see cref="ConcatList{T}"/> instance.
@@ -48,22 +48,22 @@ namespace Views.Util
                 Contract.Invariant(this.source != null);
             }
 
-            void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+            void ICollectionChangedResponder<T>.Added(int index, T item)
             {
                 this.parent.Added(this.source, index, item);
             }
 
-            void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+            void ICollectionChangedResponder<T>.Removed(int index, T item)
             {
                 this.parent.Removed(this.source, index, item);
             }
 
-            void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+            void ICollectionChangedResponder<T>.Replaced(int index, T oldItem, T newItem)
             {
                 this.parent.Replaced(this.source, index, oldItem, newItem);
             }
 
-            void CollectionChangedListener<T>.IResponder.Reset()
+            void ICollectionChangedResponder<T>.Reset()
             {
                 this.parent.Reset(this.source);
             }
@@ -116,7 +116,7 @@ namespace Views.Util
         /// <summary>
         /// Responds to the notification that the collection of source collections has changed.
         /// </summary>
-        void CollectionChangedListener<IList<T>>.IResponder.Added(int index, IList<T> item)
+        void ICollectionChangedResponder<IList<T>>.Added(int index, IList<T> item)
         {
             this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
             this.CreateNotifier().Reset();
@@ -125,7 +125,7 @@ namespace Views.Util
         /// <summary>
         /// Responds to the notification that the collection of source collections has changed.
         /// </summary>
-        void CollectionChangedListener<IList<T>>.IResponder.Removed(int index, IList<T> item)
+        void ICollectionChangedResponder<IList<T>>.Removed(int index, IList<T> item)
         {
             this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
             this.CreateNotifier().Reset();
@@ -134,7 +134,7 @@ namespace Views.Util
         /// <summary>
         /// Responds to the notification that the collection of source collections has changed.
         /// </summary>
-        void CollectionChangedListener<IList<T>>.IResponder.Replaced(int index, IList<T> oldItem, IList<T> newItem)
+        void ICollectionChangedResponder<IList<T>>.Replaced(int index, IList<T> oldItem, IList<T> newItem)
         {
             this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
             this.CreateNotifier().Reset();
@@ -143,7 +143,7 @@ namespace Views.Util
         /// <summary>
         /// Responds to the notification that the collection of source collections has changed.
         /// </summary>
-        void CollectionChangedListener<IList<T>>.IResponder.Reset()
+        void ICollectionChangedResponder<IList<T>>.Reset()
         {
             this.listeners = this.sources.Select(x => CollectionChangedListener<T>.Create(x, x is INotifyCollectionChanged ? new SourceChangeResponder(this, x) : null));
             this.CreateNotifier().Reset();

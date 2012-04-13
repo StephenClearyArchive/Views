@@ -10,7 +10,7 @@ namespace Views.Util
     /// Layers a "priority" source list over a "background" source list.
     /// </summary>
     /// <typeparam name="T">The type of object contained in the list.</typeparam>
-    public sealed class LayeredList<T> : ReadOnlySourceListBase<T>, CollectionChangedListener<T>.IResponder
+    public sealed class LayeredList<T> : ReadOnlySourceListBase<T>, ICollectionChangedResponder<T>
     {
         /// <summary>
         /// The priority source list.
@@ -51,22 +51,22 @@ namespace Views.Util
             Contract.Invariant(this.prioritySource != null);
         }
 
-        void CollectionChangedListener<T>.IResponder.Added(int index, T item)
+        void ICollectionChangedResponder<T>.Added(int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
-        void CollectionChangedListener<T>.IResponder.Removed(int index, T item)
+        void ICollectionChangedResponder<T>.Removed(int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
-        void CollectionChangedListener<T>.IResponder.Replaced(int index, T oldItem, T newItem)
+        void ICollectionChangedResponder<T>.Replaced(int index, T oldItem, T newItem)
         {
             this.CreateNotifier().Replaced(index, oldItem, newItem);
         }
 
-        void CollectionChangedListener<T>.IResponder.Reset()
+        void ICollectionChangedResponder<T>.Reset()
         {
             this.CreateNotifier().Reset();
         }

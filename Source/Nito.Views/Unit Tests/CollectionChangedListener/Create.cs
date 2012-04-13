@@ -8,24 +8,24 @@ using System.Collections.ObjectModel;
 
 namespace t.CollectionChangedListener
 {
-    internal sealed class IntResponder : CollectionChangedListener<int>.IResponder
+    internal sealed class IntResponder : ICollectionChangedResponder<int>
     {
-        void CollectionChangedListener<int>.IResponder.Added(int index, int item)
+        void ICollectionChangedResponder<int>.Added(int index, int item)
         {
             this.Added(index, item);
         }
 
-        void CollectionChangedListener<int>.IResponder.Removed(int index, int item)
+        void ICollectionChangedResponder<int>.Removed(int index, int item)
         {
             this.Removed(index, item);
         }
 
-        void CollectionChangedListener<int>.IResponder.Replaced(int index, int oldItem, int newItem)
+        void ICollectionChangedResponder<int>.Replaced(int index, int oldItem, int newItem)
         {
             this.Replaced(index, oldItem, newItem);
         }
 
-        void CollectionChangedListener<int>.IResponder.Reset()
+        void ICollectionChangedResponder<int>.Reset()
         {
             this.Reset();
         }

@@ -19,7 +19,7 @@ namespace Views.Util
         /// <summary>
         /// A type that forwards changes in individual source collections to its parent list.
         /// </summary>
-        private sealed class SourceChangeResponder0 : CollectionChangedListener<TSource0>.IResponder
+        private sealed class SourceChangeResponder0 : ICollectionChangedResponder<TSource0>
         {
             /// <summary>
             /// The parent list.
@@ -42,17 +42,17 @@ namespace Views.Util
                 Contract.Invariant(this.parent != null);
             }
 
-            void CollectionChangedListener<TSource0>.IResponder.Added(int index, TSource0 item)
+            void ICollectionChangedResponder<TSource0>.Added(int index, TSource0 item)
             {
                 this.parent.CreateNotifier().Reset();
             }
 
-            void CollectionChangedListener<TSource0>.IResponder.Removed(int index, TSource0 item)
+            void ICollectionChangedResponder<TSource0>.Removed(int index, TSource0 item)
             {
                 this.parent.CreateNotifier().Reset();
             }
 
-            void CollectionChangedListener<TSource0>.IResponder.Replaced(int index, TSource0 oldItem, TSource0 newItem)
+            void ICollectionChangedResponder<TSource0>.Replaced(int index, TSource0 oldItem, TSource0 newItem)
             {
                 var selector = this.parent.selector;
                 var notifier = this.parent.CreateNotifier();
@@ -63,7 +63,7 @@ namespace Views.Util
                         selector(newItem, this.parent.source1[index], this.parent.source2[index]));
             }
 
-            void CollectionChangedListener<TSource0>.IResponder.Reset()
+            void ICollectionChangedResponder<TSource0>.Reset()
             {
                 this.parent.CreateNotifier().Reset();
             }
@@ -72,7 +72,7 @@ namespace Views.Util
         /// <summary>
         /// A type that forwards changes in individual source collections to its parent list.
         /// </summary>
-        private sealed class SourceChangeResponder1 : CollectionChangedListener<TSource1>.IResponder
+        private sealed class SourceChangeResponder1 : ICollectionChangedResponder<TSource1>
         {
             /// <summary>
             /// The parent list.
@@ -95,17 +95,17 @@ namespace Views.Util
                 Contract.Invariant(this.parent != null);
             }
 
-            void CollectionChangedListener<TSource1>.IResponder.Added(int index, TSource1 item)
+            void ICollectionChangedResponder<TSource1>.Added(int index, TSource1 item)
             {
                 this.parent.CreateNotifier().Reset();
             }
 
-            void CollectionChangedListener<TSource1>.IResponder.Removed(int index, TSource1 item)
+            void ICollectionChangedResponder<TSource1>.Removed(int index, TSource1 item)
             {
                 this.parent.CreateNotifier().Reset();
             }
 
-            void CollectionChangedListener<TSource1>.IResponder.Replaced(int index, TSource1 oldItem, TSource1 newItem)
+            void ICollectionChangedResponder<TSource1>.Replaced(int index, TSource1 oldItem, TSource1 newItem)
             {
                 var selector = this.parent.selector;
                 var notifier = this.parent.CreateNotifier();
@@ -116,7 +116,7 @@ namespace Views.Util
                         selector(this.parent.source0[index], newItem, this.parent.source2[index]));
             }
 
-            void CollectionChangedListener<TSource1>.IResponder.Reset()
+            void ICollectionChangedResponder<TSource1>.Reset()
             {
                 this.parent.CreateNotifier().Reset();
             }
@@ -125,7 +125,7 @@ namespace Views.Util
         /// <summary>
         /// A type that forwards changes in individual source collections to its parent list.
         /// </summary>
-        private sealed class SourceChangeResponder2 : CollectionChangedListener<TSource2>.IResponder
+        private sealed class SourceChangeResponder2 : ICollectionChangedResponder<TSource2>
         {
             /// <summary>
             /// The parent list.
@@ -148,17 +148,17 @@ namespace Views.Util
                 Contract.Invariant(this.parent != null);
             }
 
-            void CollectionChangedListener<TSource2>.IResponder.Added(int index, TSource2 item)
+            void ICollectionChangedResponder<TSource2>.Added(int index, TSource2 item)
             {
                 this.parent.CreateNotifier().Reset();
             }
 
-            void CollectionChangedListener<TSource2>.IResponder.Removed(int index, TSource2 item)
+            void ICollectionChangedResponder<TSource2>.Removed(int index, TSource2 item)
             {
                 this.parent.CreateNotifier().Reset();
             }
 
-            void CollectionChangedListener<TSource2>.IResponder.Replaced(int index, TSource2 oldItem, TSource2 newItem)
+            void ICollectionChangedResponder<TSource2>.Replaced(int index, TSource2 oldItem, TSource2 newItem)
             {
                 var selector = this.parent.selector;
                 var notifier = this.parent.CreateNotifier();
@@ -169,7 +169,7 @@ namespace Views.Util
                         selector(this.parent.source0[index], this.parent.source1[index], newItem));
             }
 
-            void CollectionChangedListener<TSource2>.IResponder.Reset()
+            void ICollectionChangedResponder<TSource2>.Reset()
             {
                 this.parent.CreateNotifier().Reset();
             }

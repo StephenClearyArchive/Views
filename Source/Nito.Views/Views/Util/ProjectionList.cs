@@ -11,7 +11,7 @@ namespace Views.Util
     /// </summary>
     /// <typeparam name="TSource">The type of object contained in the source list.</typeparam>
     /// <typeparam name="TResult">The type of object contained in the resulting list.</typeparam>
-    public sealed class ProjectionList<TSource, TResult> : ListBase<TResult>, CollectionChangedListener<TSource>.IResponder
+    public sealed class ProjectionList<TSource, TResult> : ListBase<TResult>, ICollectionChangedResponder<TSource>
     {
         /// <summary>
         /// The source list.
@@ -68,7 +68,7 @@ namespace Views.Util
             Contract.Invariant(this.reverseSelector != null);
         }
 
-        void CollectionChangedListener<TSource>.IResponder.Added(int index, TSource item)
+        void ICollectionChangedResponder<TSource>.Added(int index, TSource item)
         {
             var notifier = this.CreateNotifier();
             if (this.selector == null)
@@ -77,7 +77,7 @@ namespace Views.Util
                 notifier.Added(index, this.selector(item));
         }
 
-        void CollectionChangedListener<TSource>.IResponder.Removed(int index, TSource item)
+        void ICollectionChangedResponder<TSource>.Removed(int index, TSource item)
         {
             var notifier = this.CreateNotifier();
             if (this.selector == null)
@@ -86,7 +86,7 @@ namespace Views.Util
                 notifier.Removed(index, this.selector(item));
         }
 
-        void CollectionChangedListener<TSource>.IResponder.Replaced(int index, TSource oldItem, TSource newItem)
+        void ICollectionChangedResponder<TSource>.Replaced(int index, TSource oldItem, TSource newItem)
         {
             var notifier = this.CreateNotifier();
             if (this.selector == null)
@@ -95,7 +95,7 @@ namespace Views.Util
                 notifier.Replaced(index, this.selector(oldItem), this.selector(newItem));
         }
 
-        void CollectionChangedListener<TSource>.IResponder.Reset()
+        void ICollectionChangedResponder<TSource>.Reset()
         {
             this.CreateNotifier().Reset();
         }

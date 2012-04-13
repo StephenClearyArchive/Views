@@ -8,44 +8,45 @@ using System.Diagnostics.Contracts;
 namespace Views.Util
 {
     /// <summary>
+    /// The callbacks for <see cref="CollectionChangedListener{T}"/>
+    /// </summary>
+    /// <typeparam name="T">The type of element contained in the collection.</typeparam>
+    public interface ICollectionChangedResponder<T>
+    {
+        /// <summary>
+        /// The collection added an item.
+        /// </summary>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
+        void Added(int index, T item);
+
+        /// <summary>
+        /// The collection removed an item.
+        /// </summary>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="item">The item that was removed.</param>
+        void Removed(int index, T item);
+
+        /// <summary>
+        /// The collection replaced an item.
+        /// </summary>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
+        void Replaced(int index, T oldItem, T newItem);
+
+        /// <summary>
+        /// The collection has undergone significant changes.
+        /// </summary>
+        void Reset();
+    }
+
+    /// <summary>
     /// A type that listens to collection changes. Listening may be activated or deactivated (which actually unsubscribes), or it may be temporarily paused (which does not unsubscribe). It is normal for instances of this class to be <c>null</c>.
     /// </summary>
     /// <typeparam name="T">The type of element contained in the collection.</typeparam>
     public sealed class CollectionChangedListener<T>
     {
-        /// <summary>
-        /// The callbacks for <see cref="CollectionChangedListener{T}"/>
-        /// </summary>
-        public interface IResponder
-        {
-            /// <summary>
-            /// The collection added an item.
-            /// </summary>
-            /// <param name="index">The index of the new item.</param>
-            /// <param name="item">The item that was added.</param>
-            void Added(int index, T item);
-
-            /// <summary>
-            /// The collection removed an item.
-            /// </summary>
-            /// <param name="index">The index of the removed item.</param>
-            /// <param name="item">The item that was removed.</param>
-            void Removed(int index, T item);
-
-            /// <summary>
-            /// The collection replaced an item.
-            /// </summary>
-            /// <param name="index">The index of the item that changed.</param>
-            /// <param name="oldItem">The old item.</param>
-            /// <param name="newItem">The new item.</param>
-            void Replaced(int index, T oldItem, T newItem);
-
-            /// <summary>
-            /// The collection has undergone significant changes.
-            /// </summary>
-            void Reset();
-        }
-
         /// <summary>
         /// The collection to monitor.
         /// </summary>
@@ -59,14 +60,14 @@ namespace Views.Util
         /// <summary>
         /// The callback object.
         /// </summary>
-        private readonly IResponder responder;
+        private readonly ICollectionChangedResponder<T> responder;
 
         /// <summary>
         /// Creates a new instance of the <see cref="CollectionChangedListener{T}"/> class. The instance is initially inactive.
         /// </summary>
         /// <param name="collection">The collection to monitor.</param>
         /// <param name="responder">The callback object.</param>
-        private CollectionChangedListener(INotifyCollectionChanged collection, IResponder responder)
+        private CollectionChangedListener(INotifyCollectionChanged collection, ICollectionChangedResponder<T> responder)
         {
             Contract.Requires(collection != null);
             Contract.Requires(responder != null);
@@ -149,7 +150,7 @@ namespace Views.Util
         /// <param name="collection">The collection to monitor.</param>
         /// <param name="responder">The callback object.</param>
         /// <returns>A new <see cref="CollectionChangedListener{T}"/> or <c>null</c>.</returns>
-        public static CollectionChangedListener<T> Create(object collection, IResponder responder)
+        public static CollectionChangedListener<T> Create(object collection, ICollectionChangedResponder<T> responder)
         {
             Contract.Requires(collection != null);
             Contract.Requires(responder != null);
