@@ -18,7 +18,7 @@ namespace Views
         /// <param name="view">The view.</param>
         /// <param name="index">The index of the element to return.</param>
         /// <returns>The element at the specified index.</returns>
-        public static T ElementAt<T>(this IView<T> view, int index)
+        public static T GetItem<T>(this IView<T> view, int index)
         {
             Contract.Requires(view != null);
             Contract.Requires(view is IList<T>);
@@ -35,7 +35,7 @@ namespace Views
         /// <param name="index">The index of the element to return.</param>
         /// <param name="defaultValue">The default value to return if the index is invalid. Defaults to <c>default(T)</c>.</param>
         /// <returns>The element at the specified index.</returns>
-        public static T ElementAtOrDefault<T>(this IView<T> view, int index, T defaultValue = default(T))
+        public static T GetItemOrDefault<T>(this IView<T> view, int index, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
             Contract.Requires(view is IList<T>);
