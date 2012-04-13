@@ -11,7 +11,7 @@ namespace Views.Linq
     public static class ViewLinq
     {
         /// <summary>
-        /// Casts the elements in a source view to a specified type. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map"/> instead).
+        /// Casts the elements in a source view to a specified type. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map{TSource,TResult}"/> instead).
         /// </summary>
         /// <typeparam name="TResult">The type of element observed by the resulting view.</typeparam>
         /// <param name="source">The source view.</param>
@@ -22,7 +22,7 @@ namespace Views.Linq
         }
 
         /// <summary>
-        /// Creates a projected view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map"/> instead).
+        /// Creates a projected view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map{TSource,TResult}"/> instead).
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
         /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
@@ -35,7 +35,7 @@ namespace Views.Linq
         }
 
         /// <summary>
-        /// Creates a projected, flattened view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map"/> and <see cref="O:ViewExtensions.Concat"/> instead).
+        /// Creates a projected, flattened view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map{TSource,TResult}"/> and <see cref="O:ViewExtensions.Concat"/> instead).
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
         /// <typeparam name="TCollection">The type of element observed by the intermediate view.</typeparam>
