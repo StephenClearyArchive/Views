@@ -21,7 +21,22 @@ namespace t.View
         public void HasEmptySequence()
         {
             var view = Views.View.Empty<int>();
-            SequenceAssert.AreEquivalent(new int[0], view);
+            ViewAssert.AreEquivalent(new int[0], view);
+        }
+
+        [TestMethod]
+        public void ReturnValueIsSingleton()
+        {
+            var view0 = Views.View.Empty<int>();
+            var view1 = Views.View.Empty<int>();
+            Assert.AreSame(view0, view1);
+        }
+
+        [TestMethod]
+        public void ReadOnly()
+        {
+            var view = Views.View.Empty<int>();
+            ViewAssert.CollectionIsReadOnly(view);
         }
     }
 }
