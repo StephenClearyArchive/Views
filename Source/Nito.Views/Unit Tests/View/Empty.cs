@@ -21,7 +21,7 @@ namespace t.View
         public void HasEmptySequence()
         {
             var view = Views.View.Empty<int>();
-            SequenceAssert.AreEquivalent(new int[0], view as IList<int>);
+            SequenceAssert.AreEquivalent(new int[0], view);
         }
     }
 }
