@@ -10,7 +10,7 @@ namespace Views.Util
     /// An indirect list, which provides a layer of indirection for the index values of a source list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class IndirectList<T> : IndirectListBase<T>, CollectionChangedListener<int>.IResponder
+    public sealed class IndirectList<T> : IndirectListBase<T>, ICollectionChangedResponder<int>
     {
         /// <summary>
         /// The listener for the list of redirected index values.
@@ -53,12 +53,12 @@ namespace Views.Util
             }
         }
 
-        void CollectionChangedListener<int>.IResponder.Added(int index, int item)
+        void ICollectionChangedResponder<int>.Added(int index, int item)
         {
             this.CreateNotifier().Added(index, this.source[item]);
         }
 
-        void CollectionChangedListener<int>.IResponder.Removed(int index, int item)
+        void ICollectionChangedResponder<int>.Removed(int index, int item)
         {
             if (item < this.source.Count)
                 this.CreateNotifier().Removed(index, this.source[item]);
@@ -66,7 +66,7 @@ namespace Views.Util
                 this.CreateNotifier().Reset();
         }
 
-        void CollectionChangedListener<int>.IResponder.Replaced(int index, int oldItem, int newItem)
+        void ICollectionChangedResponder<int>.Replaced(int index, int oldItem, int newItem)
         {
             if (oldItem < this.source.Count)
                 this.CreateNotifier().Replaced(index, this.source[oldItem], this.source[newItem]);
@@ -74,7 +74,7 @@ namespace Views.Util
                 this.CreateNotifier().Reset();
         }
 
-        void CollectionChangedListener<int>.IResponder.Reset()
+        void ICollectionChangedResponder<int>.Reset()
         {
             this.CreateNotifier().Reset();
         }
