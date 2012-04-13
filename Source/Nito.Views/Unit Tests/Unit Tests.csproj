@@ -51,6 +51,8 @@
     <Compile Include="SourceListBase\GenericEnumerable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SourceListBase\GenericItem.cs" />
+    <Compile Include="View\Return.cs" />
+    <Compile Include="View\Repeat.cs" />
     <Compile Include="View\Range.cs" />
     <Compile Include="View\Empty.cs" />
   </ItemGroup>
