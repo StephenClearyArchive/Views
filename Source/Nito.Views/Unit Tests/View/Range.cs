@@ -11,6 +11,13 @@ namespace t.View
     public class Range
     {
         [TestMethod]
+        public void BasicFunctionality()
+        {
+            var view = Views.View.Range(-2, 5);
+            ViewAssert.BasicFunctionality(view);
+        }
+
+        [TestMethod]
         public void HasSpecifiedCount()
         {
             var view = Views.View.Range(3, 5);

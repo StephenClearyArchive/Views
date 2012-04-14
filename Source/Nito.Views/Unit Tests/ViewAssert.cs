@@ -68,6 +68,9 @@ public static class ViewAssert
         // Both have the same count.
         Assert.AreEqual(list.Count, objectList.Count);
 
+        // Both have the same elements.
+        AreEquivalent(list, objectList.Cast<T>());
+
         // IList<T>.IsReadOnly = IList.IsReadOnly || IList.IsFixedSize
         Assert.AreEqual(list.IsReadOnly, objectList.IsReadOnly || objectList.IsFixedSize);
 
@@ -82,13 +85,19 @@ public static class ViewAssert
         ThrowsException(() => { var test = objectList[-1]; });
         ThrowsException(() => { var test = objectList[list.Count]; });
 
-        // Both have the same elements.
-        AreEquivalent(list, objectList.Cast<T>());
-
         // For each list, accessing via the indexer is the same as the enumerable implementation.
         AreEquivalent(Enumerable.Range(0, list.Count).Select(i => list[i]), list);
         AreEquivalent(Enumerable.Range(0, objectList.Count).Select(i => objectList[i]).Cast<T>(), list);
 
-        // TODO: Contains, IndexOf, CopyTo.
+        // Contains and IndexOf return the same results.
+        Assert.AreEqual(list.Contains(default(T)), list.IndexOf(default(T)) != -1);
+        Assert.AreEqual(objectList.Contains(default(T)), objectList.IndexOf(default(T)) != -1);
+
+        // CopyTo will copy.
+        var array = new T[list.Count];
+        list.CopyTo(array, 0);
+        AreEquivalent(list, array);
+        objectList.CopyTo(array, 0);
+        AreEquivalent(objectList.Cast<T>(), array);
     }
 }

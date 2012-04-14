@@ -11,6 +11,13 @@ namespace t.View
     public class Empty
     {
         [TestMethod]
+        public void BasicFunctionality()
+        {
+            var view = Views.View.Empty<int>();
+            ViewAssert.BasicFunctionality(view);
+        }
+
+        [TestMethod]
         public void HasCountOf0()
         {
             var view = Views.View.Empty<int>();
