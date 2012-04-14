@@ -11,6 +11,13 @@ namespace t.View
     public class Repeat
     {
         [TestMethod]
+        public void BasicFunctionality()
+        {
+            var view = Views.View.Repeat(0, 3);
+            ViewAssert.BasicFunctionality(view);
+        }
+
+        [TestMethod]
         public void HasSpecifiedCount()
         {
             var view = Views.View.Repeat(3, 5);

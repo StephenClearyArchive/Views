@@ -11,6 +11,13 @@ namespace t.View
     public class Return
     {
         [TestMethod]
+        public void BasicFunctionality()
+        {
+            var view = Views.View.Return(3, 5, 0, 7);
+            ViewAssert.BasicFunctionality(view);
+        }
+
+        [TestMethod]
         public void HasSpecifiedNumberOfItems()
         {
             var view = Views.View.Return(3, 5);
