@@ -1,0 +1,249 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+
+<# int maxNumberOfSourceLists = 3; #>
+
+// This file was automatically generated. Do not edit.
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
+using System.Linq;
+
+namespace Views.Util
+{
+<# for (int i = 2; i != maxNumberOfSourceLists + 1; ++i)
+{
+  var tSourceList = Join(i, j => "TSource" + j);
+#>
+    /// <summary>
+    /// Projects source lists to a result list, and projects the result list back to the source lists.
+    /// </summary>
+<# for (int j = 0; j != i; ++j) { #>
+    /// <typeparam name="TSource<#= j #>">The type of object contained in source list <#= j #>.</typeparam>
+<# } #>
+    /// <typeparam name="TResult">The type of object contained in the resulting list.</typeparam>
+    public sealed class ProjectionList<<#= tSourceList #>, TResult> : ListBase<TResult>
+    {
+<# for (int j = 0; j != i; ++j)
+{
+  var preSelector = Enumerable.Range(0, j).Select(k => "this.parent.source" + k + "[index]");
+  var postSelector = Enumerable.Range(j + 1, i - j - 1).Select(k => "this.parent.source" + k + "[index]");
+  var oldSelectorCall = string.Join(", ", preSelector.Concat(Enumerable.Repeat("oldItem", 1)).Concat(postSelector));
+  var newSelectorCall = string.Join(", ", preSelector.Concat(Enumerable.Repeat("newItem", 1)).Concat(postSelector));
+#>
+        /// <summary>
+        /// A type that forwards changes in individual source collections to its parent list.
+        /// </summary>
+        private sealed class SourceChangeResponder<#= j #> : ICollectionChangedResponder<TSource<#= j #>>
+        {
+            /// <summary>
+            /// The parent list.
+            /// </summary>
+            private readonly ProjectionList<<#= tSourceList #>, TResult> parent;
+
+            public SourceChangeResponder<#= j #>(ProjectionList<<#= tSourceList #>, TResult> parent)
+            {
+                Contract.Requires(parent != null);
+                this.parent = parent;
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.parent != null);
+            }
+
+            void ICollectionChangedResponder<TSource<#= j #>>.Added(int index, TSource<#= j #> item)
+            {
+                this.parent.CreateNotifier().Reset();
+            }
+
+            void ICollectionChangedResponder<TSource<#= j #>>.Removed(int index, TSource<#= j #> item)
+            {
+                this.parent.CreateNotifier().Reset();
+            }
+
+            void ICollectionChangedResponder<TSource<#= j #>>.Replaced(int index, TSource<#= j #> oldItem, TSource<#= j #> newItem)
+            {
+                var selector = this.parent.selector;
+                var notifier = this.parent.CreateNotifier();
+                if (selector == null)
+                    notifier.Reset();
+                else
+                    notifier.Replaced(index, selector(<#= oldSelectorCall #>), selector(<#= newSelectorCall #>));
+            }
+
+            void ICollectionChangedResponder<TSource<#= j #>>.Reset()
+            {
+                this.parent.CreateNotifier().Reset();
+            }
+        }
+
+<# } #>
+<# for (int j = 0; j != i; ++j) { #>
+        /// <summary>
+        /// Source list <#= j #>.
+        /// </summary>
+        private readonly IList<TSource<#= j #>> source<#= j #>;
+
+        /// <summary>
+        /// The listener for source list <#= j #>.
+        /// </summary>
+        private readonly CollectionChangedListener<TSource<#= j #>> listener<#= j #>;
+
+<# } #>
+        /// <summary>
+        /// The projection function from sources to result.
+        /// </summary>
+        private readonly Func<<#= tSourceList #>, TResult> selector;
+
+        /// <summary>
+        /// The projection function from result to source.
+        /// </summary>
+        private readonly Func<TResult, Tuple<<#= tSourceList #>>> reverseSelector;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProjectionList{<#= tSourceList #>,TResult}"/> class.
+        /// </summary>
+<# for (int j = 0; j != i; ++j) { #>
+        /// <param name="source<#= j #>">Source list <#= j #>.</param>
+<# } #>
+        /// <param name="selector">The projection function from sources to result.</param>
+        /// <param name="reverseSelector">The projection function from result to sources.</param>
+        public ProjectionList(<#= Join(i, j => "IList<TSource" + j + "> source" + j) #>, Func<<#= tSourceList #>, TResult> selector, Func<TResult, Tuple<<#= tSourceList #>>> reverseSelector)
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            Contract.Requires(source<#= j #> != null);
+<# } #>
+            Contract.Requires(selector != null);
+            Contract.Requires(reverseSelector != null);
+<# for (int j = 0; j != i; ++j) { #>
+            this.source<#= j #> = source<#= j #>;
+            this.listener<#= j #> = CollectionChangedListener<TSource<#= j #>>.Create(source<#= j #>, source<#= j #> is INotifyCollectionChanged ? new SourceChangeResponder<#= j #>(this) : null);
+<# } #>
+            this.selector = selector;
+            this.reverseSelector = reverseSelector;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this list is read-only. This list is read-only if any of its source lists are read-only.
+        /// </summary>
+        /// <value></value>
+        /// <returns>true if this list is read-only; otherwise, false.</returns>
+        public override bool IsReadOnly
+        {
+            get { return <#= Join(i, j => "this.source" + j + ".IsReadOnly", " || ") #>; }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            Contract.Invariant(this.source<#= j #> != null);
+<# } #>
+            Contract.Invariant(this.selector != null);
+            Contract.Invariant(this.reverseSelector != null);
+        }
+
+        /// <summary>
+        /// Pauses all notification listeners for source collections. Returns a disposable that will resume the listeners when disposed.
+        /// </summary>
+        /// <returns>A disposable that will resume the listeners when disposed.</returns>
+        protected override IDisposable PauseListeners()
+        {
+            return MultiDispose.Create(<#= Join(i, j => "this.listener" + j + ".Pause()") #>);
+        }
+
+        /// <summary>
+        /// Removes all elements from the list.
+        /// </summary>
+        protected override void DoClear()
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            this.source<#= j #>.Clear();
+<# } #>
+        }
+
+        private int Min(params int[] counts)
+		{
+		    return counts.Min();
+		}
+
+        /// <summary>
+        /// Gets the number of elements contained in this list.
+        /// </summary>
+        /// <returns>The number of elements contained in this list.</returns>
+        protected override int DoCount()
+        {
+            return Min(<#= Join(i, j => "this.source" + j + ".Count") #>);
+        }
+
+        /// <summary>
+        /// Gets an element at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
+        /// <returns>The element at the specified index.</returns>
+        protected override TResult DoGetItem(int index)
+        {
+            if (this.selector == null)
+                throw this.NotSupported();
+
+            return this.selector(<#= Join(i, j => "this.source" + j + "[index]") #>);
+        }
+
+        /// <summary>
+        /// Sets an element at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
+        /// <param name="item">The element to store in the list.</param>
+        protected override void DoSetItem(int index, TResult item)
+        {
+            if (this.reverseSelector == null)
+                throw this.NotSupported();
+
+            var items = this.reverseSelector(item);
+<# for (int j = 0; j != i; ++j) { #>
+            this.source<#= j #>[index] = items.Item<#= j + 1 #>;
+<# } #>
+        }
+
+        /// <summary>
+        /// Inserts an element at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index at which the element should be inserted. This index is guaranteed to be valid.</param>
+        /// <param name="item">The element to store in the list.</param>
+        protected override void DoInsert(int index, TResult item)
+        {
+            if (this.reverseSelector == null)
+                throw this.NotSupported();
+
+            var items = this.reverseSelector(item);
+<# for (int j = 0; j != i; ++j) { #>
+            this.source<#= j #>.Insert(index, items.Item<#= j + 1 #>);
+<# } #>
+        }
+
+        /// <summary>
+        /// Removes an element at the specified index.
+        /// </summary>
+        /// <param name="index">The zero-based index of the element to remove. This index is guaranteed to be valid.</param>
+        protected override void DoRemoveAt(int index)
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            this.source<#= j #>.RemoveAt(index);
+<# } #>
+        }
+	}
+
+<# } #>
+}
+
+<#+
+  private string Join(int count, Func<int, string> selector, string separator = ", ")
+  {
+    return string.Join(separator, Enumerable.Range(0, count).Select(selector));
+  }
+#>
