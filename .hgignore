@@ -3,3 +3,4 @@ glob:**/bin/**
 glob:**/obj/**
 glob:**/TestResults/**
 glob:**/MolesAssemblies/**
+glob:Source/Nito.Views/Views/Util/ProjectionListN.cs
