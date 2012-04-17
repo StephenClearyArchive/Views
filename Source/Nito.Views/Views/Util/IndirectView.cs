@@ -10,7 +10,7 @@ namespace Views.Util
     /// An indirect list, which provides a layer of indirection for the index values of a source list.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class IndirectList<T> : IndirectListBase<T>, ICollectionChangedResponder<int>
+    public sealed class IndirectList<T> : IndirectViewBase<T>, ICollectionChangedResponder<int>
     {
         /// <summary>
         /// The listener for the list of redirected index values.

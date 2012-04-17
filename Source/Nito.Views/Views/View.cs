@@ -12,7 +12,7 @@ namespace Views
     public static class View
     {
         /// <summary>
-        /// A type that caches instances of read-only, empty views.
+        /// A type that caches instances of constant, empty views.
         /// </summary>
         /// <typeparam name="T">The type of elements observed by the view.</typeparam>
         private static class EmptyInstance<T>
@@ -28,52 +28,35 @@ namespace Views
             }
 
             /// <summary>
-            /// The read-only, empty view.
+            /// The constant, empty view.
             /// </summary>
-            public static readonly IView<T> Instance = new Util.AnonymousReadOnlyList<T> { Count = () => 0 };
+            public static readonly IView<T> Instance = new Util.AnonymousConstantView<T> { SetCount = 0 };
         }
 
         /// <summary>
-        /// Returns a read-only view that generates its elements when they are observed, passing the element's index to the generator delegate.
+        /// Returns a constant view that generates its elements when they are observed, passing the element's index to the generator delegate.
         /// </summary>
         /// <typeparam name="T">The type of elements observed by the view.</typeparam>
         /// <param name="generator">The delegate that is used to generate the elements. May not be <c>null</c>.</param>
-        /// <param name="count">The delegate that returns the number of elements observed by the view. May not be <c>null</c>.</param>
-        /// <returns>A read-only view that generates its elements on demand.</returns>
-        public static IView<T> Generate<T>(Func<int, T> generator, Func<int> count)
-        {
-            Contract.Requires(generator != null);
-            Contract.Requires(count != null);
-            Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.AnonymousReadOnlyList<T>
-            {
-                Count = count,
-                GetItem = generator,
-            };
-        }
-
-        /// <summary>
-        /// Returns a read-only view that generates its elements when they are observed, passing the element's index to the generator delegate.
-        /// </summary>
-        /// <typeparam name="T">The type of elements observed by the view.</typeparam>
-        /// <param name="generator">The delegate that is used to generate the elements. May not be <c>null</c>.</param>
-        /// <param name="count">The number of elements observed by the view. If <paramref name="count"/> is 0, an empty view is returned. Must be greater than or equal to 0.</param>
-        /// <returns>A read-only view that generates its elements on demand.</returns>
+        /// <param name="count">The number of elements observed by the view. This must be greater than or equal to <c>0</c>.</param>
+        /// <returns>A constant view that generates its elements on demand.</returns>
         public static IView<T> Generate<T>(Func<int, T> generator, int count)
         {
             Contract.Requires(generator != null);
             Contract.Requires(count >= 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            if (count == 0)
-                return EmptyInstance<T>.Instance;
-            return Generate<T>(generator, () => count);
+            return new Util.AnonymousConstantView<T>
+            {
+                SetCount = count,
+                GetItem = generator,
+            };
         }
 
         /// <summary>
-        /// Returns a read-only view that generates numbers in a sequence.
+        /// Returns a constant view that generates numbers in a sequence.
         /// </summary>
         /// <param name="start">The value at which the view begins (inclusive).</param>
-        /// <param name="count">The number of elements in the view. This must be greater than or equal to <c>0</c>.</param>
+        /// <param name="count">The number of elements observed by the view. This must be greater than or equal to <c>0</c>.</param>
         /// <param name="step">The stride of the view. Defaults to <c>1</c>.</param>
         /// <returns>A read-only view that generates numbers in a sequence.</returns>
         public static IView<int> Range(int start, int count, int step = 1)
@@ -82,14 +65,14 @@ namespace Views
             Contract.Ensures(Contract.Result<IView<int>>() != null);
             if (count == 0)
                 return EmptyInstance<int>.Instance;
-            return Generate<int>(i => start + i * step, () => count);
+            return Generate<int>(i => start + i * step, count);
         }
 
         /// <summary>
-        /// Returns an empty, read-only view. If you want a modifiable empty view, use <c>new List&lt;T&gt;.View()</c>.
+        /// Returns an empty, constant view. If you want a mutable empty view, use <c>new List&lt;T&gt;.View()</c> or <c>new ObservableCollection&lt;T&gt;.View()</c>.
         /// </summary>
         /// <typeparam name="T">The type of elements observed by the view.</typeparam>
-        /// <returns>An empty, read-only view.</returns>
+        /// <returns>An empty, constant view.</returns>
         public static IView<T> Empty<T>()
         {
             Contract.Ensures(Contract.Result<IView<T>>() != null);
@@ -97,32 +80,32 @@ namespace Views
         }
 
         /// <summary>
-        /// Converts a single value into a read-only view which observes that value the specified number of times.
+        /// Converts a single value into a constant view which observes that value the specified number of times.
         /// </summary>
         /// <typeparam name="T">The type of the value.</typeparam>
         /// <param name="source">The value.</param>
         /// <param name="count">The number of times <paramref name="source"/> is repeated. If <paramref name="count"/> is 0, an empty view is returned. This must be greater than or equal to <c>0</c>.</param>
-        /// <returns>A read-only view observing <paramref name="count"/> elements, all equal to <paramref name="source"/>.</returns>
+        /// <returns>A constant view observing <paramref name="count"/> elements, all equal to <paramref name="source"/>.</returns>
         public static IView<T> Repeat<T>(T source, int count)
         {
             Contract.Requires(count >= 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             if (count == 0)
                 return EmptyInstance<T>.Instance;
-            return Generate<T>(_ => source, () => count);
+            return Generate<T>(_ => source, count);
         }
 
         /// <summary>
-        /// Converts values into a read-only view which observes those values.
+        /// Converts values into a constant view which observes those values.
         /// </summary>
         /// <typeparam name="T">The type of the values.</typeparam>
         /// <param name="sources">The values.</param>
-        /// <returns>A read-only view observing the given values.</returns>
+        /// <returns>A constant view observing the given values.</returns>
         public static IView<T> Return<T>(params T[] sources)
         {
             Contract.Requires(sources != null);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return Generate<T>(i => sources[i], () => sources.Length);
+            return Generate<T>(i => sources[i], sources.Length);
         }
     }
 }

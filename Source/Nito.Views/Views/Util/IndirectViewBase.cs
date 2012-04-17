@@ -3,30 +3,49 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
+using System.Collections.Specialized;
 
 namespace Views.Util
 {
     /// <summary>
-    /// An indirect list, which provides a layer of indirection for the index values of a source list. By default, this base class does not allow clear/insert/remove. Also, the list of redirected indices is not observed for changes.
+    /// An indirect view, which provides a layer of indirection for the index values of a source view. The list of redirected indices is not observed for changes.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public abstract class IndirectListBase<T> : ReadOnlySourceListBase<T>
+    /// <typeparam name="T">The type of elements observed by the view.</typeparam>
+    public abstract class IndirectViewBase<T> : SourceViewBase<T>
     {
         /// <summary>
         /// The redirected index values.
         /// </summary>
-        protected IList<int> indices;
+        protected List<int> indices;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="IndirectListBase&lt;T&gt;"/> class for the given source list, using the given redirected index values.
+        /// Initializes a new instance of the <see cref="IndirectViewBase&lt;T&gt;"/> class for the given source list, using the given redirected index values.
         /// </summary>
-        /// <param name="source">The source list.</param>
+        /// <param name="source">The source view.</param>
         /// <param name="indices">The redirected index values. This may be <c>null</c>, but the derived class constructor must initialize <see cref="indices"/> before it completes.</param>
-        public IndirectListBase(IList<T> source, IList<int> indices)
+        public IndirectViewBase(IView<T> source, List<int> indices)
             : base(source)
         {
             Contract.Requires(source != null);
             this.indices = indices;
+        }
+
+        /// <summary>
+        /// Gets the number of elements observed by this view.
+        /// </summary>
+        /// <returns>The number of elements observed by this view.</returns>
+        public override int Count
+        {
+            get { return this.indices.Count; }
+        }
+
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to get.</param>
+        public override T this[int index]
+        {
+            get { return this.source[this.indices[index]]; }
         }
 
         [ContractInvariantMethod]
@@ -40,7 +59,7 @@ namespace Views.Util
         /// </summary>
         /// <param name="source">The source list.</param>
         /// <returns>A new list of indices matching the specified source list.</returns>
-        protected static List<int> DefaultIndices(IList<T> source)
+        protected static List<int> DefaultIndices(IView<T> source)
         {
             Contract.Requires(source != null);
             Contract.Ensures(Contract.Result<List<int>>() != null);
@@ -53,9 +72,10 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has added an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
-        protected override void SourceCollectionAdded(int index, T item)
+        public override void Added(INotifyCollectionChanged collection, int index, T item)
         {
             this.CreateNotifier().Reset();
         }
@@ -63,9 +83,10 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has removed an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the removed item.</param>
         /// <param name="item">The item that was removed.</param>
-        protected override void SourceCollectionRemoved(int index, T item)
+        public override void Removed(INotifyCollectionChanged collection, int index, T item)
         {
             this.CreateNotifier().Reset();
         }
@@ -73,10 +94,11 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has replaced an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
         /// <param name="newItem">The new item.</param>
-        protected override void SourceCollectionReplaced(int index, T oldItem, T newItem)
+        public override void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
             var affectedIndices = this.indices.Where(x => x == index);
             if (!affectedIndices.Any())
@@ -85,50 +107,6 @@ namespace Views.Util
                 this.CreateNotifier().Reset();
             else
                 this.CreateNotifier().Replaced(affectedIndices.First(), oldItem, newItem);
-        }
-
-        /// <summary>
-        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
-        /// </summary>
-        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
-        protected override bool CanUpdateElementValues()
-        {
-            return ListHelper.CanUpdateElementValues(this.source) ?? false;
-        }
-
-        /// <summary>
-        /// Gets the number of elements contained in this list.
-        /// </summary>
-        /// <returns>The number of elements contained in this list.</returns>
-        protected override int DoCount()
-        {
-            return this.indices.Count;
-        }
-
-        /// <summary>
-        /// Gets an element at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
-        /// <returns>The element at the specified index.</returns>
-        protected override T DoGetItem(int index)
-        {
-            using (this.listener.Pause())
-            {
-                return this.source[this.indices[index]];
-            }
-        }
-
-        /// <summary>
-        /// Sets an element at the specified index.
-        /// </summary>
-        /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
-        /// <param name="item">The element to store in the list.</param>
-        protected override void DoSetItem(int index, T item)
-        {
-            using (this.listener.Pause())
-            {
-                this.source[this.indices[index]] = item;
-            }
         }
 
         /// <summary>

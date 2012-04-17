@@ -21,7 +21,7 @@ namespace Views
             var view = source as IView<T>;
             if (view != null)
                 return view;
-            return new Util.SourceListBase<T>(source);
+            return new Util.ListView<T>(source);
         }
 
         /// <summary>
@@ -37,35 +37,20 @@ namespace Views
             var view = source as IView<T>;
             if (view != null)
                 return view;
-            return new Util.GenericList<T>(source);
+            return new Util.ObjectListView<T>(source);
         }
 
         /// <summary>
-        /// Creates a new list containing the elements currently in the specified view.
+        /// Creates a list-like wrapper for the specified view. The wrapper also implements the (non-generic) <see cref="System.Collections.IList"/> interface, <see cref="INotifyCollectionChanged"/>, etc.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The source view.</param>
-        /// <returns>A new list containing the elements currently in the specified view.</returns>
-        public static List<T> ToList<T>(this IView<T> view)
+        /// <returns>A list-like wrapper for the specified view.</returns>
+        public static IList<T> List<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            Contract.Ensures(Contract.Result<List<T>>() != null);
-            return new List<T>(view as IList<T>);
-        }
-
-        /// <summary>
-        /// Creates a new array containing the elements currently in the specified view.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="view">The source view.</param>
-        /// <returns>A new array containing the elements currently in the specified view.</returns>
-        public static T[] ToArray<T>(this IView<T> view)
-        {
-            Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            Contract.Ensures(Contract.Result<T[]>() != null);
-            return (view as IList<T>).ToArray();
+            Contract.Ensures(Contract.Result<IList<T>>() != null);
+            return new Util.ViewWrapper<T>(view);
         }
 
         /// <summary>
@@ -77,9 +62,8 @@ namespace Views
         public static IView<T> Reverse<T>(this IView<T> source)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.ReverseList<T>(source as IList<T>);
+            return new Util.ReverseView<T>(source);
         }
 
         /// <summary>
@@ -94,13 +78,12 @@ namespace Views
         public static IView<T> Slice<T>(this IView<T> source, int start = 0, int stop = int.MaxValue, int step = 1)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Requires(step > 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             if (step <= 0)
                 throw new ArgumentOutOfRangeException("step", "Invalid step " + step);
 
-            var count = (source as IList<T>).Count;
+            var count = source.Count;
 
             // Handle negative start/stop values.
             if (start < 0)
@@ -117,10 +100,10 @@ namespace Views
                 return Views.View.Empty<T>();
 
             // Apply the slice if necessary.
-            source = (start == 0 && stop == count) ? source : new Util.SliceList<T>(source as IList<T>, start, stop - start);
+            source = (start == 0 && stop == count) ? source : new Util.SliceView<T>(source, start, stop - start);
 
             // Apply the step if necessary.
-            return (step == 1) ? source : new Util.StepList<T>(source as IList<T>, step);
+            return (step == 1) ? source : new Util.StepView<T>(source, step);
         }
 
         /// <summary>
@@ -133,7 +116,6 @@ namespace Views
         public static IView<T> Skip<T>(this IView<T> source, int offset)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             return Slice<T>(source, start: offset);
         }
@@ -148,7 +130,6 @@ namespace Views
         public static IView<T> Take<T>(this IView<T> source, int count)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             return Slice<T>(source, stop: count);
         }
@@ -163,10 +144,9 @@ namespace Views
         public static IView<T> Repeat<T>(this IView<T> source, int repeatCount)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Requires(repeatCount >= 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.RepeatList<T>(source as IList<T>, repeatCount);
+            return new Util.RepeatView<T>(source, repeatCount);
         }
 
         /// <summary>
@@ -179,9 +159,8 @@ namespace Views
         public static IView<T> Sort<T>(this IView<T> source, IComparer<T> comparer = null)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.SortedList<T>(source as IList<T>, comparer);
+            return new Util.SortedView<T>(source, comparer);
         }
 
         /// <summary>
@@ -203,31 +182,28 @@ namespace Views
         /// Creates a concatenated view of the data.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="source">The source views to concatenate.</param>
+        /// <param name="sources">The source views to concatenate.</param>
         /// <returns>The concatenated view.</returns>
-        public static IView<T> Concat<T>(this IEnumerable<IView<T>> source)
+        public static IView<T> Concat<T>(this IEnumerable<IView<T>> sources)
         {
-            Contract.Requires(source != null);
-            Contract.Requires(Contract.ForAll(source, x => x != null));
-            Contract.Requires(Contract.ForAll(source, x => x is IList<T>));
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources, x => x != null));
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.ConcatList<T>(source.Select(x => x as IList<T>));
+            return new Util.ConcatView<T>(sources);
         }
 
         /// <summary>
         /// Creates a concatenated view of the data.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="source">The source views to concatenate.</param>
+        /// <param name="sources">The source views to concatenate.</param>
         /// <returns>The concatenated view.</returns>
-        public static IView<T> Concat<T>(this IView<IView<T>> source)
+        public static IView<T> Concat<T>(this IView<IView<T>> sources)
         {
-            Contract.Requires(source != null);
-            Contract.Requires(source is IList<IView<T>>);
-            Contract.Requires(Contract.ForAll(source as IList<IView<T>>, x => x != null));
-            Contract.Requires(Contract.ForAll(source as IList<IView<T>>, x => x is IList<T>));
+            Contract.Requires(sources != null);
+            Contract.Requires(Contract.ForAll(sources as IEnumerable<IView<T>>, x => x != null));
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return (source as IList<IView<T>>).Concat();
+            return (sources as IEnumerable<IView<T>>).Concat();
         }
 
         /// <summary>
@@ -240,11 +216,10 @@ namespace Views
         public static IView<T> Rotate<T>(this IView<T> source, int offset)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             if (offset == 0)
                 return source;
-            return new Util.OffsetList<T>(source as IList<T>, offset);
+            return new Util.OffsetView<T>(source, offset);
         }
 
         /// <summary>
@@ -253,15 +228,14 @@ namespace Views
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
         /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
         /// <param name="source">The source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <param name="selector">The projection used when reading elements.</param>
         /// <returns>The projected view.</returns>
-        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> read = null, Func<TResult, TSource> write = null)
+        public static IView<TResult> Map<TSource, TResult>(this IView<TSource> source, Func<TSource, TResult> selector)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<TSource>);
+            Contract.Requires(selector != null);
             Contract.Ensures(Contract.Result<IView<TResult>>() != null);
-            return new Util.ProjectionList<TSource, TResult>(source as IList<TSource>, read, write);
+            return new Util.ProjectionView<TSource, TResult>(source, selector);
         }
 
         /// <summary>
@@ -272,17 +246,15 @@ namespace Views
         /// <typeparam name="TResult">The type of element observed by the projected view.</typeparam>
         /// <param name="source0">The first source view.</param>
         /// <param name="source1">The second source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <param name="selector">The projection used when reading elements.</param>
         /// <returns>The projected view.</returns>
-        public static IView<TResult> Map<TSource0, TSource1, TResult>(this IView<TSource0> source0, IView<TSource1> source1, Func<TSource0, TSource1, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1>> write = null)
+        public static IView<TResult> Map<TSource0, TSource1, TResult>(this IView<TSource0> source0, IView<TSource1> source1, Func<TSource0, TSource1, TResult> selector)
         {
             Contract.Requires(source0 != null);
-            Contract.Requires(source0 is IList<TSource0>);
             Contract.Requires(source1 != null);
-            Contract.Requires(source1 is IList<TSource1>);
+            Contract.Requires(selector != null);
             Contract.Ensures(Contract.Result<IView<TResult>>() != null);
-            return new Util.ProjectionList<TSource0, TSource1, TResult>(source0 as IList<TSource0>, source1 as IList<TSource1>, read, write);
+            return new Util.ProjectionView<TSource0, TSource1, TResult>(source0, source1, selector);
         }
 
         /// <summary>
@@ -295,19 +267,16 @@ namespace Views
         /// <param name="source0">The first source view.</param>
         /// <param name="source1">The second source view.</param>
         /// <param name="source2">The third source view.</param>
-        /// <param name="read">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
-        /// <param name="write">The projection used when writing elements. This may be <c>null</c> if the projected view is read-only.</param>
+        /// <param name="selector">The projection used when reading elements. This may be <c>null</c> if the projected view is write-only.</param>
         /// <returns>The projected view.</returns>
-        public static IView<TResult> Map<TSource0, TSource1, TSource2, TResult>(this IView<TSource0> source0, IView<TSource1> source1, IView<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> read = null, Func<TResult, Tuple<TSource0, TSource1, TSource2>> write = null)
+        public static IView<TResult> Map<TSource0, TSource1, TSource2, TResult>(this IView<TSource0> source0, IView<TSource1> source1, IView<TSource2> source2, Func<TSource0, TSource1, TSource2, TResult> selector)
         {
             Contract.Requires(source0 != null);
-            Contract.Requires(source0 is IList<TSource0>);
             Contract.Requires(source1 != null);
-            Contract.Requires(source1 is IList<TSource1>);
             Contract.Requires(source2 != null);
-            Contract.Requires(source2 is IList<TSource2>);
+            Contract.Requires(selector != null);
             Contract.Ensures(Contract.Result<IView<TResult>>() != null);
-            return new Util.ProjectionList<TSource0, TSource1, TSource2, TResult>(source0 as IList<TSource0>, source1 as IList<TSource1>, source2 as IList<TSource2>, read, write);
+            return new Util.ProjectionView<TSource0, TSource1, TSource2, TResult>(source0, source1, source2, selector);
         }
 
         /// <summary>
@@ -320,11 +289,9 @@ namespace Views
         public static IView<T> Pad<T>(this IView<T> source, IView<T> backgroundSource)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Requires(backgroundSource != null);
-            Contract.Requires(backgroundSource is IList<T>);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.LayeredList<T>(backgroundSource as IList<T>, source as IList<T>);
+            return new Util.LayeredView<T>(backgroundSource, source);
         }
 
         /// <summary>
@@ -354,10 +321,9 @@ namespace Views
         public static IView<T> Filter<T>(this IView<T> source, Func<T, bool> filter)
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Requires(filter != null);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            return new Util.FilteredList<T>(source as IList<T>, filter);
+            return new Util.FilteredView<T>(source, filter);
         }
 
         // TODO: Randomize, TakeWhile/SkipWhile, Buffer (from Rx), Permutations.

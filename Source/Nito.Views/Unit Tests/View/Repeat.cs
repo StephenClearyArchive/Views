@@ -21,7 +21,7 @@ namespace t.View
         public void HasSpecifiedCount()
         {
             var view = Views.View.Repeat(3, 5);
-            Assert.AreEqual(5, view.Count());
+            Assert.AreEqual(5, view.Count);
         }
 
         [TestMethod]
@@ -43,14 +43,6 @@ namespace t.View
         public void NegativeCountThrowsException()
         {
             var view = Views.View.Repeat(3, -1);
-        }
-
-        [TestMethod]
-        public void ReadOnly()
-        {
-            var view = Views.View.Repeat(3, 5);
-            ViewAssert.CollectionIsReadOnly(view);
-            ViewAssert.ElementsAreReadOnly(view);
         }
     }
 }
