@@ -303,7 +303,6 @@ namespace Views
         public static IView<T> Pad<T>(this IView<T> source, int count, T value = default(T))
         {
             Contract.Requires(source != null);
-            Contract.Requires(source is IList<T>);
             Contract.Requires(count >= 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
             return source.Pad(Views.View.Repeat(value, count));
