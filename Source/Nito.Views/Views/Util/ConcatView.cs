@@ -148,7 +148,19 @@ namespace Views.Util
                 this.CreateNotifier().Replaced(sourceBaseIndex + index, oldItem, newItem);
         }
 
-        // TODO: SubscriptionsActive
+        protected override void SubscriptionsActive()
+        {
+            this.listener.Activate();
+            foreach (var sourceListener in this.listeners)
+                sourceListener.Activate();
+        }
+
+        protected override void SubscriptionsInactive()
+        {
+            this.listener.Deactivate();
+            foreach (var sourceListener in this.listeners)
+                sourceListener.Deactivate();
+        }
 
         /// <summary>
         /// Finds the source view and its index for accessing a specified concatenated index.

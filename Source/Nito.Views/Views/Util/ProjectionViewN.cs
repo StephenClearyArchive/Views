@@ -171,6 +171,18 @@ namespace Views.Util
             Contract.Invariant(this.selector != null);
         }
 
+        protected override void SubscriptionsActive()
+        {
+            this.listener0.Activate();
+            this.listener1.Activate();
+        }
+
+        protected override void SubscriptionsInactive()
+        {
+            this.listener0.Deactivate();
+            this.listener1.Deactivate();
+        }
+
         private int Min(params int[] counts)
 		{
 		    return counts.Min();
@@ -397,6 +409,20 @@ namespace Views.Util
             Contract.Invariant(this.source1 != null);
             Contract.Invariant(this.source2 != null);
             Contract.Invariant(this.selector != null);
+        }
+
+        protected override void SubscriptionsActive()
+        {
+            this.listener0.Activate();
+            this.listener1.Activate();
+            this.listener2.Activate();
+        }
+
+        protected override void SubscriptionsInactive()
+        {
+            this.listener0.Deactivate();
+            this.listener1.Deactivate();
+            this.listener2.Deactivate();
         }
 
         private int Min(params int[] counts)

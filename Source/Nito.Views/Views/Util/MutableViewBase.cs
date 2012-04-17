@@ -58,15 +58,11 @@ namespace Views.Util
         /// <summary>
         /// A notification that there is at least one <see cref="CollectionChanged"/> subscription active.
         /// </summary>
-        protected virtual void SubscriptionsActive()
-        {
-        }
+        protected abstract void SubscriptionsActive();
 
         /// <summary>
         /// A notification that there are no <see cref="CollectionChanged"/> subscriptions active.
         /// </summary>
-        protected virtual void SubscriptionsInactive()
-        {
-        }
+        protected abstract void SubscriptionsInactive();
     }
 }
