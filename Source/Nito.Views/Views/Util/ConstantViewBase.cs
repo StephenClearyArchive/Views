@@ -12,7 +12,7 @@ namespace Views.Util
     /// Provides common implementations of some view methods.
     /// </summary>
     /// <typeparam name="T">The type of element observed by the view.</typeparam>
-    public abstract class ConstantViewBase<T> : ViewBase<T>, INotifyCollectionChanged, ICanNotifyCollectionChanged
+    public abstract class ConstantViewBase<T> : ViewBase<T>, ICanNotifyCollectionChanged
     {
         public bool CanNotifyCollectionChanged
         {

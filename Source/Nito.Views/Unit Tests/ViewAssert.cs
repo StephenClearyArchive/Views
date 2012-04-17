@@ -43,7 +43,7 @@ public static class ViewAssert
         var enumerable = view as IEnumerable<T>;
         Assert.IsNotNull(enumerable);
         Assert.IsNotNull(view as INotifyCollectionChanged);
-        Assert.IsNotNull(view as ICanNotifyCollectionChanged);
+        Assert.IsNotNull(view as Views.Util.ICanNotifyCollectionChanged);
 
         // Invalid Item indexes are rejected.
         ThrowsException(() => { var test = view[-1]; });

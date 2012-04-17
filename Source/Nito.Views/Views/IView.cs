@@ -36,13 +36,16 @@ namespace Views
     [ContractClass(typeof(ViewContracts<>))]
     public interface IView<out T>
     {
+        /// <summary>
+        /// Gets the number of elements observed by this view.
+        /// </summary>
+        /// <returns>The number of elements observed by this view.</returns>
         int Count { get; }
 
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to get.</param>
         T this[int index] { get; }
-    }
-
-    public interface ICanNotifyCollectionChanged
-    {
-        bool CanNotifyCollectionChanged { get; }
     }
 }
