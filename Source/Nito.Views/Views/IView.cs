@@ -34,7 +34,7 @@ namespace Views
     /// </summary>
     /// <typeparam name="T">The type of item observed by the view.</typeparam>
     [ContractClass(typeof(ViewContracts<>))]
-    public interface IView<out T>
+    public interface IView<out T> : Views.Linq.IView
     {
         /// <summary>
         /// Gets the number of elements observed by this view.

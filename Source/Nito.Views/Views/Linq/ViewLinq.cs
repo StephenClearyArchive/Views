@@ -18,7 +18,7 @@ namespace Views.Linq
         /// <returns>The result view.</returns>
         public static IView<TResult> Cast<TResult>(this IView source)
         {
-            return (source as System.Collections.IList).View<TResult>();
+            return new DynamicViewWrapper<TResult>(source);
         }
 
         /// <summary>
