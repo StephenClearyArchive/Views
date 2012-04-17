@@ -12,7 +12,7 @@ namespace Views.Util
     /// Provides common implementations of some view methods.
     /// </summary>
     /// <typeparam name="T">The type of element observed by the view.</typeparam>
-    public abstract class MutableViewBase<T> : ViewBase<T>, INotifyCollectionChanged, ICanNotifyCollectionChanged
+    public abstract class MutableViewBase<T> : ViewBase<T>, ICanNotifyCollectionChanged
     {
         /// <summary>
         /// Backing field for <see cref="CollectionChanged"/>.

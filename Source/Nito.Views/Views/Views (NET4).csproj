@@ -158,6 +158,7 @@
     <Compile Include="Util\CollectionChangedResponder.cs" />
     <Compile Include="Util\ConcatView.cs" />
     <Compile Include="Util\ConstantViewBase.cs" />
+    <Compile Include="Util\ICanNotifyCollectionChanged.cs" />
     <Compile Include="Util\ProjectionViewN.cs">
       <DependentUpon>ProjectionViewN.tt</DependentUpon>
       <SubType>Code</SubType>
