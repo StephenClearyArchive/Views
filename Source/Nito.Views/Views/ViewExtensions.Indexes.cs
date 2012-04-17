@@ -56,7 +56,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the index of the only element in a view that matches a condition, or -1 if no matching elements are found. Throws <see cref="InvalidOperationException"/> if there are multiple matching elements.
+        /// Returns the index of the only element in a view that matches a condition, or -1 if no matching elements are found. Throws an exception if there are multiple matching elements.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view in which to locate the value.</param>
@@ -66,18 +66,13 @@ namespace Views
         {
             Contract.Requires(view != null);
             Contract.Requires(predicate != null);
+            Contract.Requires((view as IEnumerable<T>).Count(predicate) == 1);
             Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < view.Count));
             var count = view.Count;
-            int ret = -1;
             for (int i = 0; i != count; ++i)
             {
                 if (predicate(view[i]))
-                {
-                    if (ret == -1)
-                        ret = i;
-                    else
-                        throw new InvalidOperationException("More than one element matches.");
-                }
+                    return i;
             }
 
             return -1;
