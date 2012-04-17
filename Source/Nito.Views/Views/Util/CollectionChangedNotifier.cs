@@ -40,32 +40,15 @@ namespace Views.Util
         private NotifyCollectionChangedEventHandler collectionHandler;
 
         /// <summary>
-        /// A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.
-        /// </summary>
-        private PropertyChangedEventHandler propertyHandler;
-
-        /// <summary>
         /// Initializes an instance of the <see cref="CollectionChangedNotifier"/> struct.
         /// </summary>
         /// <param name="sender">The instance that initiates the events.</param>
         /// <param name="collectionHandler">A snapshot of the <c>CollectionChanged</c> event handler. This may be <c>null</c>.</param>
-        /// <param name="propertyHandler">A snapshot of the <c>PropertyChanged</c> event handler. This may be <c>null</c>.</param>
-        /// <returns>An instance of <see cref="CollectionChangedNotifier"/> class, or <c>null</c> if there are no event handlers.</returns>
-        public CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler, PropertyChangedEventHandler propertyHandler)
+        public CollectionChangedNotifier(object sender, NotifyCollectionChangedEventHandler collectionHandler)
         {
             Contract.Requires(sender != null);
-            if (collectionHandler == null && propertyHandler == null)
-            {
-                this.sender = null;
-                this.collectionHandler = null;
-                this.propertyHandler = null;
-            }
-            else
-            {
-                this.sender = sender;
-                this.collectionHandler = collectionHandler;
-                this.propertyHandler = propertyHandler;
-            }
+            this.sender = (collectionHandler == null) ? null : sender;
+            this.collectionHandler = collectionHandler;
         }
 
         /// <summary>
@@ -77,15 +60,6 @@ namespace Views.Util
             return (this.collectionHandler != null);
         }
 
-        private void InvokePropertyHandler()
-        {
-            if (this.propertyHandler != null)
-            {
-                this.propertyHandler(this.sender, CollectionChangedNotifier.CountPropertyChangedEventArgs);
-                this.propertyHandler(this.sender, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
-            }
-        }
-
         /// <summary>
         /// Notifies listeners that an item was added.
         /// </summary>
@@ -93,11 +67,8 @@ namespace Views.Util
         /// <param name="item">The item that was added.</param>
         public void Added(int index, T item)
         {
-            if (this.sender == null)
-                return;
             if (this.collectionHandler != null)
                 this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
-            this.InvokePropertyHandler();
         }
 
         /// <summary>
@@ -107,11 +78,8 @@ namespace Views.Util
         /// <param name="oldItem">The item that was removed.</param>
         public void Removed(int index, T oldItem)
         {
-            if (this.sender == null)
-                return;
             if (this.collectionHandler != null)
                 this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, index));
-            this.InvokePropertyHandler();
         }
 
         /// <summary>
@@ -122,11 +90,8 @@ namespace Views.Util
         /// <param name="newItem">The new item.</param>
         public void Replaced(int index, T oldItem, T newItem)
         {
-            if (this.sender == null)
-                return;
             if (this.collectionHandler != null)
                 this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, index));
-            this.InvokePropertyHandler();
         }
 
         /// <summary>
@@ -134,11 +99,8 @@ namespace Views.Util
         /// </summary>
         public void Reset()
         {
-            if (this.sender == null)
-                return;
             if (this.collectionHandler != null)
                 this.collectionHandler(this.sender, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            this.InvokePropertyHandler();
         }
     }
 }

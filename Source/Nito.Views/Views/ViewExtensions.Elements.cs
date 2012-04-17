@@ -12,22 +12,6 @@ namespace Views
     public static partial class ViewExtensions
     {
         /// <summary>
-        /// Returns the element at a specified index.
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="view">The view.</param>
-        /// <param name="index">The index of the element to return.</param>
-        /// <returns>The element at the specified index.</returns>
-        public static T GetItem<T>(this IView<T> view, int index)
-        {
-            Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            Contract.Requires(index >= 0);
-            Contract.Requires(index < (view as IList<T>).Count);
-            return (view as IList<T>)[index];
-        }
-
-        /// <summary>
         /// Returns the element at a specified index, or a default value if the index is invalid.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
@@ -35,14 +19,12 @@ namespace Views
         /// <param name="index">The index of the element to return.</param>
         /// <param name="defaultValue">The default value to return if the index is invalid. Defaults to <c>default(T)</c>.</param>
         /// <returns>The element at the specified index.</returns>
-        public static T GetItemOrDefault<T>(this IView<T> view, int index, T defaultValue = default(T))
+        public static T ElementAtOrDefault<T>(this IView<T> view, int index, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            var list = view as IList<T>;
-            if (index < 0 || index >= list.Count)
+            if (index < 0 || index >= view.Count)
                 return defaultValue;
-            return list[index];
+            return view[index];
         }
 
         /// <summary>
@@ -54,11 +36,9 @@ namespace Views
         public static T First<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            var list = view as IList<T>;
-            if (list.Count == 0)
+            if (view.Count == 0)
                 throw new InvalidOperationException("View contains no elements.");
-            return list[0];
+            return view[0];
         }
 
         /// <summary>
@@ -71,12 +51,11 @@ namespace Views
         public static T First<T>(this IView<T> view, Func<T, bool> predicate)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             Contract.Requires(predicate != null);
             var index = view.FirstIndex(predicate);
             if (index == -1)
                 throw new InvalidOperationException("View contains no matching elements.");
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -89,11 +68,9 @@ namespace Views
         public static T FirstOrDefault<T>(this IView<T> view, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            var list = view as IList<T>;
-            if (list.Count == 0)
+            if (view.Count == 0)
                 return defaultValue;
-            return list[0];
+            return view[0];
         }
 
         /// <summary>
@@ -107,12 +84,11 @@ namespace Views
         public static T FirstOrDefault<T>(this IView<T> view, Func<T, bool> predicate, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             Contract.Requires(predicate != null);
             var index = view.FirstIndex(predicate);
             if (index == -1)
                 return defaultValue;
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -124,12 +100,10 @@ namespace Views
         public static T Last<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            var list = view as IList<T>;
-            var count = list.Count;
+            var count = view.Count;
             if (count == 0)
                 throw new InvalidOperationException("View contains no elements.");
-            return list[count - 1];
+            return view[count - 1];
         }
 
         /// <summary>
@@ -142,12 +116,11 @@ namespace Views
         public static T Last<T>(this IView<T> view, Func<T, bool> predicate)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             Contract.Requires(predicate != null);
             var index = view.LastIndex(predicate);
             if (index == -1)
                 throw new InvalidOperationException("View contains no matching elements.");
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -160,13 +133,13 @@ namespace Views
         public static T LastOrDefault<T>(this IView<T> view, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            var list = view as IList<T>;
-            var count = list.Count;
+            var count = view.Count;
             if (count == 0)
                 return defaultValue;
-            return list[count - 1];
+            return view[count - 1];
         }
+
+        // TODO: evaluate Contracts for some of these runtime exceptions.
 
         /// <summary>
         /// Returns the last element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.
@@ -179,12 +152,11 @@ namespace Views
         public static T LastOrDefault<T>(this IView<T> view, Func<T, bool> predicate, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             Contract.Requires(predicate != null);
             var index = view.LastIndex(predicate);
             if (index == -1)
                 return defaultValue;
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -196,12 +168,10 @@ namespace Views
         public static T Single<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
-            var list = view as IList<T>;
-            var count = list.Count;
+            var count = view.Count;
             if (count != 1)
                 throw new InvalidOperationException("View does not contain exactly one element.");
-            return list[0];
+            return view[0];
         }
 
         /// <summary>
@@ -214,12 +184,11 @@ namespace Views
         public static T Single<T>(this IView<T> view, Func<T, bool> predicate)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             Contract.Requires(predicate != null);
             var index = view.SingleIndex(predicate);
             if (index == -1)
                 throw new InvalidOperationException("View contains no matching elements.");
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -233,12 +202,11 @@ namespace Views
         public static T SingleOrDefault<T>(this IView<T> view, Func<T, bool> predicate, T defaultValue = default(T))
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             Contract.Requires(predicate != null);
             var index = view.SingleIndex(predicate);
             if (index == -1)
                 return defaultValue;
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -251,11 +219,10 @@ namespace Views
         public static T Max<T>(this IView<T> view, IComparer<T> comparer = null)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             var index = view.MaxIndex(comparer);
             if (index == -1)
                 return default(T);
-            return (view as IList<T>)[index];
+            return view[index];
         }
 
         /// <summary>
@@ -268,11 +235,10 @@ namespace Views
         public static T Min<T>(this IView<T> view, IComparer<T> comparer = null)
         {
             Contract.Requires(view != null);
-            Contract.Requires(view is IList<T>);
             var index = view.MinIndex(comparer);
             if (index == -1)
                 return default(T);
-            return (view as IList<T>)[index];
+            return view[index];
         }
     }
 }

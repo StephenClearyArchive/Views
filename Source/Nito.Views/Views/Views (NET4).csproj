@@ -152,37 +152,40 @@
     <Compile Include="Linq\OrderedView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\AnonymousComparer.cs" />
-    <Compile Include="Util\AnonymousReadOnlyList.cs" />
+    <Compile Include="Util\AnonymousConstantView.cs" />
     <Compile Include="Util\CollectionChangedListener.cs" />
     <Compile Include="Util\CollectionChangedNotifier.cs" />
-    <Compile Include="Util\ConcatList.cs" />
-    <Compile Include="Util\FilteredList.cs">
+    <Compile Include="Util\CollectionChangedResponder.cs" />
+    <Compile Include="Util\ConcatView.cs" />
+    <Compile Include="Util\ConstantViewBase.cs" />
+    <Compile Include="Util\ProjectionViewN.cs">
+      <DependentUpon>ProjectionViewN.tt</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\IndirectListBase.cs" />
-    <Compile Include="Util\LayeredList.cs" />
-    <Compile Include="Util\GenericList.cs" />
-    <Compile Include="Util\IndirectList.cs" />
-    <Compile Include="Util\ListBase.cs" />
-    <Compile Include="Util\ListHelper.cs" />
-    <Compile Include="Util\MultiDispose.cs" />
-    <Compile Include="Util\OffsetList.cs" />
-    <Compile Include="Util\ProjectionList.cs" />
-    <Compile Include="Util\ProjectionListN.cs">
-      <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>ProjectionListN.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Include="Util\ReadOnlyListBase.cs" />
-    <Compile Include="Util\ReadOnlySourceListBase.cs" />
-    <Compile Include="Util\RepeatList.cs" />
-    <Compile Include="Util\ReverseList.cs" />
-    <Compile Include="Util\SliceList.cs" />
-    <Compile Include="Util\SortedList.cs">
+    <Compile Include="Util\ProjectionView.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\SourceListBase.cs" />
-    <Compile Include="Util\StepList.cs" />
+    <Compile Include="Util\ViewBase.cs" />
+    <Compile Include="Util\ListView.cs" />
+    <Compile Include="Util\MutableViewBase.cs" />
+    <Compile Include="Util\FilteredView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\IndirectViewBase.cs" />
+    <Compile Include="Util\LayeredView.cs" />
+    <Compile Include="Util\ObjectListView.cs" />
+    <Compile Include="Util\ViewWrapper.cs" />
+    <Compile Include="Util\OffsetView.cs" />
+    <Compile Include="Util\RepeatView.cs" />
+    <Compile Include="Util\ReverseView.cs" />
+    <Compile Include="Util\SliceView.cs" />
+    <Compile Include="Util\SortedView.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Util\SourceViewBase.cs" />
+    <Compile Include="Util\StepView.cs" />
     <Compile Include="View.cs" />
     <Compile Include="ViewExtensions.cs" />
     <Compile Include="ViewExtensions.Elements.cs" />
@@ -191,13 +194,13 @@
     <Compile Include="Linq\ViewLinq.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Util\ProjectionListN.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ProjectionListN.cs</LastGenOutput>
-    </None>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+    <None Include="Util\ProjectionViewN.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ProjectionViewN.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

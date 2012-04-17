@@ -21,7 +21,7 @@ namespace t.View
         public void HasSpecifiedCount()
         {
             var view = Views.View.Range(3, 5);
-            Assert.AreEqual(5, view.Count());
+            Assert.AreEqual(5, view.Count);
         }
 
         [TestMethod]
@@ -71,14 +71,6 @@ namespace t.View
         {
             var view = Views.View.Range(-1, 5, -2);
             ViewAssert.AreEquivalent(new[] { -1, -3, -5, -7, -9 }, view);
-        }
-
-        [TestMethod]
-        public void ReadOnly()
-        {
-            var view = Views.View.Range(3, 5);
-            ViewAssert.CollectionIsReadOnly(view);
-            ViewAssert.ElementsAreReadOnly(view);
         }
     }
 }

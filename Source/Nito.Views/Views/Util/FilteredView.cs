@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
+using System.Collections.Specialized;
 
 namespace Views.Util
 {
     /// <summary>
-    /// A filtered list, which provides a filtered view into a source list.
+    /// A filtered view, which provides a filtered view into a source view.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public sealed class FilteredList<T> : IndirectListBase<T>
+    /// <typeparam name="T">The type of elements observed by the view.</typeparam>
+    public sealed class FilteredView<T> : IndirectViewBase<T>
     {
         /// <summary>
         /// The filter which determines which elements in the source list are visible in this list.
@@ -18,11 +19,11 @@ namespace Views.Util
         private readonly Func<T, bool> filter;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FilteredList&lt;T&gt;"/> class for the given source list.
+        /// Initializes a new instance of the <see cref="FilteredView&lt;T&gt;"/> class for the given source view.
         /// </summary>
-        /// <param name="source">The source list.</param>
-        /// <param name="filter">The filter which determines which elements in the source list are visible in this list.</param>
-        public FilteredList(IList<T> source, Func<T, bool> filter)
+        /// <param name="source">The source view.</param>
+        /// <param name="filter">The filter which determines which elements in the source view are visible in this view.</param>
+        public FilteredView(IView<T> source, Func<T, bool> filter)
             : base(source, null)
         {
             Contract.Requires(source != null);
@@ -57,9 +58,10 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has added an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
-        protected override void SourceCollectionAdded(int index, T item)
+        public override void Added(INotifyCollectionChanged collection, int index, T item)
         {
             // Update our existing indexes.
             var newIndex = (this.indices as List<int>).BinarySearch(index);
@@ -82,9 +84,10 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has removed an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the removed item.</param>
         /// <param name="item">The item that was removed.</param>
-        protected override void SourceCollectionRemoved(int index, T item)
+        public override void Removed(INotifyCollectionChanged collection, int index, T item)
         {
             // Update our existing indexes.
             var removedIndex = (this.indices as List<int>).BinarySearch(index);
@@ -106,10 +109,11 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has replaced an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
         /// <param name="newItem">The new item.</param>
-        protected override void SourceCollectionReplaced(int index, T oldItem, T newItem)
+        public override void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
             var oldItemPassesFilter = filter(oldItem);
             var newItemPassesFilter = filter(newItem);
@@ -149,7 +153,8 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has changed significantly.
         /// </summary>
-        protected override void SourceCollectionReset()
+        /// <param name="collection">The collection that changed.</param>
+        public override void Reset(INotifyCollectionChanged collection)
         {
             this.ResetIndices();
             this.CreateNotifier().Reset();

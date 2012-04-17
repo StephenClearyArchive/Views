@@ -21,7 +21,7 @@ namespace t.View
         public void HasCountOf0()
         {
             var view = Views.View.Empty<int>();
-            Assert.AreEqual(0, view.Count());
+            Assert.AreEqual(0, view.Count);
         }
 
         [TestMethod]
@@ -37,13 +37,6 @@ namespace t.View
             var view0 = Views.View.Empty<int>();
             var view1 = Views.View.Empty<int>();
             Assert.AreSame(view0, view1);
-        }
-
-        [TestMethod]
-        public void ReadOnly()
-        {
-            var view = Views.View.Empty<int>();
-            ViewAssert.CollectionIsReadOnly(view);
         }
     }
 }

@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
+using System.Collections.Specialized;
 
 namespace Views.Util
 {
     /// <summary>
-    /// A sorted list, which provides a sorted view into a source list.
+    /// A sorted view over a source view.
     /// </summary>
-    /// <typeparam name="T">The type of elements in the list.</typeparam>
-    public class SortedList<T> : IndirectListBase<T>
+    /// <typeparam name="T">The type of elements observed by the view.</typeparam>
+    public class SortedView<T> : IndirectViewBase<T>
     {
         /// <summary>
         /// The comparer used to indirectly compare source list elements.
@@ -18,11 +19,11 @@ namespace Views.Util
         private readonly IComparer<int> indexComparer;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SortedList&lt;T&gt;"/> class for the given source list.
+        /// Initializes a new instance of the <see cref="SortedView&lt;T&gt;"/> class for the given source list.
         /// </summary>
-        /// <param name="source">The source list.</param>
-        /// <param name="comparer">The source list element comparer. If this is <c>null</c>, then <see cref="Comparer{T}.Default"/> is used.</param>
-        public SortedList(IList<T> source, IComparer<T> comparer)
+        /// <param name="source">The source view.</param>
+        /// <param name="comparer">The source view element comparer. If this is <c>null</c>, then <see cref="Comparer{T}.Default"/> is used.</param>
+        public SortedView(IView<T> source, IComparer<T> comparer)
             : base(source, null)
         {
             Contract.Requires(source != null);
@@ -49,9 +50,10 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has added an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the new item.</param>
         /// <param name="item">The item that was added.</param>
-        protected override void SourceCollectionAdded(int index, T item)
+        public override void Added(INotifyCollectionChanged collection, int index, T item)
         {
             // Update our existing indexes.
             for (int i = 0; i != this.indices.Count; ++i)
@@ -75,9 +77,10 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has removed an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the removed item.</param>
         /// <param name="item">The item that was removed.</param>
-        protected override void SourceCollectionRemoved(int index, T item)
+        public override void Removed(INotifyCollectionChanged collection, int index, T item)
         {
             // Update our existing indexes.
             int removedIndex = -1;
@@ -99,10 +102,11 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has replaced an item.
         /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         /// <param name="index">The index of the item that changed.</param>
         /// <param name="oldItem">The old item.</param>
         /// <param name="newItem">The new item.</param>
-        protected override void SourceCollectionReplaced(int index, T oldItem, T newItem)
+        public override void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
             // Do a removal followed by an insert.
             // Note that the other source indices do not change, so this code is simpler than an *actual* element removal and insert.
@@ -123,29 +127,11 @@ namespace Views.Util
         /// <summary>
         /// A notification that the source collection has changed significantly.
         /// </summary>
-        protected override void SourceCollectionReset()
+        /// <param name="collection">The collection that changed.</param>
+        public override void Reset(INotifyCollectionChanged collection)
         {
             this.ResetIndices();
             this.CreateNotifier().Reset();
-        }
-
-        /// <summary>
-        /// Returns a value indicating whether the elements within this collection may be updated, e.g., the index setter.
-        /// </summary>
-        /// <returns>A value indicating whether the elements within this collection may be updated.</returns>
-        protected override bool CanUpdateElementValues()
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// Sets an element at the specified index. This implementation always throws <see cref="NotSupportedException"/>.
-        /// </summary>
-        /// <param name="index">The zero-based index of the element to get. This index is guaranteed to be valid.</param>
-        /// <param name="item">The element to store in the list.</param>
-        protected override void DoSetItem(int index, T item)
-        {
-            throw this.NotSupported();
         }
     }
 }

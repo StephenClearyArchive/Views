@@ -1,0 +1,157 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+
+<# int maxNumberOfSourceViews = 3; #>
+
+// This file was automatically generated. Do not edit.
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics.Contracts;
+using System.Linq;
+
+namespace Views.Util
+{
+<# for (int i = 2; i != maxNumberOfSourceViews + 1; ++i)
+{
+  var tSourceList = Join(i, j => "TSource" + j);
+#>
+    /// <summary>
+    /// Projects source views to a result view.
+    /// </summary>
+<# for (int j = 0; j != i; ++j) { #>
+    /// <typeparam name="TSource<#= j #>">The type of element observed by source view <#= j #>.</typeparam>
+<# } #>
+    /// <typeparam name="TResult">The type of element observed by the resulting view.</typeparam>
+    public sealed class ProjectionView<<#= tSourceList #>, TResult> : MutableViewBase<TResult>
+    {
+<# for (int j = 0; j != i; ++j)
+{
+  var preSelector = Enumerable.Range(0, j).Select(k => "this.parent.source" + k + "[index]");
+  var postSelector = Enumerable.Range(j + 1, i - j - 1).Select(k => "this.parent.source" + k + "[index]");
+  var oldSelectorCall = string.Join(", ", preSelector.Concat(Enumerable.Repeat("oldItem", 1)).Concat(postSelector));
+  var newSelectorCall = string.Join(", ", preSelector.Concat(Enumerable.Repeat("newItem", 1)).Concat(postSelector));
+#>
+        /// <summary>
+        /// A type that forwards changes in individual source collections to its parent view.
+        /// </summary>
+        private sealed class SourceChangeResponder<#= j #> : ICollectionChangedResponder<TSource<#= j #>>
+        {
+            /// <summary>
+            /// The parent list.
+            /// </summary>
+            private readonly ProjectionView<<#= tSourceList #>, TResult> parent;
+
+            public SourceChangeResponder<#= j #>(ProjectionView<<#= tSourceList #>, TResult> parent)
+            {
+                Contract.Requires(parent != null);
+                this.parent = parent;
+            }
+
+            [ContractInvariantMethod]
+            private void ObjectInvariant()
+            {
+                Contract.Invariant(this.parent != null);
+            }
+
+            public void Added(INotifyCollectionChanged collection, int index, TSource<#= j #> item)
+            {
+                this.parent.CreateNotifier().Reset();
+            }
+
+            public void Removed(INotifyCollectionChanged collection, int index, TSource<#= j #> item)
+            {
+                this.parent.CreateNotifier().Reset();
+            }
+
+            public void Replaced(INotifyCollectionChanged collection, int index, TSource<#= j #> oldItem, TSource<#= j #> newItem)
+            {
+                var selector = this.parent.selector;
+                this.parent.CreateNotifier().Replaced(index, selector(<#= oldSelectorCall #>), selector(<#= newSelectorCall #>));
+            }
+
+            public void Reset(INotifyCollectionChanged collection)
+            {
+                this.parent.CreateNotifier().Reset();
+            }
+        }
+
+<# } #>
+<# for (int j = 0; j != i; ++j) { #>
+        /// <summary>
+        /// Source view <#= j #>.
+        /// </summary>
+        private readonly IView<TSource<#= j #>> source<#= j #>;
+
+        /// <summary>
+        /// The listener for source view <#= j #>.
+        /// </summary>
+        private readonly CollectionChangedListener<TSource<#= j #>> listener<#= j #>;
+
+<# } #>
+        /// <summary>
+        /// The projection function from sources to result.
+        /// </summary>
+        private readonly Func<<#= tSourceList #>, TResult> selector;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProjectionView{<#= tSourceList #>,TResult}"/> class.
+        /// </summary>
+<# for (int j = 0; j != i; ++j) { #>
+        /// <param name="source<#= j #>">Source view <#= j #>.</param>
+<# } #>
+        /// <param name="selector">The projection function from sources to result.</param>
+        public ProjectionView(<#= Join(i, j => "IView<TSource" + j + "> source" + j) #>, Func<<#= tSourceList #>, TResult> selector)
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            Contract.Requires(source<#= j #> != null);
+<# } #>
+            Contract.Requires(selector != null);
+<# for (int j = 0; j != i; ++j) { #>
+            this.source<#= j #> = source<#= j #>;
+            this.listener<#= j #> = CollectionChangedListener<TSource<#= j #>>.Create(source<#= j #>, CollectionChangedListener<TSource<#= j #>>.WillCreate(source<#= j #>) ? new SourceChangeResponder<#= j #>(this) : null);
+<# } #>
+            this.selector = selector;
+        }
+
+        public override int Count
+        {
+            get { return Min(<#= Join(i, j => "this.source" + j + ".Count") #>); }
+        }
+
+        public override TResult this[int index]
+        {
+            get { return this.selector(<#= Join(i, j => "this.source" + j + "[index]") #>); }
+        }
+
+        public override bool CanNotifyCollectionChanged
+        {
+            get { return <#= Join(i, j => "(this.source" + j + " as ICanNotifyCollectionChanged).CanNotifyCollectionChanged", " || ") #>; }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            Contract.Invariant(this.source<#= j #> != null);
+<# } #>
+            Contract.Invariant(this.selector != null);
+        }
+
+        private int Min(params int[] counts)
+		{
+		    return counts.Min();
+		}
+	}
+
+<# } #>
+}
+
+<#+
+  private string Join(int count, Func<int, string> selector, string separator = ", ")
+  {
+    return string.Join(separator, Enumerable.Range(0, count).Select(selector));
+  }
+#>
