@@ -12,7 +12,7 @@ namespace Views.Util
     /// Provides implementations of common interfaces for views.
     /// </summary>
     /// <typeparam name="T">The type of element contained observed by the view.</typeparam>
-    public sealed class ViewWrapper<T> : IList<T>, System.Collections.IList, IView<T>, INotifyCollectionChanged // TODO: , INotifyPropertyChanged
+    public sealed class ViewWrapper<T> : IList<T>, System.Collections.IList, IView<T>, INotifyCollectionChanged, INotifyPropertyChanged, ICollectionChangedResponder<T>
     {
         /// <summary>
         /// The wrapped view.
@@ -20,9 +20,24 @@ namespace Views.Util
         private readonly IView<T> view;
 
         /// <summary>
+        /// The listener for the wrapped view.
+        /// </summary>
+        private readonly CollectionChangedListener<T> listener;
+
+        /// <summary>
         /// Backing field for <see cref="System.Collections.ICollection.SyncRoot"/>.
         /// </summary>
         private readonly object syncRoot;
+
+        /// <summary>
+        /// Backing field for <see cref="CollectionChanged"/>.
+        /// </summary>
+        private NotifyCollectionChangedEventHandler collectionChanged;
+
+        /// <summary>
+        /// Backing field for <see cref="PropertyChanged"/>.
+        /// </summary>
+        private PropertyChangedEventHandler propertyChanged;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewWrapper&lt;T&gt;"/> class around the specified view.
@@ -31,6 +46,7 @@ namespace Views.Util
         public ViewWrapper(IView<T> view)
         {
             this.view = view;
+            this.listener = CollectionChangedListener<T>.Create(view, this);
             this.syncRoot = new object();
         }
 
@@ -39,8 +55,93 @@ namespace Views.Util
         /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged
         {
-            add { (this.view as INotifyCollectionChanged).CollectionChanged += value; }
-            remove { (this.view as INotifyCollectionChanged).CollectionChanged -= value; }
+            add
+            {
+                bool subscriptionsActivated = (this.collectionChanged == null && this.propertyChanged == null);
+                this.collectionChanged += value;
+                if (subscriptionsActivated)
+                    this.SubscriptionsActive();
+            }
+
+            remove
+            {
+                this.collectionChanged -= value;
+                if (this.collectionChanged == null && this.propertyChanged == null)
+                    this.SubscriptionsInactive();
+            }
+        }
+
+        /// <summary>
+        /// Notifies listeners of changes in the view's properties. This may NOT be accessed by multiple threads.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                bool subscriptionsActivated = (this.collectionChanged == null && this.propertyChanged == null);
+                this.propertyChanged += value;
+                if (subscriptionsActivated)
+                    this.SubscriptionsActive();
+            }
+
+            remove
+            {
+                this.propertyChanged -= value;
+                if (this.collectionChanged == null && this.propertyChanged == null)
+                    this.SubscriptionsInactive();
+            }
+        }
+
+        private void SubscriptionsActive()
+        {
+            this.listener.Activate();
+        }
+
+        private void SubscriptionsInactive()
+        {
+            this.listener.Deactivate();
+        }
+
+        private CollectionChangedNotifier<T> CreateNotifier()
+        {
+            return new CollectionChangedNotifier<T>(this, this.collectionChanged);
+        }
+
+        private void NotifyPropertyChanged(CollectionChangedNotifier<T> notifier)
+        {
+            if (notifier.CaptureItems() && this.propertyChanged != null)
+            {
+                this.propertyChanged(this, CollectionChangedNotifier.CountPropertyChangedEventArgs);
+                this.propertyChanged(this, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
+            }
+        }
+
+        public void Added(INotifyCollectionChanged collection, int index, T item)
+        {
+            var notifier = this.CreateNotifier();
+            notifier.Added(index, item);
+            this.NotifyPropertyChanged(notifier);
+        }
+
+        public void Removed(INotifyCollectionChanged collection, int index, T item)
+        {
+            var notifier = this.CreateNotifier();
+            notifier.Removed(index, item);
+            this.NotifyPropertyChanged(notifier);
+        }
+
+        public void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
+        {
+            var notifier = this.CreateNotifier();
+            notifier.Replaced(index, oldItem, newItem);
+            this.NotifyPropertyChanged(notifier);
+        }
+
+        public void Reset(INotifyCollectionChanged collection)
+        {
+            var notifier = this.CreateNotifier();
+            notifier.Reset();
+            this.NotifyPropertyChanged(notifier);
         }
 
         int IView<T>.Count
