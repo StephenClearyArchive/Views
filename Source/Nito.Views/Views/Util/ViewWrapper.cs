@@ -107,11 +107,12 @@ namespace Views.Util
             return new CollectionChangedNotifier<T>(this, this.collectionChanged);
         }
 
-        private void NotifyPropertyChanged(CollectionChangedNotifier<T> notifier)
+        private void NotifyPropertyChanged(CollectionChangedNotifier<T> notifier, bool countChanged = true)
         {
             if (notifier.CaptureItems() && this.propertyChanged != null)
             {
-                this.propertyChanged(this, CollectionChangedNotifier.CountPropertyChangedEventArgs);
+                if (countChanged)
+                    this.propertyChanged(this, CollectionChangedNotifier.CountPropertyChangedEventArgs);
                 this.propertyChanged(this, CollectionChangedNotifier.ItemsPropertyChangedEventArgs);
             }
         }
@@ -134,7 +135,7 @@ namespace Views.Util
         {
             var notifier = this.CreateNotifier();
             notifier.Replaced(index, oldItem, newItem);
-            this.NotifyPropertyChanged(notifier);
+            this.NotifyPropertyChanged(notifier, false);
         }
 
         public void Reset(INotifyCollectionChanged collection)
