@@ -12,7 +12,7 @@ namespace Views
     public static partial class ViewExtensions
     {
         /// <summary>
-        /// Returns the index of the first element in a view that matches a condition, or -1 if no matching elements are found. This is logically equivalent to <see cref="List{T}.FindIndex(Predicate{T})"/>.
+        /// Returns the index of the first element in a view that matches a condition, or -1 if no matching elements are found.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view in which to locate the value.</param>
@@ -34,7 +34,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the index of the last element in a view that matches a condition, or -1 if no matching elements are found. This is logically equivalent to <see cref="List{T}.FindLastIndex(Predicate{T})"/>.
+        /// Returns the index of the last element in a view that matches a condition, or -1 if no matching elements are found.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view in which to locate the value.</param>
@@ -124,7 +124,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the index of the first matching element in a view, or -1 if no matching elements are found. This is logically equivalent to <see cref="List{T}.IndexOf(T)"/>.
+        /// Returns the index of the first matching element in a view, or -1 if no matching elements are found.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view in which to locate the value.</param>
@@ -140,7 +140,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the index of the last matching element in a view, or -1 if no matching elements are found. This is logically equivalent to <see cref="List{T}.LastIndexOf(T)"/>.
+        /// Returns the index of the last matching element in a view, or -1 if no matching elements are found.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view in which to locate the value.</param>

@@ -37,6 +37,10 @@ namespace Views.Util
             this.priorityListener = CollectionChangedListener<T>.Create(prioritySource, this);
         }
 
+        /// <summary>
+        /// Gets the number of elements observed by this view.
+        /// </summary>
+        /// <returns>The number of elements observed by this view.</returns>
         public override int Count
         {
             get
@@ -45,6 +49,10 @@ namespace Views.Util
             }
         }
 
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to get.</param>
         public override T this[int index]
         {
             get
@@ -61,16 +69,35 @@ namespace Views.Util
             Contract.Invariant(this.prioritySource != null);
         }
 
+        /// <summary>
+        /// A notification that the source collection has added an item.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
         public override void Added(INotifyCollectionChanged collection, int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
+        /// <summary>
+        /// A notification that the source collection has removed an item.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="item">The item that was removed.</param>
         public override void Removed(INotifyCollectionChanged collection, int index, T item)
         {
             this.CreateNotifier().Reset();
         }
 
+        /// <summary>
+        /// A notification that the source collection has replaced an item.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
         public override void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
             if (collection == this.prioritySource || index >= this.prioritySource.Count)
@@ -78,7 +105,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that there is at least one <see cref="ListBase{T}.CollectionChanged"/> or <see cref="ListBase{T}.PropertyChanged"/> subscription active. This implementation activates the source listeners.
+        /// A notification that there is at least one <see cref="MutableViewBase{T}.CollectionChanged"/> subscription active.
         /// </summary>
         protected override void SubscriptionsActive()
         {
@@ -87,7 +114,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that there are no <see cref="ListBase{T}.CollectionChanged"/> nor <see cref="ListBase{T}.PropertyChanged"/> subscriptions active. This implementation deactivates the source listeners.
+        /// A notification that there are no <see cref="MutableViewBase{T}.CollectionChanged"/> subscriptions active.
         /// </summary>
         protected override void SubscriptionsInactive()
         {

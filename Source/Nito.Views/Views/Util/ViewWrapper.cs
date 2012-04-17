@@ -117,6 +117,12 @@ namespace Views.Util
             }
         }
 
+        /// <summary>
+        /// A notification that the source collection has added an item.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
+        /// <param name="index">The index of the new item.</param>
+        /// <param name="item">The item that was added.</param>
         public void Added(INotifyCollectionChanged collection, int index, T item)
         {
             var notifier = this.CreateNotifier();
@@ -124,6 +130,12 @@ namespace Views.Util
             this.NotifyPropertyChanged(notifier);
         }
 
+        /// <summary>
+        /// A notification that the source collection has removed an item.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
+        /// <param name="index">The index of the removed item.</param>
+        /// <param name="item">The item that was removed.</param>
         public void Removed(INotifyCollectionChanged collection, int index, T item)
         {
             var notifier = this.CreateNotifier();
@@ -131,6 +143,13 @@ namespace Views.Util
             this.NotifyPropertyChanged(notifier);
         }
 
+        /// <summary>
+        /// A notification that the source collection has replaced an item.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
+        /// <param name="index">The index of the item that changed.</param>
+        /// <param name="oldItem">The old item.</param>
+        /// <param name="newItem">The new item.</param>
         public void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
             var notifier = this.CreateNotifier();
@@ -138,6 +157,10 @@ namespace Views.Util
             this.NotifyPropertyChanged(notifier, false);
         }
 
+        /// <summary>
+        /// A notification that the source collection has changed significantly. This implementation passes along the notification to the notifier for this view.
+        /// </summary>
+        /// <param name="collection">The collection that changed.</param>
         public void Reset(INotifyCollectionChanged collection)
         {
             var notifier = this.CreateNotifier();

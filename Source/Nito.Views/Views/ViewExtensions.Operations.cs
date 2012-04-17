@@ -41,7 +41,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Creates a list-like wrapper for the specified view. The wrapper also implements the (non-generic) <see cref="System.Collections.IList"/> interface, <see cref="INotifyCollectionChanged"/>, etc.
+        /// Creates a list-like wrapper for the specified view. The wrapper also implements the (non-generic) <see cref="System.Collections.IList"/> interface, <see cref="System.Collections.Specialized.INotifyCollectionChanged"/>, etc.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The source view.</param>
