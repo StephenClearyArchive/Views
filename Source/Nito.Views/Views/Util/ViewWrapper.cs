@@ -35,10 +35,25 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Gets the number of elements contained in this list.
+        /// Notifies listeners of changes in the view. This may NOT be accessed by multiple threads.
         /// </summary>
-        /// <returns>The number of elements contained in this list.</returns>
-        public int Count
+        public event NotifyCollectionChangedEventHandler CollectionChanged
+        {
+            add { (this.view as INotifyCollectionChanged).CollectionChanged += value; }
+            remove { (this.view as INotifyCollectionChanged).CollectionChanged -= value; }
+        }
+
+        int IView<T>.Count
+        {
+            get { return this.view.Count; }
+        }
+
+        int ICollection<T>.Count
+        {
+            get { return this.view.Count; }
+        }
+
+        int System.Collections.ICollection.Count
         {
             get { return this.view.Count; }
         }
@@ -85,15 +100,6 @@ namespace Views.Util
             set { throw this.NotSupported(); }
         }
 
-        /// <summary>
-        /// Notifies listeners of changes in the view. This may NOT be accessed by multiple threads.
-        /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged
-        {
-            add { (this.view as INotifyCollectionChanged).CollectionChanged += value; }
-            remove { (this.view as INotifyCollectionChanged).CollectionChanged -= value; }
-        }
-
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
@@ -120,26 +126,19 @@ namespace Views.Util
             throw this.NotSupported();
         }
 
-        public void Clear()
+        void ICollection<T>.Clear()
         {
             throw this.NotSupported();
         }
 
-        /// <summary>
-        /// Determines the index of a specific item in this list.
-        /// </summary>
-        /// <param name="item">The object to locate in this list.</param>
-        /// <returns>The index of <paramref name="item"/> if found in this list; otherwise, -1.</returns>
-        public int IndexOf(T item)
+        void System.Collections.IList.Clear()
         {
-            var comparer = EqualityComparer<T>.Default;
-            for (int i = 0; i != this.Count; ++i)
-            {
-                if (comparer.Equals(item, this.view[i]))
-                    return i;
-            }
+            throw this.NotSupported();
+        }
 
-            return -1;
+        int IList<T>.IndexOf(T item)
+        {
+            return this.view.FirstIndexOf(item);
         }
 
         int System.Collections.IList.IndexOf(object value)
@@ -149,7 +148,7 @@ namespace Views.Util
                 return -1;
             }
 
-            return this.IndexOf((T)value);
+            return this.view.FirstIndexOf((T)value);
         }
 
         void ICollection<T>.Add(T item)
@@ -162,16 +161,9 @@ namespace Views.Util
             throw this.NotSupported();
         }
 
-        /// <summary>
-        /// Determines whether this list contains a specific value.
-        /// </summary>
-        /// <param name="item">The object to locate in this list.</param>
-        /// <returns>
-        /// true if <paramref name="item"/> is found in this list; otherwise, false.
-        /// </returns>
-        public bool Contains(T item)
+        bool ICollection<T>.Contains(T item)
         {
-            return this.Contains(item, null); // TODO: ArgumentNullException?
+            return (this.view as IEnumerable<T>).Contains(item);
         }
 
         bool System.Collections.IList.Contains(object value)
@@ -181,33 +173,12 @@ namespace Views.Util
                 return false;
             }
 
-            return this.Contains((T)value);
+            return (this.view as IEnumerable<T>).Contains((T)value);
         }
 
-        /// <summary>
-        /// Copies the elements of this list to an <see cref="T:System.Array"/>, starting at a particular <see cref="T:System.Array"/> index.
-        /// </summary>
-        /// <param name="array">The one-dimensional <see cref="T:System.Array"/> that is the destination of the elements copied from this slice. The <see cref="T:System.Array"/> must have zero-based indexing.</param>
-        /// <param name="arrayIndex">The zero-based index in <paramref name="array"/> at which copying begins.</param>
-        /// <exception cref="T:System.ArgumentNullException">
-        /// <paramref name="array"/> is null.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentOutOfRangeException">
-        /// <paramref name="arrayIndex"/> is less than 0.
-        /// </exception>
-        /// <exception cref="T:System.ArgumentException">
-        /// <paramref name="arrayIndex"/> is equal to or greater than the length of <paramref name="array"/>.
-        /// -or-
-        /// The number of elements in the source <see cref="T:System.Collections.Generic.ICollection`1"/> is greater than the available space from <paramref name="arrayIndex"/> to the end of the destination <paramref name="array"/>.
-        /// </exception>
-        public void CopyTo(T[] array, int arrayIndex)
+        void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null)
-            {
-                throw new ArgumentNullException("array", "Array is null");
-            }
-
-            int count = this.Count;
+            int count = this.view.Count;
             for (int i = 0; i != count; ++i)
             {
                 array[arrayIndex + i] = this.view[i];
@@ -216,23 +187,10 @@ namespace Views.Util
 
         void System.Collections.ICollection.CopyTo(Array array, int index)
         {
-            if (array == null)
+            int count = this.view.Count;
+            for (int i = 0; i != count; ++i)
             {
-                throw new ArgumentNullException("array", "Array is null.");
-            }
-
-            if (array.Rank != 1)
-            {
-                throw new ArgumentException("Multidimensional arrays are not supported.");
-            }
-
-            try
-            {
-                Array.Copy(this.ToArray(), 0, array, 0, this.Count);
-            }
-            catch (ArrayTypeMismatchException ex)
-            {
-                throw new ArgumentException("Invalid array argument; see inner exception for details.", ex);
+                array.SetValue(this.view[i], index + i);
             }
         }
 
@@ -246,30 +204,14 @@ namespace Views.Util
             throw this.NotSupported();
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="T:System.Collections.Generic.IEnumerator`1"/> that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<T> GetEnumerator()
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            int count = this.Count;
-            for (int i = 0; i != count; ++i)
-            {
-                yield return this.view[i];
-            }
+            return (this.view as IEnumerable<T>).GetEnumerator();
         }
 
-        /// <summary>
-        /// Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        /// An <see cref="T:System.Collections.IEnumerator"/> object that can be used to iterate through the collection.
-        /// </returns>
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return (this.view as IEnumerable<T>).GetEnumerator();
         }
 
         /// <summary>
