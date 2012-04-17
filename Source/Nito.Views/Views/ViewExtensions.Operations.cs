@@ -323,6 +323,34 @@ namespace Views
             return new Util.FilteredView<T>(source, filter);
         }
 
-        // TODO: Randomize, TakeWhile/SkipWhile, Buffer (from Rx), Permutations.
+        /// <summary>
+        /// Creates a randomly-ordered view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="randomNumberGenerator">The random number generator; when invoked with a value <c>n</c>, this must return a random number in the range [0, n).</param>
+        /// <returns>The randomly-ordered view.</returns>
+        public static IView<T> RandomShuffle<T>(this IView<T> source, Func<int, int> randomNumberGenerator)
+        {
+            Contract.Requires(source != null);
+            Contract.Requires(randomNumberGenerator != null);
+            return new Util.RandomView<T>(source, randomNumberGenerator);
+        }
+
+        /// <summary>
+        /// Creates a randomly-ordered view of the data.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="randomNumberGenerator">The random number generator. If <c>null</c>, then the default time-seeded pseudo-random number generator is used.</param>
+        /// <returns>The randomly-ordered view.</returns>
+        public static IView<T> RandomShuffle<T>(this IView<T> source, Random randomNumberGenerator = null)
+        {
+            Contract.Requires(source != null);
+            randomNumberGenerator = randomNumberGenerator ?? new Random();
+            return source.RandomShuffle(x => randomNumberGenerator.Next(x));
+        }
+
+        // TODO: TakeWhile/SkipWhile, Buffer (from Rx), Permutations.
     }
 }
