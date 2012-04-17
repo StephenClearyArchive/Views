@@ -116,16 +116,27 @@ namespace Views.Util
             this.selector = selector;
         }
 
+        /// <summary>
+        /// Gets the number of elements observed by this view.
+        /// </summary>
+        /// <returns>The number of elements observed by this view.</returns>
         public override int Count
         {
             get { return Min(<#= Join(i, j => "this.source" + j + ".Count") #>); }
         }
 
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to get.</param>
         public override TResult this[int index]
         {
             get { return this.selector(<#= Join(i, j => "this.source" + j + "[index]") #>); }
         }
 
+        /// <summary>
+        /// Returns a value indicating whether an instance may ever raise <see cref="INotifyCollectionChanged.CollectionChanged"/>.
+        /// </summary>
         public override bool CanNotifyCollectionChanged
         {
             get { return <#= Join(i, j => "(this.source" + j + " as ICanNotifyCollectionChanged).CanNotifyCollectionChanged", " || ") #>; }
@@ -140,6 +151,9 @@ namespace Views.Util
             Contract.Invariant(this.selector != null);
         }
 
+        /// <summary>
+        /// A notification that there is at least one <see cref="MutableViewBase{T}.CollectionChanged"/> subscription active.
+        /// </summary>
         protected override void SubscriptionsActive()
         {
 <# for (int j = 0; j != i; ++j) { #>
@@ -147,6 +161,9 @@ namespace Views.Util
 <# } #>
         }
 
+        /// <summary>
+        /// A notification that there are no <see cref="MutableViewBase{T}.CollectionChanged"/> subscriptions active.
+        /// </summary>
         protected override void SubscriptionsInactive()
         {
 <# for (int j = 0; j != i; ++j) { #>

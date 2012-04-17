@@ -14,6 +14,9 @@ namespace Views.Util
     /// <typeparam name="T">The type of element observed by the view.</typeparam>
     public abstract class ConstantViewBase<T> : ViewBase<T>, ICanNotifyCollectionChanged
     {
+        /// <summary>
+        /// Returns a value indicating whether an instance may ever raise <see cref="INotifyCollectionChanged.CollectionChanged"/>.
+        /// </summary>
         public bool CanNotifyCollectionChanged
         {
             get { return false; }

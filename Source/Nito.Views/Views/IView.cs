@@ -30,7 +30,7 @@ namespace Views
     }
 
     /// <summary>
-    /// A view of data that provides fast random-access to elements. Views do not necessarily store data; they may be "virtual" in the sense of creating the data elements on request. Any type implementing this interface must also implement <see cref="INotifyCollectionChanged"/>, <see cref="ICanNotifyCollectionChanged"/>, and <see cref="IEnumerable{T}"/>.
+    /// A view of data that provides fast random-access to elements. Views do not necessarily store data; they may be "virtual" in the sense of creating the data elements on request. Any type implementing this interface must also implement <see cref="INotifyCollectionChanged"/>, <see cref="Views.Util.ICanNotifyCollectionChanged"/>, and <see cref="IEnumerable{T}"/>.
     /// </summary>
     /// <typeparam name="T">The type of item observed by the view.</typeparam>
     [ContractClass(typeof(ViewContracts<>))]

@@ -148,16 +148,27 @@ namespace Views.Util
             this.selector = selector;
         }
 
+        /// <summary>
+        /// Gets the number of elements observed by this view.
+        /// </summary>
+        /// <returns>The number of elements observed by this view.</returns>
         public override int Count
         {
             get { return Min(this.source0.Count, this.source1.Count); }
         }
 
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to get.</param>
         public override TResult this[int index]
         {
             get { return this.selector(this.source0[index], this.source1[index]); }
         }
 
+        /// <summary>
+        /// Returns a value indicating whether an instance may ever raise <see cref="INotifyCollectionChanged.CollectionChanged"/>.
+        /// </summary>
         public override bool CanNotifyCollectionChanged
         {
             get { return (this.source0 as ICanNotifyCollectionChanged).CanNotifyCollectionChanged || (this.source1 as ICanNotifyCollectionChanged).CanNotifyCollectionChanged; }
@@ -171,12 +182,18 @@ namespace Views.Util
             Contract.Invariant(this.selector != null);
         }
 
+        /// <summary>
+        /// A notification that there is at least one <see cref="MutableViewBase{T}.CollectionChanged"/> subscription active.
+        /// </summary>
         protected override void SubscriptionsActive()
         {
             this.listener0.Activate();
             this.listener1.Activate();
         }
 
+        /// <summary>
+        /// A notification that there are no <see cref="MutableViewBase{T}.CollectionChanged"/> subscriptions active.
+        /// </summary>
         protected override void SubscriptionsInactive()
         {
             this.listener0.Deactivate();
@@ -387,16 +404,27 @@ namespace Views.Util
             this.selector = selector;
         }
 
+        /// <summary>
+        /// Gets the number of elements observed by this view.
+        /// </summary>
+        /// <returns>The number of elements observed by this view.</returns>
         public override int Count
         {
             get { return Min(this.source0.Count, this.source1.Count, this.source2.Count); }
         }
 
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to get.</param>
         public override TResult this[int index]
         {
             get { return this.selector(this.source0[index], this.source1[index], this.source2[index]); }
         }
 
+        /// <summary>
+        /// Returns a value indicating whether an instance may ever raise <see cref="INotifyCollectionChanged.CollectionChanged"/>.
+        /// </summary>
         public override bool CanNotifyCollectionChanged
         {
             get { return (this.source0 as ICanNotifyCollectionChanged).CanNotifyCollectionChanged || (this.source1 as ICanNotifyCollectionChanged).CanNotifyCollectionChanged || (this.source2 as ICanNotifyCollectionChanged).CanNotifyCollectionChanged; }
@@ -411,6 +439,9 @@ namespace Views.Util
             Contract.Invariant(this.selector != null);
         }
 
+        /// <summary>
+        /// A notification that there is at least one <see cref="MutableViewBase{T}.CollectionChanged"/> subscription active.
+        /// </summary>
         protected override void SubscriptionsActive()
         {
             this.listener0.Activate();
@@ -418,6 +449,9 @@ namespace Views.Util
             this.listener2.Activate();
         }
 
+        /// <summary>
+        /// A notification that there are no <see cref="MutableViewBase{T}.CollectionChanged"/> subscriptions active.
+        /// </summary>
         protected override void SubscriptionsInactive()
         {
             this.listener0.Deactivate();

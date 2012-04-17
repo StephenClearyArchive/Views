@@ -19,6 +19,9 @@ namespace Views.Util
         /// </summary>
         private NotifyCollectionChangedEventHandler collectionChanged;
 
+        /// <summary>
+        /// Returns a value indicating whether an instance may ever raise <see cref="INotifyCollectionChanged.CollectionChanged"/>.
+        /// </summary>
         public abstract bool CanNotifyCollectionChanged { get; }
 
         /// <summary>

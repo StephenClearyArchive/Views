@@ -26,7 +26,7 @@ namespace Views.Util
         /// <param name="index">The index of the item to get.</param>
         public abstract T this[int index] { get; }
 
-        public IEnumerator<T> GetEnumerator()
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             int count = this.Count;
             for (int i = 0; i != count; ++i)
@@ -35,7 +35,7 @@ namespace Views.Util
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return this.GetEnumerator();
+            return (this as IEnumerable<T>).GetEnumerator();
         }
     }
 }

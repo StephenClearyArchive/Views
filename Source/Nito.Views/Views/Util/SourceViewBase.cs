@@ -52,6 +52,9 @@ namespace Views.Util
             get { return this.source[index]; }
         }
 
+        /// <summary>
+        /// Returns a value indicating whether an instance may ever raise <see cref="INotifyCollectionChanged.CollectionChanged"/>.
+        /// </summary>
         public override bool CanNotifyCollectionChanged
         {
             get { return (this.source as ICanNotifyCollectionChanged).CanNotifyCollectionChanged; }
@@ -107,7 +110,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that there is at least one <see cref="ListBase{T}.CollectionChanged"/> or <see cref="ListBase{T}.PropertyChanged"/> subscription active. This implementation activates the source listener.
+        /// A notification that there is at least one <see cref="MutableViewBase{T}.CollectionChanged"/> subscription active.
         /// </summary>
         protected override void SubscriptionsActive()
         {
@@ -115,7 +118,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that there are no <see cref="ListBase{T}.CollectionChanged"/> nor <see cref="ListBase{T}.PropertyChanged"/> subscriptions active. This implementation deactivates the source listener.
+        /// A notification that there are no <see cref="MutableViewBase{T}.CollectionChanged"/> subscriptions active.
         /// </summary>
         protected override void SubscriptionsInactive()
         {
