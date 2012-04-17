@@ -84,5 +84,15 @@ namespace Views.Util
         {
             this.CreateNotifier().Reset();
         }
+
+        protected override void SubscriptionsActive()
+        {
+            this.listener.Activate();
+        }
+
+        protected override void SubscriptionsInactive()
+        {
+            this.listener.Deactivate();
+        }
     }
 }

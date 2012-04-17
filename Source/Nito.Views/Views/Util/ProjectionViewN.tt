@@ -140,6 +140,20 @@ namespace Views.Util
             Contract.Invariant(this.selector != null);
         }
 
+        protected override void SubscriptionsActive()
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            this.listener<#= j #>.Activate();
+<# } #>
+        }
+
+        protected override void SubscriptionsInactive()
+        {
+<# for (int j = 0; j != i; ++j) { #>
+            this.listener<#= j #>.Deactivate();
+<# } #>
+        }
+
         private int Min(params int[] counts)
 		{
 		    return counts.Min();
