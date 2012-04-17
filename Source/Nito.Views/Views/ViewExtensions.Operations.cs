@@ -80,8 +80,6 @@ namespace Views
             Contract.Requires(source != null);
             Contract.Requires(step > 0);
             Contract.Ensures(Contract.Result<IView<T>>() != null);
-            if (step <= 0)
-                throw new ArgumentOutOfRangeException("step", "Invalid step " + step);
 
             var count = source.Count;
 

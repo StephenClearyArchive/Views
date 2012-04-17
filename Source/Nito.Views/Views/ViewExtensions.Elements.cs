@@ -28,7 +28,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the first element in a view. Throws <see cref="InvalidOperationException"/> if the view is empty.
+        /// Returns the first element in a view. Throws an exception if the view is empty.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
@@ -36,13 +36,12 @@ namespace Views
         public static T First<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            if (view.Count == 0)
-                throw new InvalidOperationException("View contains no elements.");
+            Contract.Requires(view.Count != 0);
             return view[0];
         }
 
         /// <summary>
-        /// Returns the first element in a view that matches a condition. Throws <see cref="InvalidOperationException"/> if no elements in the view match the condition.
+        /// Returns the first element in a view that matches a condition. Throws an exception if no elements in the view match the condition.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
@@ -52,9 +51,9 @@ namespace Views
         {
             Contract.Requires(view != null);
             Contract.Requires(predicate != null);
+            Contract.Requires(Contract.Exists(view as IEnumerable<T>, x => predicate(x)));
             var index = view.FirstIndex(predicate);
-            if (index == -1)
-                throw new InvalidOperationException("View contains no matching elements.");
+            Contract.Assert(index != -1);
             return view[index];
         }
 
@@ -92,7 +91,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the last element in a view. Throws <see cref="InvalidOperationException"/> if the view is empty.
+        /// Returns the last element in a view. Throws an exception if the view is empty.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
@@ -100,14 +99,12 @@ namespace Views
         public static T Last<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            var count = view.Count;
-            if (count == 0)
-                throw new InvalidOperationException("View contains no elements.");
-            return view[count - 1];
+            Contract.Requires(view.Count != 0);
+            return view[view.Count - 1];
         }
 
         /// <summary>
-        /// Returns the last element in a view that matches a condition. Throws <see cref="InvalidOperationException"/> if no elements in the view match the condition.
+        /// Returns the last element in a view that matches a condition. Throws an exception if no elements in the view match the condition.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
@@ -117,9 +114,9 @@ namespace Views
         {
             Contract.Requires(view != null);
             Contract.Requires(predicate != null);
+            Contract.Requires(Contract.Exists(view as IEnumerable<T>, x => predicate(x)));
             var index = view.LastIndex(predicate);
-            if (index == -1)
-                throw new InvalidOperationException("View contains no matching elements.");
+            Contract.Assert(index != -1);
             return view[index];
         }
 
@@ -138,8 +135,6 @@ namespace Views
                 return defaultValue;
             return view[count - 1];
         }
-
-        // TODO: evaluate Contracts for some of these runtime exceptions.
 
         /// <summary>
         /// Returns the last element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition.
@@ -160,7 +155,7 @@ namespace Views
         }
 
         /// <summary>
-        /// Returns the only element in a view. Throws <see cref="InvalidOperationException"/> if the view does not contain exactly one element.
+        /// Returns the only element in a view. Throws an exception if the view does not contain exactly one element.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
@@ -168,14 +163,12 @@ namespace Views
         public static T Single<T>(this IView<T> view)
         {
             Contract.Requires(view != null);
-            var count = view.Count;
-            if (count != 1)
-                throw new InvalidOperationException("View does not contain exactly one element.");
+            Contract.Requires(view.Count == 1);
             return view[0];
         }
 
         /// <summary>
-        /// Returns the only element in a view that matches a condition. Throws <see cref="InvalidOperationException"/> if there is not exactly one element in the view that matches the condition.
+        /// Returns the only element in a view that matches a condition. Throws an exception if there is not exactly one element in the view that matches the condition.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
@@ -185,14 +178,14 @@ namespace Views
         {
             Contract.Requires(view != null);
             Contract.Requires(predicate != null);
+            Contract.Requires((view as IEnumerable<T>).Count(predicate) == 1);
             var index = view.SingleIndex(predicate);
-            if (index == -1)
-                throw new InvalidOperationException("View contains no matching elements.");
+            Contract.Assert(index != -1);
             return view[index];
         }
 
         /// <summary>
-        /// Returns the only element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition. Throws <see cref="InvalidOperationException"/> if multiple elements match the condition.
+        /// Returns the only element in a view that matches a condition, or <paramref name="defaultValue"/> if no elements in the view match the condition. Throws an exception if multiple elements match the condition.
         /// </summary>
         /// <typeparam name="T">The type of element observed by the view.</typeparam>
         /// <param name="view">The view.</param>
