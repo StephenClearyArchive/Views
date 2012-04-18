@@ -48,4 +48,22 @@ namespace Views
         /// <param name="index">The index of the item to get.</param>
         T this[int index] { get; }
     }
+
+    /// <summary>
+    /// A generator of permutations of another view.
+    /// </summary>
+    /// <typeparam name="T">The type of item observed by the view.</typeparam>
+    public interface IViewPermutationGenerator<out T>
+    {
+        /// <summary>
+        /// Gets the current permuation of the view. This value is only valid until <see cref="NextPermutation"/> is invoked.
+        /// </summary>
+        IView<T> Current { get; }
+
+        /// <summary>
+        /// Rearranges the elements in this view to advance to the next permutation. If this method returns <c>false</c>, then there are no more permutations, and this view is reset to the first permutation.
+        /// </summary>
+        /// <returns><c>true</c> if this view advanced to the next permutation; <c>false</c> if this view reset to the first permutation.</returns>
+        bool NextPermutation();
+    }
 }

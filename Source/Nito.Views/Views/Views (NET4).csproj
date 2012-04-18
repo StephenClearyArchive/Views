@@ -159,6 +159,9 @@
     <Compile Include="Util\ConstantViewBase.cs" />
     <Compile Include="Linq\DynamicViewWrapper.cs" />
     <Compile Include="Util\IndirectComparer.cs" />
+    <Compile Include="Util\PermutationView.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Util\SkipSliceView.cs" />
     <Compile Include="Util\TakeSliceView.cs" />
     <Compile Include="Util\RandomView.cs" />
