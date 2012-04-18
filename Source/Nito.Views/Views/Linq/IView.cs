@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Views.Util;
 
 namespace Views.Linq
 {
@@ -19,8 +20,8 @@ namespace Views.Linq
     public interface IOrderedView<T> : IView<T>
     {
         /// <summary>
-        /// Gets the comparer that defines how the elements are sorted in this view.
+        /// Gets the comparer used to indirectly compare source list elements.
         /// </summary>
-        IComparer<T> Comparer { get; }
+        IndirectComparer<T> IndexComparer { get; }
     }
 }
