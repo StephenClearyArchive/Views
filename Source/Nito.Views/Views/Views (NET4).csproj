@@ -149,7 +149,6 @@
   <ItemGroup>
     <Compile Include="IView.cs" />
     <Compile Include="Linq\IView.cs" />
-    <Compile Include="Linq\OrderedView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\AnonymousComparer.cs" />
     <Compile Include="Util\AnonymousConstantView.cs" />
@@ -159,6 +158,7 @@
     <Compile Include="Util\ConcatView.cs" />
     <Compile Include="Util\ConstantViewBase.cs" />
     <Compile Include="Linq\DynamicViewWrapper.cs" />
+    <Compile Include="Util\IndirectComparer.cs" />
     <Compile Include="Util\SkipSliceView.cs" />
     <Compile Include="Util\TakeSliceView.cs" />
     <Compile Include="Util\RandomView.cs" />

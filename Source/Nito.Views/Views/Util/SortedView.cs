@@ -11,12 +11,12 @@ namespace Views.Util
     /// A sorted view over a source view.
     /// </summary>
     /// <typeparam name="T">The type of elements observed by the view.</typeparam>
-    public class SortedView<T> : IndirectViewBase<T>
+    public class SortedView<T> : IndirectViewBase<T>, Linq.IOrderedView<T>
     {
         /// <summary>
         /// The comparer used to indirectly compare source list elements.
         /// </summary>
-        private readonly IComparer<int> indexComparer;
+        private readonly IndirectComparer<T> indexComparer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SortedView&lt;T&gt;"/> class for the given source list.
@@ -27,7 +27,7 @@ namespace Views.Util
             : base(source, null)
         {
             Contract.Requires(source != null);
-            this.indexComparer = this.GetComparer(comparer);
+            this.indexComparer = new IndirectComparer<T>(this, comparer);
             this.ResetIndices();
         }
 
@@ -38,13 +38,21 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the comparer used to indirectly compare source list elements.
+        /// </summary>
+        public IndirectComparer<T> IndexComparer
+        {
+            get { return this.indexComparer; }
+        }
+
+        /// <summary>
         /// Creates a new sorted list of redirected indices.
         /// </summary>
         private void ResetIndices()
         {
             var newIndices = DefaultIndices(this.source);
-            this.indices = newIndices;
             newIndices.Sort(indexComparer);
+            this.indices = newIndices;
         }
 
         /// <summary>

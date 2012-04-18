@@ -108,17 +108,5 @@ namespace Views.Util
             else
                 this.CreateNotifier().Replaced(affectedIndices.First(), oldItem, newItem);
         }
-
-        /// <summary>
-        /// Returns an indirect comparer which may be used to sort or compare elements in this list, based on a source list comparer.
-        /// </summary>
-        /// <param name="comparer">The source list comparer. If this is <c>null</c>, then <see cref="Comparer{T}.Default"/> is used.</param>
-        /// <returns>The indirect comparer.</returns>
-        public IComparer<int> GetComparer(IComparer<T> comparer = null)
-        {
-            Contract.Ensures(Contract.Result<IComparer<T>>() != null);
-            comparer = comparer ?? Comparer<T>.Default;
-            return new AnonymousComparer<int> { Compare = (x, y) => comparer.Compare(this[x], this[y]) };
-        }
     }
 }
