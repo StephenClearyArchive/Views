@@ -381,6 +381,18 @@ namespace Views
             return new Util.SkipSliceView<T>(source, predicate);
         }
 
-        // TODO: Buffer (from Rx), Permutations.
+        /// <summary>
+        /// Generates the first permutation of a view. Permutations are generated in lexicographical order.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="comparer">The source comparer. If this is <c>null</c>, then <see cref="Comparer{T}.Default"/> is used.</param>
+        /// <returns>The permutation generator for the source view.</returns>
+        public static IViewPermutationGenerator<T> Permutations<T>(this IView<T> source, IComparer<T> comparer = null)
+        {
+            Contract.Requires(source != null);
+            Contract.Ensures(Contract.Result<IViewPermutationGenerator<T>>() != null);
+            return new Util.PermutationView<T>(source, comparer);
+        }
     }
 }
