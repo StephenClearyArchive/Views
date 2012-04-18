@@ -159,6 +159,8 @@
     <Compile Include="Util\ConcatView.cs" />
     <Compile Include="Util\ConstantViewBase.cs" />
     <Compile Include="Linq\DynamicViewWrapper.cs" />
+    <Compile Include="Util\SkipSliceView.cs" />
+    <Compile Include="Util\TakeSliceView.cs" />
     <Compile Include="Util\RandomView.cs" />
     <Compile Include="Util\ICanNotifyCollectionChanged.cs" />
     <Compile Include="Util\ProjectionViewN.cs">

@@ -11,17 +11,17 @@ namespace Views.Util
     /// Slices a source view.
     /// </summary>
     /// <typeparam name="T">The type of element observed by the view.</typeparam>
-    public sealed class SliceView<T> : SourceViewBase<T>
+    public class SliceView<T> : SourceViewBase<T>
     {
         /// <summary>
         /// The offset into the source view where this slice begins.
         /// </summary>
-        private int offset;
+        protected int offset;
 
         /// <summary>
         /// The number of objects in this slice.
         /// </summary>
-        private int count;
+        protected int sliceCount;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SliceView&lt;T&gt;"/> class.
@@ -34,11 +34,11 @@ namespace Views.Util
         {
             Contract.Requires(source != null);
             Contract.Requires(offset >= 0 && offset <= source.Count);
-            Contract.Requires(count <= source.Count);
+            Contract.Requires(count >= 0 && count <= source.Count);
             Contract.Requires(offset <= source.Count - count);
 
             this.offset = offset;
-            this.count = count;
+            this.sliceCount = count;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Views.Util
         /// <returns>The number of elements observed by this view.</returns>
         public override int Count
         {
-            get { return this.count; }
+            get { return this.sliceCount; }
         }
 
         /// <summary>
@@ -63,8 +63,8 @@ namespace Views.Util
         private void ObjectInvariant()
         {
             Contract.Invariant(this.offset >= 0 && this.offset <= this.source.Count);
-            Contract.Invariant(this.count <= this.source.Count);
-            Contract.Invariant(this.offset <= this.source.Count - this.count);
+            Contract.Invariant(this.sliceCount >= 0 && this.sliceCount <= this.source.Count);
+            Contract.Invariant(this.offset <= this.source.Count - this.sliceCount);
         }
 
         /// <summary>
@@ -77,9 +77,9 @@ namespace Views.Util
         {
             if (index >= this.offset)
             {
-                if (index - this.offset <= this.count)
+                if (index - this.offset <= this.sliceCount)
                 {
-                    ++this.count;
+                    ++this.sliceCount;
                     this.CreateNotifier().Added(index + this.offset, item);
                 }
             }
@@ -99,9 +99,9 @@ namespace Views.Util
         {
             if (index >= this.offset)
             {
-                if (index - this.offset < this.count)
+                if (index - this.offset < this.sliceCount)
                 {
-                    --this.count;
+                    --this.sliceCount;
                     this.CreateNotifier().Removed(index + this.offset, item);
                 }
             }
@@ -120,7 +120,7 @@ namespace Views.Util
         /// <param name="newItem">The new item.</param>
         public override void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
-            if (index >= this.offset && index - this.offset < this.count)
+            if (index >= this.offset && index - this.offset < this.sliceCount)
                 this.CreateNotifier().Replaced(index + this.offset, oldItem, newItem);
         }
     }

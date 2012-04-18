@@ -351,6 +351,36 @@ namespace Views
             return source.RandomShuffle(x => randomNumberGenerator.Next(x));
         }
 
-        // TODO: TakeWhile/SkipWhile, Buffer (from Rx), Permutations.
+        /// <summary>
+        /// Creates a slice of the data by taking all elements until the point when a predicate becomes false.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="predicate">The predicate used to slice the data.</param>
+        /// <returns>The sliced view.</returns>
+        public static IView<T> TakeWhile<T>(this IView<T> source, Func<T, bool> predicate)
+        {
+            Contract.Requires(source != null);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<IView<T>>() != null);
+            return new Util.TakeSliceView<T>(source, predicate);
+        }
+
+        /// <summary>
+        /// Creates a slice of the data by skipping all elements until the point when a predicate becomes false, and taking all remaining elements.
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="predicate">The predicate used to slice the data.</param>
+        /// <returns>The sliced view.</returns>
+        public static IView<T> SkipWhile<T>(this IView<T> source, Func<T, bool> predicate)
+        {
+            Contract.Requires(source != null);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<IView<T>>() != null);
+            return new Util.SkipSliceView<T>(source, predicate);
+        }
+
+        // TODO: Buffer (from Rx), Permutations.
     }
 }
