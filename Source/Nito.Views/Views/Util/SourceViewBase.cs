@@ -101,7 +101,7 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// A notification that the source collection has changed significantly. This implementation passes along the notification to the notifier for this view.
+        /// A notification that the source collection has changed significantly.
         /// </summary>
         /// <param name="collection">The collection that changed.</param>
         public virtual void Reset(INotifyCollectionChanged collection)
