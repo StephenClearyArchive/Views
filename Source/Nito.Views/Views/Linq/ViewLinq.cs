@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Views.Util;
+using Comparers;
 
 namespace Views.Linq
 {
@@ -61,7 +62,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> OrderBy<T, TKey>(this IView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, new Util.AnonymousComparer<T> { Compare = (x, y) => Comparer<TKey>.Default.Compare(selector(x), selector(y)) });
+            return new SortedView<T>(source, Compare.Key<T>.OrderBy(selector));
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> OrderByDescending<T, TKey>(this IView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, new Util.AnonymousComparer<T> { Compare = (x, y) => Comparer<TKey>.Default.Compare(selector(y), selector(x)) });
+            return new SortedView<T>(source, Compare.Key<T>.OrderByDescending(selector));
         }
 
         /// <summary>
@@ -87,16 +88,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> ThenBy<T, TKey>(this IOrderedView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, new Util.AnonymousComparer<T>
-            {
-                Compare = (x, y) =>
-                {
-                    var primarySortResult = source.IndexComparer.Comparer.Compare(x, y);
-                    if (primarySortResult != 0)
-                        return primarySortResult;
-                    return Comparer<TKey>.Default.Compare(selector(x), selector(y));
-                }
-            });
+            return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare.Key<T>.OrderBy(selector)));
         }
 
         /// <summary>
@@ -109,16 +101,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> ThenByDescending<T, TKey>(this IOrderedView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, new Util.AnonymousComparer<T>
-            {
-                Compare = (x, y) =>
-                {
-                    var primarySortResult = source.IndexComparer.Comparer.Compare(x, y);
-                    if (primarySortResult != 0)
-                        return primarySortResult;
-                    return Comparer<TKey>.Default.Compare(selector(y), selector(x));
-                }
-            });
+            return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare.Key<T>.OrderByDescending(selector)));
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
+using Comparers;
 
 namespace Views
 {
@@ -120,7 +121,7 @@ namespace Views
             Contract.Requires(view != null);
             Contract.Ensures(Contract.Result<int>() == -1 || (Contract.Result<int>() >= 0 && Contract.Result<int>() < view.Count));
             comparer = comparer ?? Comparer<T>.Default;
-            return view.MaxIndex(new Util.AnonymousComparer<T> { Compare = (x, y) => comparer.Compare(y, x) });
+            return view.MaxIndex(comparer.Reverse());
         }
 
         /// <summary>

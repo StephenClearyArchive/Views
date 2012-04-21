@@ -10,7 +10,7 @@ namespace Views.Util
     /// An "indirect comparer", which compares two index values by comparing their elements in a view.
     /// </summary>
     /// <typeparam name="T">The type of elements observed by the view.</typeparam>
-    public sealed class IndirectComparer<T> : IComparer<int>
+    public sealed class IndirectComparer<T> : Comparers.Util.SourceComparerBase<T, int>
     {
         /// <summary>
         /// The source view.
@@ -18,27 +18,21 @@ namespace Views.Util
         private readonly IView<T> view;
 
         /// <summary>
-        /// The source element comparer.
-        /// </summary>
-        private readonly IComparer<T> comparer;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="IndirectComparer&lt;T&gt;"/> class.
         /// </summary>
         /// <param name="view">The source view.</param>
         /// <param name="comparer">The source element comparer.</param>
         public IndirectComparer(IView<T> view, IComparer<T> comparer = null)
+            : base(comparer)
         {
             Contract.Requires(view != null);
             this.view = view;
-            this.comparer = comparer ?? Comparer<T>.Default;
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(this.view != null);
-            Contract.Invariant(this.comparer != null);
         }
 
         /// <summary>
@@ -50,22 +44,27 @@ namespace Views.Util
         }
 
         /// <summary>
-        /// Gets the source element comparer.
+        /// Compares two objects and returns a value less than 0 if <paramref name="x"/> is less than <paramref name="y"/>, 0 if <paramref name="x"/> is equal to <paramref name="y"/>, or greater than 0 if <paramref name="x"/> is greater than <paramref name="y"/>.
         /// </summary>
-        public IComparer<T> Comparer
+        /// <param name="x">The first object to compare.</param>
+        /// <param name="y">The second object to compare.</param>
+        /// <returns>A value less than 0 if <paramref name="x"/> is less than <paramref name="y"/>, 0 if <paramref name="x"/> is equal to <paramref name="y"/>, or greater than 0 if <paramref name="x"/> is greater than <paramref name="y"/>.</returns>
+        protected override int DoCompare(int x, int y)
         {
-            get { return this.comparer; }
+            Contract.Assume(x >= 0 && x < this.view.Count);
+            Contract.Assume(y >= 0 && y < this.view.Count);
+            return this.Source.Compare(this.view[x], this.view[y]);
         }
 
         /// <summary>
-        /// Compares the index values by comparing their elements in the soruce view.
+        /// Returns a hash code for the specified object.
         /// </summary>
-        /// <param name="x">The first index value.</param>
-        /// <param name="y">The second index value.</param>
-        /// <returns>A value less than zero if <paramref name="x"/> &lt; <paramref name="y"/>; zero if <paramref name="x"/> == <paramref name="y"/>; or a value greater than zero if <paramref name="x"/> &gt; <paramref name="y"/>.</returns>
-        public int Compare(int x, int y)
+        /// <param name="obj">The object for which to return a hash code.</param>
+        /// <returns>A hash code for the specified object.</returns>
+        protected override int DoGetHashCode(int obj)
         {
-            return this.comparer.Compare(this.view[x], this.view[y]);
+            Contract.Assume(obj >= 0 && obj < this.view.Count);
+            return Comparers.Util.ComparerHelpers.GetHashCodeFromComparer(this.Source, this.view[obj]);
         }
     }
 }
