@@ -88,7 +88,7 @@ namespace Views.Util
         /// <param name="newItem">The new item.</param>
         public override void Replaced(INotifyCollectionChanged collection, int index, T oldItem, T newItem)
         {
-            if (this.indexComparer.Comparer.Compare(oldItem, newItem) == 0)
+            if (this.indexComparer.Source.Compare(oldItem, newItem) == 0)
             {
                 this.CreateNotifier().Replaced(index, oldItem, newItem);
             }
