@@ -24,6 +24,18 @@ namespace Views.Linq
         }
 
         /// <summary>
+        /// Creates a filtered view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Filter"/> instead).
+        /// </summary>
+        /// <typeparam name="T">The type of element observed by the view.</typeparam>
+        /// <param name="source">The source view.</param>
+        /// <param name="predicate">The filter method to apply on the data.</param>
+        /// <returns>The filtered view.</returns>
+        public static IView<T> Where<T>(this IView<T> source, Func<T, bool> predicate)
+        {
+            return source.Filter(predicate);
+        }
+
+        /// <summary>
         /// Creates a projected view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Map{TSource,TResult}"/> instead).
         /// </summary>
         /// <typeparam name="TSource">The type of element observed by the source view.</typeparam>
@@ -51,6 +63,8 @@ namespace Views.Linq
             return source.Map(item => collectionSelector(item).Map(collection => new { Item = item, Collection = collection })).Concat()
                 .Map(x => resultSelector(x.Item, x.Collection));
         }
+
+        // TODO: Join
 
         /// <summary>
         /// Creates a sorted view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Sort"/> instead).
@@ -103,19 +117,5 @@ namespace Views.Linq
         {
             return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare.Key<T>.OrderByDescending(selector)));
         }
-
-        /// <summary>
-        /// Creates a filtered view of the data. This method is for LINQ support and is not intended for end-user code (use <see cref="ViewExtensions.Filter"/> instead).
-        /// </summary>
-        /// <typeparam name="T">The type of element observed by the view.</typeparam>
-        /// <param name="source">The source view.</param>
-        /// <param name="predicate">The filter method to apply on the data.</param>
-        /// <returns>The filtered view.</returns>
-        public static IView<T> Where<T>(this IView<T> source, Func<T, bool> predicate)
-        {
-            return source.Filter(predicate);
-        }
-
-        // TODO: Join, GroupJoin, GroupBy.
     }
 }
