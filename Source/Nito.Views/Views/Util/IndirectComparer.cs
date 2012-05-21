@@ -10,7 +10,7 @@ namespace Views.Util
     /// An "indirect comparer", which compares two index values by comparing their elements in a view.
     /// </summary>
     /// <typeparam name="T">The type of elements observed by the view.</typeparam>
-    public sealed class IndirectComparer<T> : Comparers.Util.SourceComparerBase<T, int>
+    public sealed class IndirectComparer<T> : Comparers.Util.SourceComparerBase<int, T>
     {
         /// <summary>
         /// The source view.
@@ -23,7 +23,7 @@ namespace Views.Util
         /// <param name="view">The source view.</param>
         /// <param name="comparer">The source element comparer.</param>
         public IndirectComparer(IView<T> view, IComparer<T> comparer = null)
-            : base(comparer)
+            : base(comparer, false)
         {
             Contract.Requires(view != null);
             this.view = view;
