@@ -140,8 +140,9 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Comparers">
-      <HintPath>..\packages\Comparers.1.0.0\lib\net40-client\Comparers.dll</HintPath>
+    <Reference Include="Comparers, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Comparers.3.0.0\lib\net40-client\Comparers.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

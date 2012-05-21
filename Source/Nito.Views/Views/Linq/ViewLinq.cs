@@ -76,7 +76,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> OrderBy<T, TKey>(this IView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, Compare.Key<T>.OrderBy(selector));
+            return new SortedView<T>(source, Compare<T>.OrderBy(selector));
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> OrderByDescending<T, TKey>(this IView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, Compare.Key<T>.OrderByDescending(selector));
+            return new SortedView<T>(source, Compare<T>.OrderByDescending(selector));
         }
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> ThenBy<T, TKey>(this IOrderedView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare.Key<T>.OrderBy(selector)));
+            return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare<T>.OrderBy(selector)));
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Views.Linq
         /// <returns>The sorted view.</returns>
         public static IOrderedView<T> ThenByDescending<T, TKey>(this IOrderedView<T> source, Func<T, TKey> selector)
         {
-            return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare.Key<T>.OrderByDescending(selector)));
+            return new SortedView<T>(source, source.IndexComparer.Source.ThenBy(Compare<T>.OrderByDescending(selector)));
         }
     }
 }
