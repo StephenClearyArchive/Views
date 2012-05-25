@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics.Contracts;
+using System.IO;
 
 namespace Views
 {
@@ -64,6 +65,16 @@ namespace Views
             else if (view.Count == other.Count)
                 return 0;
             return 1;
+        }
+
+        /// <summary>
+        /// Creates a new stream for this view.
+        /// </summary>
+        /// <param name="view">The source view.</param>
+        /// <returns>A new stream for the view.</returns>
+        public static Stream ToStream(this IView<byte> view)
+        {
+            return new Util.ViewStream(view);
         }
     }
 }
