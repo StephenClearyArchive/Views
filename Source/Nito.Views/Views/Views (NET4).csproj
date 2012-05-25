@@ -189,6 +189,7 @@
     <Compile Include="Util\IndirectViewBase.cs" />
     <Compile Include="Util\LayeredView.cs" />
     <Compile Include="Util\ObjectListView.cs" />
+    <Compile Include="Util\ViewStream.cs" />
     <Compile Include="Util\ViewWrapper.cs" />
     <Compile Include="Util\OffsetView.cs" />
     <Compile Include="Util\RepeatView.cs" />
