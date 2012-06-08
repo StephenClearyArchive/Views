@@ -38,6 +38,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the priority source view.
+        /// </summary>
+        public IView<T> PrioritySource
+        {
+            get { return this.prioritySource; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>

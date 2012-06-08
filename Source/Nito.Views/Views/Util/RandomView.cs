@@ -39,6 +39,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the random number generator; when invoked with a value <c>n</c>, this will return a random number in the range [0, n).
+        /// </summary>
+        public Func<int, int> RandomNumberGenerator
+        {
+            get { return this.randomNumberGenerator; }
+        }
+
+        /// <summary>
         /// Creates a new sorted list of redirected indices.
         /// </summary>
         private void ResetIndices()

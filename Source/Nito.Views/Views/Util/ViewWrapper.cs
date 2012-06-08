@@ -51,6 +51,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the wrapped view.
+        /// </summary>
+        public IView<T> View
+        {
+            get { return this.view; }
+        }
+
+        /// <summary>
         /// Notifies listeners of changes in the view. This may NOT be accessed by multiple threads.
         /// </summary>
         public event NotifyCollectionChangedEventHandler CollectionChanged

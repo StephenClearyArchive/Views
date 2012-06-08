@@ -44,6 +44,22 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the source view.
+        /// </summary>
+        public IView<TSource> Source
+        {
+            get { return this.source; }
+        }
+
+        /// <summary>
+        /// Gets the projection function from source to result.
+        /// </summary>
+        public Func<TSource, TResult> Selector
+        {
+            get { return this.selector; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>

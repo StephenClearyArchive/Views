@@ -42,6 +42,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the sequence of source views.
+        /// </summary>
+        public IEnumerable<IView<T>> Sources
+        {
+            get { return this.sources; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>

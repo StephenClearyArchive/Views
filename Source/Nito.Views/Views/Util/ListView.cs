@@ -35,6 +35,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the source list.
+        /// </summary>
+        public IList<T> Source
+        {
+            get { return this.source; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>

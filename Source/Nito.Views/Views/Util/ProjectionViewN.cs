@@ -149,6 +149,30 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets source view 0.
+        /// </summary>
+        public IView<TSource0> Source0
+		{
+		    get { return this.source0; }
+		}
+
+        /// <summary>
+        /// Gets source view 1.
+        /// </summary>
+        public IView<TSource1> Source1
+		{
+		    get { return this.source1; }
+		}
+
+        /// <summary>
+        /// Gets the projection function from sources to result.
+        /// </summary>
+        public Func<TSource0, TSource1, TResult> Selector
+		{
+			get { return this.selector; }
+		}
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>
@@ -403,6 +427,38 @@ namespace Views.Util
             this.listener2 = CollectionChangedListener<TSource2>.Create(source2, CollectionChangedListener<TSource2>.WillCreate(source2) ? new SourceChangeResponder2(this) : null);
             this.selector = selector;
         }
+
+        /// <summary>
+        /// Gets source view 0.
+        /// </summary>
+        public IView<TSource0> Source0
+		{
+		    get { return this.source0; }
+		}
+
+        /// <summary>
+        /// Gets source view 1.
+        /// </summary>
+        public IView<TSource1> Source1
+		{
+		    get { return this.source1; }
+		}
+
+        /// <summary>
+        /// Gets source view 2.
+        /// </summary>
+        public IView<TSource2> Source2
+		{
+		    get { return this.source2; }
+		}
+
+        /// <summary>
+        /// Gets the projection function from sources to result.
+        /// </summary>
+        public Func<TSource0, TSource1, TSource2, TResult> Selector
+		{
+			get { return this.selector; }
+		}
 
         /// <summary>
         /// Gets the number of elements observed by this view.

@@ -42,6 +42,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the offset into the source view where this slice begins.
+        /// </summary>
+        public int SliceOffset
+        {
+            get { return this.offset; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>
