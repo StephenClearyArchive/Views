@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+ <metadata>
+  <id>Views</id>
+  <version>0.2.0</version>
+  <title>Views (by Nito Programs)</title>
+  <authors>Stephen Cleary</authors>
+  <owners>Stephen Cleary</owners>
+  <summary>Lightweight, observable slices and projections of IList&lt;T&gt; data sources, without having to copy the data.</summary>
+  <description>Lightweight, observable slices and projections of IList&lt;T&gt; data sources, without having to copy the data.</description>
+  <language>en-US</language>
+  <projectUrl>http://nitoviews.codeplex.com/</projectUrl>
+  <tags>nito views</tags>
+  <dependencies>
+   <dependency id="Comparers" version="3.0.0" />
+  </dependencies>
+  <releaseNotes>
+  </releaseNotes>
+ </metadata>
+ <files>
+  <file src="Views\bin\Release\Views.dll" target="lib\net40-client" />
+  <file src="Views\bin\Release\Views.pdb" target="lib\net40-client" />
+  <file src="Views\bin\Release\Views.xml" target="lib\net40-client" />
+  <file src="Views\bin\Release\CodeContracts\Views.Contracts.dll" target="lib\net40-client\CodeContracts" />
+  <file src="**\*.cs" target="src" />
+ </files>
+</package>
