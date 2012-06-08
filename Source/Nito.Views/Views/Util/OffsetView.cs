@@ -29,6 +29,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the offset into the source view where this view begins. This offset may be negative.
+        /// </summary>
+        public int Offset
+        {
+            get { return this.offset; }
+        }
+
+        /// <summary>
         /// Gets the item at the specified index.
         /// </summary>
         /// <param name="index">The index of the item to get.</param>

@@ -40,6 +40,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the predicate used to slice the view.
+        /// </summary>
+        public Func<T, bool> Predicate
+        {
+            get { return this.predicate; }
+        }
+
+        /// <summary>
         /// Recalculates the slice, based on the current source view.
         /// </summary>
         private void ResetSlice()

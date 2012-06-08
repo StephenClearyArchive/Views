@@ -26,6 +26,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the underlying view.
+        /// </summary>
+        public IView<byte> View
+        {
+            get { return this.view; }
+        }
+
+        /// <summary>
         /// Gets a value indicating whether this stream permits read operations. Always returns <c>true</c>.
         /// </summary>
         public override bool CanRead { get { return true; } }

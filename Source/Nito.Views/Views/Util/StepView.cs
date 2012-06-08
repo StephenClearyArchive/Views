@@ -31,6 +31,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// The step size to use when traversing the source view.
+        /// </summary>
+        public int Step
+        {
+            get { return this.step; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>

@@ -116,6 +116,24 @@ namespace Views.Util
             this.selector = selector;
         }
 
+<# for (int j = 0; j != i; ++j) { #>
+        /// <summary>
+        /// Gets source view <#= j #>.
+        /// </summary>
+        public IView<TSource<#= j #>> Source<#= j #>
+		{
+		    get { return this.source<#= j #>; }
+		}
+
+<# } #>
+        /// <summary>
+        /// Gets the projection function from sources to result.
+        /// </summary>
+        public Func<<#= tSourceList #>, TResult> Selector
+		{
+			get { return this.selector; }
+		}
+
         /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>

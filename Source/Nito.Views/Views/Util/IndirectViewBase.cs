@@ -31,6 +31,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the current redirected index values.
+        /// </summary>
+        public IList<int> RedirectedIndices
+        {
+            get { return this.indices; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>

@@ -40,6 +40,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the filter which determines which elements in the source list are visible in this list.
+        /// </summary>
+        public Func<T, bool> Filter
+        {
+            get { return this.filter; }
+        }
+
+        /// <summary>
         /// Creates a new filtered list of redirected indices.
         /// </summary>
         private void ResetIndices()

@@ -32,6 +32,14 @@ namespace Views.Util
         }
 
         /// <summary>
+        /// Gets the number of times the source view is repeated.
+        /// </summary>
+        public int RepeatCount
+        {
+            get { return this.repeatCount; }
+        }
+
+        /// <summary>
         /// Gets the number of elements observed by this view.
         /// </summary>
         /// <returns>The number of elements observed by this view.</returns>
